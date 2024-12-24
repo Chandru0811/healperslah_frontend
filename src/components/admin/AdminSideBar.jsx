@@ -5,7 +5,7 @@ import { BsBagCheckFill, BsBarChartFill } from "react-icons/bs";
 import { BiLogOut } from "react-icons/bi";
 import PropTypes from "prop-types";
 
-function VendorSideBar({ handleLogout }) {
+function AdminSideBar({ handleLogout }) {
   const navigate = useNavigate();
   const handelLogOutClick = () => {
     handleLogout();
@@ -84,7 +84,7 @@ function VendorSideBar({ handleLogout }) {
     </nav>
   );
 }
-VendorSideBar.propTypes = {
+AdminSideBar.propTypes = {
   handleLogout: PropTypes.func.isRequired,
 };
-export default VendorSideBar;
+export default AdminSideBar;

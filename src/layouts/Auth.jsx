@@ -17,6 +17,7 @@ function Auth({ handleLogout, loginAsAdmin, loginAsVendor }) {
               element={
                 <Login
                 loginAsVendor={loginAsVendor}
+                loginAsAdmin={loginAsAdmin}
                 />
               }
             />
@@ -25,6 +26,7 @@ function Auth({ handleLogout, loginAsAdmin, loginAsVendor }) {
               element={
                 <Login
                   loginAsVendor={loginAsVendor}
+                  loginAsAdmin={loginAsAdmin}
                 />
               }
             />

@@ -38,14 +38,14 @@ function Company() {
     <>
       {/* ==== NAV bar ==== */}
       <section className="header">
-        <nav className="navbar navbar-expand-lg py-0">
-          <div className="container-fluid py-md-2 py-lg-0 py-2">
+        <nav className="navbar navbar-expand-lg py-0 px-0">
+          <div className="container-fluid px-0 py-md-2 py-lg-0 py-2">
             <a
               href="/"
               className="text-light text-decoration-none ps-2 ps-md-3 d-flex align-items-center"
             >
               <img
-                src={logo} // Updated to use imported image
+                src={logo}
                 alt="Logo"
                 className="me-2 my-1 my-md-2 img-fluid"
                 style={{ height: "60px" }}
@@ -123,7 +123,7 @@ function Company() {
         {/* <!--==== Hero Section ====-->  */}
         <section
           className="partner_top"
-          style={{ paddingTop: "80px", paddingBottom: "80px" }}
+          style={{ paddingTop: "80px", paddingBottom: "30px" }}
         >
           <div className="cta-container pb-5">
             <h1 className="h1-tag pt-5 pb-4">
@@ -135,7 +135,7 @@ function Company() {
             </h2>
           </div>
 
-          <div className="container text-end mt-5 pe-1 pe-md-0">
+          <div className="container text-end mt-5 pe-1 pe-md-0 pt-5">
             <img src={PlayStore} alt="Play store" className="link_img me-4" />
             <img src={AppStore} alt="App store" className="link_img" />
           </div>
@@ -191,33 +191,23 @@ function Company() {
                 </div>
                 <div className="col-md-5 col-12 mb-3">
                   <select
-                    type="text"
-                    className="form-select my-3 form-select-lg w-100"
-                    aria-label="Nationality of the owner"
+                    className="form-select my-3 form-select-lg w-100 custom-select"
+                    style={{ fontSize: "90%" }}
                   >
-                    <option
-                      value=""
-                      style={{ color: "#ccc" }}
-                      className="fw-light"
-                    >
-                    </option>
-
+                    <option value="">Select a Nation</option>
                     <option value="Singapore">Singapore</option>
                     <option value="Malaysia">Malaysia</option>
                   </select>
                 </div>
+
                 <div className="col-md-5 col-12 mb-3">
                   <select
                     type="text"
-                    className="form-select my-3 form-select-lg w-100"
+                    className="form-select my-3 form-select-lg w-100 custom-select"
                     aria-label="Nationality of the owner"
+                    style={{ fontSize: "90%" }}
                   >
-                    <option
-                      value=""
-                      style={{ color: "#ccc" }}
-                      className="fw-light"
-                    >
-                    </option>
+                    <option value="">Select a Nationality</option>
 
                     <option value="Singaporen">Singaporen</option>
                     <option value="Singaporen PR">Singaporen PR</option>
@@ -328,12 +318,11 @@ function Company() {
                 <div className="col-md-5 col-12">
                   <select
                     type="text"
-                    className="form-select my-3 form-select-lg w-100"
-                    placeholder="Details of preferred payment mode"
+                    className="form-select my-3 form-select-lg w-100 custom-select"
                     aria-label="Details of preferred payment mode"
-                    rows="8"
+                    style={{ fontSize: "90%" }}
                   >
-                    <option value=""></option>
+                    <option value="">Select a Payment Mode</option>
                     <option value="Cash">Cash</option>
                     <option value="UPI">UPI</option>
                     <option value="Bank Tranfer">Bank Tranfer</option>

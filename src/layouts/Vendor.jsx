@@ -11,7 +11,7 @@ function Vendor({ handleLogout }) {
       <div className="d-flex flex-column flex-lg-row bg-surface-secondary">
         <VendorSideBar handleLogout={handleLogout} />
         <div className="flex-grow-1 h-screen overflow-y-auto">
-          <VendorHeader />
+          <VendorHeader handleLogout={handleLogout} />
           <main className="pt-2 bg-surface-secondary">
             <div style={{ minHeight: "90vh" }} className="px-2">
               <Routes>

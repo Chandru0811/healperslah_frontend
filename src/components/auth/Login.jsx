@@ -5,9 +5,9 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Link } from "react-router-dom";
 import headerlogo from "../../assets/Helperlah Logo.png";
-import "../../styles/custom.css"
+import "../../styles/custom.css";
 
-function Login({ loginAsVendor }) {
+function Login({ loginAsVendor, loginAsAdmin }) {
   const [showPassword, setShowPassword] = useState(false);
   const [loadIndicator, setLoadIndicator] = useState(false);
 
@@ -15,7 +15,10 @@ function Login({ loginAsVendor }) {
     email: Yup.string()
       .email("Invalid email address")
       .required("Email is required"),
-    password: Yup.string().required("Password is required"),
+    password: Yup.string()
+      .required("Password is required")
+      .max(8, "Password must not exceed 8 characters")
+      .matches(/^\S*$/, "Password must not contain spaces"),
   });
 
   const formik = useFormik({
@@ -25,7 +28,19 @@ function Login({ loginAsVendor }) {
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
-      loginAsVendor();
+      if (
+        values.email === "admin@gmail.com" &&
+        values.password === "12345678"
+      ) {
+        loginAsAdmin();
+      } else if (
+        values.email === "vendor@gmail.com" &&
+        values.password === "12345678"
+      ) {
+        loginAsVendor();
+      } else {
+        alert("Invalid credentials. Please try again.");
+      }
     },
   });
 
@@ -33,14 +48,17 @@ function Login({ loginAsVendor }) {
     setShowPassword(!showPassword);
   };
 
+  // const loginAsAdmin = () => {
+  //   navigate("/admin"); 
+  // };
+
+  // const loginAsVendor = () => {
+  //   navigate("/vendor"); 
+  // };
+
   return (
-    <div
-      className="container-fluid m-0"
-      style={{ backgroundColor: "#fcfcfc" }}
-    >
-      <div
-        className="d-flex justify-content-center align-items-center m-0 pt-5"
-      >
+    <div className="container-fluid m-0" style={{ backgroundColor: "#fcfcfc" }}>
+      <div className="d-flex justify-content-center align-items-center m-0 pt-5">
         <img src={headerlogo} className="img-fluid" alt="img" />
       </div>
       <div className=" d-flex  justify-content-center align-items-center mt-5">

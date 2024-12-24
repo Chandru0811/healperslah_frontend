@@ -27,6 +27,42 @@
   width: 100%;
 }
 
+/*===== Sidebar =====  */
+
+.navbar-vertical.navbar-light .navbar-nav > .nav-item > .nav-link:hover {
+  background-color: #f462a4;
+}
+.navbar-vertical.navbar-light .navbar-nav > .nav-item > .nav-link.active {
+  background-color: #e10064;
+}
+.navbar-vertical.navbar-light .nav-link-text,
+.navbar-vertical.navbar-light .navbar-heading {
+  color: #ffff;
+}
+
+.navbar-light .navbar-nav .show > .nav-link,
+.navbar-light .navbar-nav .nav-link.active {
+  color: #fff;
+}
+
+.navbar-light .navbar-nav .show > .nav-link,
+.navbar-light .navbar-nav .nav-link.active .sidebar_icon {
+  color: #fff;
+}
+
+.navbar-light .navbar-nav .nav-link:hover,
+.navbar-light .navbar-nav .nav-link:focus {
+  color: #fff;
+}
+
+.navbar-light .navbar-nav .nav-link:hover .sidebar_icon {
+  color: #fff;
+}
+
+.sticky-top {
+  z-index: 1030;
+}
+
 /* Company Start  */
 
 /*==== Header Starts  ====*/
@@ -131,6 +167,27 @@
   border-radius: 10px;
   outline: none;
   font-size: calc(0.7rem + 0.5vw);
+  color: grey;
+}
+
+.form-container input {
+  flex: 0.3;
+  padding: 10px;
+  border: 1px solid #ff0099;
+  border-radius: 10px;
+  outline: none;
+  font-size: calc(0.7rem + 0.5vw);
+  color: grey;
+}
+
+.form-container input:focus {
+  color: grey; 
+  border-color: #ff0099; 
+}
+
+.form-container textarea:focus {
+  color: grey; 
+  border-color: #ff0099; 
 }
 
 .form-container input::placeholder {
@@ -150,6 +207,11 @@
 .form-container select::placeholder {
   color: grey;
   font-size: 80%;
+}
+
+.custom-select {
+  height: 55px;
+  color: grey;
 }
 
 .form-container textarea {
@@ -273,3 +335,24 @@
 }
 
 /*==== Footer End ====*/
+
+
+/* Vendor Header  */
+
+
+.header-user {
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  background: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1050;
+}
+
+.rotate-icon {
+  transform: rotate(180deg);
+  transition: transform 0.3s ease;
+}
+

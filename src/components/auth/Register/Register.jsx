@@ -22,7 +22,10 @@ function Register() {
       .email("Invalid email address")
       .required("Email is required"),
 
-    password: Yup.string().required("Password is required"),
+    password: Yup.string()
+      .required("Password is required")
+      .max(8, "Password must not exceed 8 characters")
+      .matches(/^\S*$/, "Password must not contain spaces"),
 
     cpassword: Yup.string()
       .required("Confirm Password is required")
@@ -42,11 +45,10 @@ function Register() {
     onSubmit: async (values) => {
       setLoadIndicator(true);
       try {
-        
         if (values.type === "Company") {
-          navigate("/company"); 
+          navigate("/company");
         } else if (values.type === "Individual") {
-          navigate("/individual"); 
+          navigate("/individual");
         }
       } catch (error) {
         console.error("Submission failed", error);
@@ -55,7 +57,6 @@ function Register() {
       }
     },
   });
-  
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -65,13 +66,8 @@ function Register() {
   };
 
   return (
-    <div
-      className="container-fluid m-0"
-      style={{ backgroundColor: "#fcfcfc" }}
-    >
-      <div
-        className="d-flex justify-content-center align-items-center m-0 pt-5"
-      >
+    <div className="container-fluid m-0" style={{ backgroundColor: "#fcfcfc" }}>
+      <div className="d-flex justify-content-center align-items-center m-0 pt-5">
         <img src={headerlogo} className="img-fluid" alt="img" />
       </div>
       <div className=" d-flex  justify-content-center align-items-center mt-3">
