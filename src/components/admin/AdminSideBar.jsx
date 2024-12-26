@@ -2,8 +2,13 @@ import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import helperlogo from "../../assets/helperlah_logo_side.png";
 import { BsBagCheckFill, BsBarChartFill } from "react-icons/bs";
-import { BiLogOut } from "react-icons/bi";
+import { BiLogOut, BiSolidPackage } from "react-icons/bi";
 import PropTypes from "prop-types";
+import { MdAssignmentInd, MdHomeRepairService, MdMiscellaneousServices, MdSubscriptions } from "react-icons/md";
+import { TbPackages } from "react-icons/tb";
+import { FaUserCircle } from "react-icons/fa";
+import { PiContactlessPaymentFill } from "react-icons/pi";
+import { RiSecurePaymentFill } from "react-icons/ri";
 
 function AdminSideBar({ handleLogout }) {
   const navigate = useNavigate();
@@ -51,16 +56,104 @@ function AdminSideBar({ handleLogout }) {
         </NavLink>
         <div className="collapse navbar-collapse" id="sidebarCollapse">
           <ul className="navbar-nav">
-            <li className="nav-item">
-              <NavLink className="nav-link" to="/dashboard">
-                <BsBarChartFill className="sidebar_icon"/>
+            <li className="nav-item px-3">
+              <NavLink
+                className="nav-link"
+                style={{ borderRadius: "5px" }}
+                to="/dashboard"
+              >
+                <BsBarChartFill className="sidebar_icon" />
                 Dashboard
               </NavLink>
             </li>
-            <li className="nav-item">
-              <NavLink className="nav-link" to="/others">
-                <BsBagCheckFill className="sidebar_icon"/>
+            <li className="nav-item px-3">
+              <NavLink
+                className="nav-link"
+                style={{ borderRadius: "5px" }}
+                to="/servicegroup"
+              >
+                <MdHomeRepairService className="sidebar_icon" />
+                Service Group
+              </NavLink>
+            </li>
+            <li className="nav-item px-3">
+              <NavLink
+                className="nav-link"
+                style={{ borderRadius: "5px" }}
+                to="/service"
+              >
+                <MdMiscellaneousServices className="sidebar_icon" />
+                Service
+              </NavLink>
+            </li>
+            <li className="nav-item px-3">
+              <NavLink
+                className="nav-link"
+                style={{ borderRadius: "5px" }}
+                to="/subscription"
+              >
+                <MdSubscriptions className="sidebar_icon" />
+                Subscription
+              </NavLink>
+            </li>
+            <li className="nav-item px-3">
+              <NavLink
+                className="nav-link"
+                style={{ borderRadius: "5px" }}
+                to="/customPackages"
+              >
+                <BiSolidPackage className="sidebar_icon" />
+                Custom packages
+              </NavLink>
+            </li>
+            <li className="nav-item px-3">
+              <NavLink
+                className="nav-link"
+                style={{ borderRadius: "5px" }}
+                to="/user"
+              >
+                <FaUserCircle className="sidebar_icon" />
+                User
+              </NavLink>
+            </li>
+            <li className="nav-item px-3">
+              <NavLink
+                className="nav-link"
+                style={{ borderRadius: "5px" }}
+                to="/orders"
+              >
+                <BsBagCheckFill className="sidebar_icon" />
                 Orders
+              </NavLink>
+            </li>
+            <li className="nav-item px-3">
+              <NavLink
+                className="nav-link"
+                style={{ borderRadius: "5px" }}
+                to="/serviceAssignments"
+              >
+                <MdAssignmentInd className="sidebar_icon" />
+                Service Assignments
+              </NavLink>
+            </li>
+            <li className="nav-item px-3">
+              <NavLink
+                className="nav-link"
+                style={{ borderRadius: "5px" }}
+                to="/payment"
+              >
+                <PiContactlessPaymentFill className="sidebar_icon" />
+                Payment
+              </NavLink>
+            </li>
+            <li className="nav-item px-3">
+              <NavLink
+                className="nav-link"
+                style={{ borderRadius: "5px" }}
+                to="/paymentType"
+              >
+                <RiSecurePaymentFill className="sidebar_icon" />
+                Payment Type
               </NavLink>
             </li>
           </ul>

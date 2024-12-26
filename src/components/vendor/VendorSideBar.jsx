@@ -51,15 +51,23 @@ function VendorSideBar({ handleLogout }) {
         </NavLink>
         <div className="collapse navbar-collapse" id="sidebarCollapse">
           <ul className="navbar-nav">
-            <li className="nav-item">
-              <NavLink className="nav-link" to="/dashboard">
-                <BsBarChartFill className="sidebar_icon"/>
+            <li className="nav-item px-3">
+              <NavLink
+                className="nav-link"
+                style={{ borderRadius: "5px" }}
+                to="/dashboard"
+              >
+                <BsBarChartFill className="sidebar_icon" />
                 Dashboard
               </NavLink>
             </li>
-            <li className="nav-item">
-              <NavLink className="nav-link" to="/others">
-                <BsBagCheckFill className="sidebar_icon"/>
+            <li className="nav-item px-3">
+              <NavLink
+                className="nav-link"
+                style={{ borderRadius: "5px" }}
+                to="/orders"
+              >
+                <BsBagCheckFill className="sidebar_icon" />
                 Orders
               </NavLink>
             </li>

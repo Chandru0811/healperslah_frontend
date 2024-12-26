@@ -23,7 +23,7 @@ function AdminHeader({ handleLogout }) {
   return (
     <header
       className="border-bottom py-3 sticky-top"
-      style={{ backgroundColor: "#f5f9fc" }}
+      style={{ backgroundColor: "#fff" }}
     >
       <div className="container-fluid">
         <div className="mb-npx">

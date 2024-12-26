@@ -5,7 +5,7 @@
   font-family: "Outfit", serif;
 }
 
-/* Common style  */
+/* Common style Start */
 
 :root {
   --client-primary-color: #e10064;
@@ -27,7 +27,7 @@
   width: 100%;
 }
 
-/*===== Sidebar =====  */
+/*===== Sidebar Start =====  */
 
 .navbar-vertical.navbar-light .navbar-nav > .nav-item > .nav-link:hover {
   background-color: #f462a4;
@@ -62,6 +62,190 @@
 .sticky-top {
   z-index: 1030;
 }
+
+/*===== Sidebar End =====  */
+
+/*===== Table Start =====  */
+
+.css-11yrv3u-MuiTableRow-root td {
+  font-size: 12px !important;
+  padding: 15px 20px !important;
+}
+
+.MuiTableBody-root tr td {
+  padding: 7px 20px !important;
+  font-family: "Outfit", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji" !important;
+}
+.MuiTableBody-root tr:hover td::after {
+  background-color: #f7f7f7 !important;
+}
+.MuiTableHead-root tr th {
+  background-color: #ffffff !important;
+  font-family: "Outfit", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji" !important;
+  border-top: 1px solid#b5b5b5 !important;
+  border-bottom: 1px solid#b5b5b5 !important;
+}
+
+.MuiMenuItem-root {
+  font-family: "Outfit" !important;
+}
+
+.MuiFormLabel-root {
+  font-family: "Outfit" !important;
+}
+
+.badges-red {
+  background-color: #fc2b39 !important;
+  font-weight: 400;
+  border-radius: 3px;
+}
+
+.badges-purple {
+  background-color: #ee1891da !important;
+  font-weight: 400;
+  border-radius: 3px;
+}
+
+.css-3hpdci-MuiSvgIcon-root-MuiStepIcon-root.Mui-active {
+  color: #287f71 !important;
+}
+.css-3hpdci-MuiSvgIcon-root-MuiStepIcon-root.Mui-completed {
+  color: #287f71 !important;
+}
+.css-3hpdci-MuiSvgIcon-root-MuiStepIcon-root {
+  color: #329181c3 !important;
+}
+
+.database_name {
+  color: #e10064;
+  font-weight: 500;
+}
+
+.card_header {
+  background-color: #ebedf0;
+}
+
+.btn-button {
+  color: #fff;
+  padding: 0.3rem 0.6rem;
+  font-weight: 400;
+  background-color: #e10064;
+  border-color: #e10064;
+}
+
+.btn-button i {
+  font-weight: 600;
+}
+
+.btn-button:hover {
+  color: #fff;
+  background-color: #e10064;
+  border-color: #e10064;
+}
+
+.btn-check:focus + .btn-button,
+.btn-button:focus {
+  color: #fff;
+  background-color: #e10064;
+  border-color: #e10064;
+  box-shadow: 0 0 0 0.25rem #53c2af;
+}
+
+.btn-check:checked + .btn-button,
+.btn-check:active + .btn-button,
+.btn-button:active,
+.btn-button.active,
+.show > .btn-button.dropdown-toggle {
+  color: #fff;
+  background-color: #e10064;
+  border-color: #e10064;
+}
+
+.btn-check:checked + .btn-button:focus,
+.btn-check:active + .btn-button:focus,
+.btn-button:active:focus,
+.btn-button.active:focus,
+.show > .btn-button.dropdown-toggle:focus {
+  box-shadow: 0 0 0 0.25rem #fa010182;
+}
+
+.btn-button:disabled,
+.btn-button.disabled {
+  color: #fff;
+  background-color: #ff3f3f;
+  border-color: #ff3f3f;
+}
+
+.btn-button-check:checked + .btn-button,
+.btn-button.active,
+.btn-button.show,
+.btn-button:first-child:active,
+:not(.btn-button-check) + .btn-button:active {
+  background-color: #e10064;
+  border-color: #e10064;
+  color: #fff;
+}
+
+/*===== Table End =====  */
+
+/* Back Button Start  */
+
+.btn-border {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #424242;
+  border-radius: 5px;
+}
+
+.btn-border:hover {
+  border: 1px solid #424242;
+  background-color: #cac8c8;
+  border-radius: 5px;
+}
+
+/* Back Button Start  */
+
+/*======= View Dot Start  ======*/
+
+.dot {
+  width: 12px;
+  height: 12px;
+  margin: 0 5px;
+  background-color: gray;
+  border-radius: 50%;
+}
+
+.dot.active {
+  background-color: #287f71;
+}
+
+/*======= View Dot End  ======*/
+
+/*======= Navigate path Start  ======*/
+
+.custom-breadcrumb {
+  text-decoration: none;
+  color: #000;
+}
+.custom-breadcrumb:hover {
+  text-decoration: none;
+  color: #0084ff;
+  cursor: pointer;
+}
+
+.breadcrumb-separator {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.breadcrumb {
+  font-size: 16px;
+}
+
+/*======= Navigate path End  ======*/
+
+/* Common style End */
 
 /* Company Start  */
 
@@ -181,13 +365,13 @@
 }
 
 .form-container input:focus {
-  color: grey; 
-  border-color: #ff0099; 
+  color: grey;
+  border-color: #ff0099;
 }
 
 .form-container textarea:focus {
-  color: grey; 
-  border-color: #ff0099; 
+  color: grey;
+  border-color: #ff0099;
 }
 
 .form-container input::placeholder {
@@ -336,9 +520,7 @@
 
 /*==== Footer End ====*/
 
-
 /* Vendor Header  */
-
 
 .header-user {
   cursor: pointer;
@@ -355,4 +537,3 @@
   transform: rotate(180deg);
   transition: transform 0.3s ease;
 }
-

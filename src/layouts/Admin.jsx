@@ -5,6 +5,10 @@ import AdminSideBar from "../components/admin/AdminSideBar";
 import AdminHeader from "../components/admin/AdminHeader";
 import AdminFooter from "../components/admin/AdminFooter";
 import AdminDashboard from "../pages/admin/AdminDashboard";
+import ServiceGroup from "../pages/admin/ServiceGroup/ServiceGroup";
+import ServiceGroupAdd from "../pages/admin/ServiceGroup/ServiceGroupAdd";
+import ServiceGroupEdit from "../pages/admin/ServiceGroup/ServiceGroupEdit";
+import ServiceGroupView from "../pages/admin/ServiceGroup/ServiceGroupView";
 
 function Admin({ handleLogout }) {
   return (
@@ -18,6 +22,12 @@ function Admin({ handleLogout }) {
               <Routes>
                 <Route path="/" element={<AdminDashboard />} />
                 <Route path="*" element={<AdminDashboard />} />
+
+                {/* Side Menu  */}
+                <Route path="/servicegroup" element={<ServiceGroup />} />
+                <Route path="/servicegroup/add" element={<ServiceGroupAdd />} />
+                <Route path="/servicegroup/edit" element={<ServiceGroupEdit />} />
+                <Route path="/servicegroup/view" element={<ServiceGroupView />} />
               </Routes>
             </div>
             <AdminFooter />

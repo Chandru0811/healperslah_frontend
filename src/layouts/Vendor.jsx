@@ -4,6 +4,8 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import VendorSideBar from "../components/vendor/VendorSideBar";
 import VendorHeader from "../components/vendor/VendorHeader";
 import VendorFooter from "../components/vendor/VenodrFooter";
+import Orders from "../pages/vendor/orders/Orders";
+import OrdersView from "../pages/vendor/orders/OrdersView";
 
 function Vendor({ handleLogout }) {
   return (
@@ -17,6 +19,10 @@ function Vendor({ handleLogout }) {
               <Routes>
                 <Route path="/" element={<VendorDashboard />} />
                 <Route path="*" element={<VendorDashboard />} />
+
+                {/* SideMenu  */}
+                <Route path="/orders" element={<Orders />}/>
+                <Route path="/orders/view" element={<OrdersView />}/>
               </Routes>
             </div>
             <VendorFooter />
