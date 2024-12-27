@@ -5,33 +5,33 @@ import * as Yup from "yup";
 import Cropper from "react-easy-crop";
 
 function ServiceGroupAdd() {
-  const [loadIndicator, setLoadIndicator] = useState(false);
+  const [imageSrc, setImageSrc] = useState(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [showCropper, setShowCropper] = useState(false);
   const [originalFileName, setOriginalFileName] = useState("");
   const [originalFileType, setOriginalFileType] = useState("");
-  const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
+  const MAX_FILE_SIZE = 2 * 1024 * 1024;
 
-  const imageValidation = Yup.mixed()
-  .required("*Image is required")
-  .test("fileFormat", "Unsupported format", (value) => {
-    return !value || (value && SUPPORTED_FORMATS.includes(value.type));
-  })
-  .test("fileSize", "File size is too large. Max 2MB.", (value) => {
-    return !value || (value && value.size <= MAX_FILE_SIZE);
-  });
+  const SUPPORTED_FORMATS = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required("*Name is required"),
     order: Yup.string().required("*Order is required"),
     basicPrice: Yup.number()
-    .typeError("*Basic Price must be number")
-    .required("*Basic Price is required")
-    .positive("*Please enter a valid number")
-    .integer("*Basic Price is must be number"),
-    icon: imageValidation,
+      .typeError("*Basic Price must be a number")
+      .required("*Basic Price is required")
+      .positive("*Please enter a valid number")
+      .integer("*Basic Price must be a whole number"),
+    icon: Yup.mixed()
+      .required("*Image is required")
+      .test("fileFormat", "Unsupported format", (value) =>
+        value ? SUPPORTED_FORMATS.includes(value.type) : true
+      )
+      .test("fileSize", "File size is too large. Max 2MB.", (value) =>
+        value ? value.size <= MAX_FILE_SIZE : true
+      ),
     description: Yup.string()
       .required("*Description is a required field")
       .max(200, "*The maximum length is 200 characters"),
@@ -45,48 +45,34 @@ function ServiceGroupAdd() {
       icon: null,
       description: "",
     },
-    validationSchema: validationSchema,
+    validationSchema,
     onSubmit: async (values) => {
+      console.log("Form submitted with values:", values);
     },
     validateOnChange: false,
-    validateOnBlur: true, 
+    validateOnBlur: true,
   });
 
-  const scrollToError = (errors) => {
-    const errorField = Object.keys(errors)[0];
-    const errorElement = document.querySelector(`[name="${errorField}"]`); 
-    if (errorElement) {
-      errorElement.scrollIntoView({ behavior: "smooth", block: "center" });
-      errorElement.focus(); 
-    }
-  };
-
-  useEffect(() => {
-    if (formik.submitCount > 0 && Object.keys(formik.errors).length > 0) {
-      scrollToError(formik.errors);
-    }
-  }, [formik.submitCount, formik.errors]);
-
   const handleFileChange = (event) => {
-    const file = event?.target?.files[0];
+    const file = event.target.files[0];
     if (file) {
       if (file.size > MAX_FILE_SIZE) {
-        formik.setFieldError(`icon`, "File size is too large. Max 2MB.");
+        formik.setFieldError("icon", "File size is too large. Max 2MB.");
+        return;
+      }
+      if (!SUPPORTED_FORMATS.includes(file.type)) {
+        formik.setFieldError("icon", "Unsupported format.");
         return;
       }
 
       const reader = new FileReader();
       reader.onload = () => {
-        setImageSrc(reader.result); 
+        setImageSrc(reader.result);
         setOriginalFileName(file.name);
         setOriginalFileType(file.type);
-        setShowCropper(true); 
+        setShowCropper(true);
       };
       reader.readAsDataURL(file);
-
-      if (file.size > MAX_FILE_SIZE) {
-        formik.setFieldError(`icon`, "File size is too large. Max 2MB.");
-      }
     }
   };
 
@@ -94,54 +80,49 @@ function ServiceGroupAdd() {
     setCroppedAreaPixels(croppedAreaPixels);
   };
 
-  const getCroppedImg = (imageSrc, crop, croppedAreaPixels) => {
+  const getCroppedImg = async (imageSrc, croppedAreaPixels) => {
+    const image = new Image();
+    image.src = imageSrc;
+    await new Promise((resolve) => (image.onload = resolve));
+
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    const targetWidth = 300;
+    const targetHeight = 300;
+    canvas.width = targetWidth;
+    canvas.height = targetHeight;
+
+    ctx.drawImage(
+      image,
+      croppedAreaPixels.x,
+      croppedAreaPixels.y,
+      croppedAreaPixels.width,
+      croppedAreaPixels.height,
+      0,
+      0,
+      targetWidth,
+      targetHeight
+    );
+
     return new Promise((resolve, reject) => {
-      const image = new Image();
-      image.src = imageSrc;
-      image.onload = () => {
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
-
-        const targetWidth = 300;
-        const targetHeight = 300;
-        canvas.width = targetWidth;
-        canvas.height = targetHeight;
-
-        ctx.drawImage(
-          image,
-          croppedAreaPixels.x,
-          croppedAreaPixels.y,
-          croppedAreaPixels.width,
-          croppedAreaPixels.height,
-          0,
-          0,
-          targetWidth,
-          targetHeight
-        );
-
-        canvas.toBlob((blob) => {
-          if (!blob) {
-            reject(new Error("Canvas is empty"));
-            return;
-          }
+      canvas.toBlob((blob) => {
+        if (blob) {
           blob.name = "croppedImage.jpeg";
           resolve(blob);
-        }, "image/jpeg");
-      };
+        } else {
+          reject(new Error("Canvas is empty"));
+        }
+      }, "image/jpeg");
     });
   };
 
   const handleCropSave = async () => {
     try {
-      const croppedImageBlob = await getCroppedImg(
-        imageSrc,
-        crop,
-        croppedAreaPixels
-      );
+      const croppedImageBlob = await getCroppedImg(imageSrc, croppedAreaPixels);
       const file = new File([croppedImageBlob], originalFileName, {
         type: originalFileType,
       });
-
       formik.setFieldValue("icon", file);
       setShowCropper(false);
     } catch (error) {
@@ -204,14 +185,7 @@ function ServiceGroupAdd() {
               <button
                 type="submit"
                 className="btn btn-button btn-sm"
-                disabled={loadIndicator}
               >
-                {loadIndicator && (
-                  <span
-                    className="spinner-border spinner-border-sm me-2"
-                    aria-hidden="true"
-                  ></span>
-                )}
                 <span className="fw-medium">Save</span>
               </button>
             </div>

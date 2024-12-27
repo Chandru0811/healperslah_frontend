@@ -10,17 +10,21 @@ import {
   IconButton,
 } from "@mui/material";
 
-function ServiceGroup() {
+function Payment() {
   const [menuAnchor, setMenuAnchor] = useState(null);
   const navigate = useNavigate();
 
   const data = [
     {
       id: 1,
-      name: "House Cleaning",
-      order: "HLP456",
-      base_price: "500",
-      status: "Active",
+      order_id: 1,
+      helper_id: 1,
+      company_id: 1,
+      booking_type: "Service Group",
+      amount_paid: "150.5",
+      balance_amount: "0",
+      total_amount: "150.5",
+      payment_status: 2,
       createdBy: "Admin",
       createdAt: "2024-12-15",
       updatedBy: "Admin",
@@ -28,10 +32,14 @@ function ServiceGroup() {
     },
     {
       id: 2,
-      name: "Electrician",
-      order: "HLP456",
-      base_price: "600",
-      status: "Inactive",
+      order_id: 2,
+      helper_id: 1,
+      company_id: 1,
+      booking_type: "Service Group",
+      amount_paid: "200",
+      balance_amount: "0",
+      total_amount: "200",
+      payment_status: 2,
       createdBy: "Admin",
       createdAt: "2024-12-15",
       updatedBy: "Admin",
@@ -69,18 +77,6 @@ function ServiceGroup() {
           </IconButton>
         ),
       },
-      { accessorKey: "name", enableHiding: false, header: "Name" },
-      {
-        accessorKey: "order",
-        enableHiding: false,
-        header: "Order",
-      },
-      {
-        accessorKey: "base_price",
-        header: "Best Price",
-        enableHiding: false,
-        size: 40,
-      },
       {
         accessorKey: "status",
         enableHiding: false,
@@ -93,6 +89,39 @@ function ServiceGroup() {
             <span className="badge badges-orange fw-light">Inactive</span>
           ) : null;
         },
+      },
+      { accessorKey: "order_id", enableHiding: false, header: "Order Id" },
+      {
+        accessorKey: "helper_id",
+        enableHiding: false,
+        header: "Helper Id",
+      },
+      {
+        accessorKey: "company_id",
+        enableHiding: false,
+        header: "Company Id",
+      },
+      {
+        accessorKey: "booking_type",
+        enableHiding: false,
+        header: "Booking Type",
+      },
+      {
+        accessorKey: "amount_paid",
+        enableHiding: false,
+        header: "Amount Paid",
+      },
+      {
+        accessorKey: "balance_amount",
+        header: "Balance Amount",
+        enableHiding: false,
+        size: 40,
+      },
+      {
+        accessorKey: "total_amount",
+        header: "Total Amount",
+        enableHiding: false,
+        size: 40,
       },
       { accessorKey: "createdBy", header: "Created By" },
       {
@@ -172,7 +201,7 @@ function ServiceGroup() {
           <span className="breadcrumb-separator"> &gt; </span>
         </li>
         <li className="breadcrumb-item active" aria-current="page">
-          &nbsp;Service Group
+          &nbsp;Payment
         </li>
       </ol>
       <div className="card">
@@ -183,20 +212,9 @@ function ServiceGroup() {
             </div>
             <span className="me-2 text-muted">
               This database shows the list of&nbsp;
-              <span className="database_name">Service Group</span>
+              <span className="database_name">Payment</span>
             </span>
           </div>
-        </div>
-        <div className="mb-3 d-flex justify-content-end">
-          <Link to="/servicegroup/add">
-            <button
-              type="button"
-              className="btn btn-button btn-sm me-2"
-              style={{ fontWeight: "600px !important" }}
-            >
-              &nbsp; Add &nbsp;&nbsp; <i class="bi bi-plus-lg"></i>
-            </button>
-          </Link>
         </div>
           <>
             <ThemeProvider theme={theme}>
@@ -216,7 +234,7 @@ function ServiceGroup() {
                   },
                 }}
                 muiTableBodyRowProps={({ row }) => ({
-                  onClick: () => navigate(`/servicegroup/view`),
+                  onClick: () => navigate(`/payment/view`),
                   style: { cursor: "pointer" },
                 })}
               />
@@ -227,15 +245,9 @@ function ServiceGroup() {
               open={Boolean(menuAnchor)}
               onClose={handleMenuClose}
             >
-              <MenuItem onClick={() => navigate(`/servicegroup/edit`)}>
+              <MenuItem onClick={() => navigate(`/payment/edit`)}>
                 Edit
               </MenuItem>
-              {/* <MenuItem>
-                <Delete
-                  path={`/deleteCenter/${selectedId}`}
-                  onOpen={handleMenuClose}
-                />
-              </MenuItem> */}
             </Menu>
           </>
       </div>
@@ -243,4 +255,4 @@ function ServiceGroup() {
   );
 }
 
-export default ServiceGroup;
+export default Payment;

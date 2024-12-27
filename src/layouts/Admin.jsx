@@ -9,6 +9,31 @@ import ServiceGroup from "../pages/admin/ServiceGroup/ServiceGroup";
 import ServiceGroupAdd from "../pages/admin/ServiceGroup/ServiceGroupAdd";
 import ServiceGroupEdit from "../pages/admin/ServiceGroup/ServiceGroupEdit";
 import ServiceGroupView from "../pages/admin/ServiceGroup/ServiceGroupView";
+import Service from "../pages/admin/Service/Service";
+import ServiceAdd from "../pages/admin/Service/ServiceAdd";
+import ServiceEdit from "../pages/admin/Service/ServiceEdit";
+import ServiceView from "../pages/admin/Service/ServiceView";
+import Subscription from "../pages/admin/Subscription/Subscription";
+import SubscriptionAdd from "../pages/admin/Subscription/SubscriptionAdd";
+import SubscriptionEdit from "../pages/admin/Subscription/SubscriptionEdit";
+import SubscriptionView from "../pages/admin/Subscription/SubscriptionView";
+import CustomPackageEdit from "../pages/admin/CustomPackage/CustomPackageEdit";
+import CustomPackage from "../pages/admin/CustomPackage/CustomPackage";
+import CustomPackageView from "../pages/admin/CustomPackage/CustomPackageView";
+import User from "../pages/admin/User/User";
+import UserView from "../pages/admin/User/UserView";
+import OrderView from "../pages/admin/Order/OrderView";
+import Order from "../pages/admin/Order/Order";
+import ServiceAssignmentView from "../pages/admin/ServiceAssignment/ServiceAssignmentView";
+import ServiceAssignmentEdit from "../pages/admin/ServiceAssignment/ServiceAssignmentEdit";
+import ServiceAssignment from "../pages/admin/ServiceAssignment/ServiceAssignment";
+import PaymentView from "../pages/admin/Payment/PaymentView";
+import PaymentEdit from "../pages/admin/Payment/PaymentEdit";
+import Payment from "../pages/admin/Payment/Payment";
+import PaymentTypeAdd from "../pages/admin/PaymentType/PaymentTypeAdd";
+import PaymentTypeEdit from "../pages/admin/PaymentType/PaymentTypeEdit";
+import PaymentTypeView from "../pages/admin/PaymentType/PaymentTypeView";
+import PaymentType from "../pages/admin/PaymentType/PaymentType";
 
 function Admin({ handleLogout }) {
   return (
@@ -26,8 +51,73 @@ function Admin({ handleLogout }) {
                 {/* Side Menu  */}
                 <Route path="/servicegroup" element={<ServiceGroup />} />
                 <Route path="/servicegroup/add" element={<ServiceGroupAdd />} />
-                <Route path="/servicegroup/edit" element={<ServiceGroupEdit />} />
-                <Route path="/servicegroup/view" element={<ServiceGroupView />} />
+                <Route
+                  path="/servicegroup/edit"
+                  element={<ServiceGroupEdit />}
+                />
+                <Route
+                  path="/servicegroup/view"
+                  element={<ServiceGroupView />}
+                />
+
+                {/* Service */}
+                <Route path="/service" element={<Service />} />
+                <Route path="/service/add" element={<ServiceAdd />} />
+                <Route path="/service/edit" element={<ServiceEdit />} />
+                <Route path="/service/view" element={<ServiceView />} />
+
+                {/* Subscription */}
+                <Route path="/subscription" element={<Subscription />} />
+                <Route path="/subscription/add" element={<SubscriptionAdd />} />
+                <Route
+                  path="/subscription/edit"
+                  element={<SubscriptionEdit />}
+                />
+                <Route
+                  path="/subscription/view"
+                  element={<SubscriptionView />}
+                />
+
+                {/* Custom Package */}
+                <Route path="/custompackage" element={<CustomPackage />} />
+                <Route
+                  path="/custompackage/edit"
+                  element={<CustomPackageEdit />}
+                />
+                <Route
+                  path="/custompackage/view"
+                  element={<CustomPackageView />}
+                />
+
+                {/* User */}
+                <Route path="/user" element={<User />} />
+                <Route path="/user/view" element={<UserView />} />
+
+                {/* Order */}
+                <Route path="/order" element={<Order />} />
+                <Route path="/order/view" element={<OrderView />} />
+
+                {/* Service Assignment */}
+                <Route path="/assignment" element={<ServiceAssignment />} />
+                <Route
+                  path="/assignment/edit"
+                  element={<ServiceAssignmentEdit />}
+                />
+                <Route
+                  path="/assignment/view"
+                  element={<ServiceAssignmentView />}
+                />
+
+                {/* Payment */}
+                <Route path="/payment" element={<Payment />} />
+                <Route path="/payment/edit" element={<PaymentEdit />} />
+                <Route path="/payment/view" element={<PaymentView />} />
+
+                {/* Payment Type */}
+                <Route path="/paymenttype" element={<PaymentType />} />
+                <Route path="/paymenttype/add" element={<PaymentTypeAdd />} />
+                <Route path="/paymenttype/edit" element={<PaymentTypeEdit />} />
+                <Route path="/paymenttype/view" element={<PaymentTypeView />} />
               </Routes>
             </div>
             <AdminFooter />

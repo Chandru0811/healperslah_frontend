@@ -10,17 +10,20 @@ import {
   IconButton,
 } from "@mui/material";
 
-function ServiceGroup() {
+function User() {
   const [menuAnchor, setMenuAnchor] = useState(null);
   const navigate = useNavigate();
 
   const data = [
     {
       id: 1,
-      name: "House Cleaning",
-      order: "HLP456",
-      base_price: "500",
-      status: "Active",
+      name: "Raja",
+      email: "raja@gmail.com",
+      mobile: "9123456780",
+      social_id: "",
+      social_provider: "",
+      email_verified_at: "",
+      role: "2",
       createdBy: "Admin",
       createdAt: "2024-12-15",
       updatedBy: "Admin",
@@ -28,10 +31,13 @@ function ServiceGroup() {
     },
     {
       id: 2,
-      name: "Electrician",
-      order: "HLP456",
-      base_price: "600",
-      status: "Inactive",
+      name: "Saran",
+      email: "saran@gmail.com",
+      mobile: "9123456781",
+      social_id: "",
+      social_provider: "",
+      email_verified_at: "",
+      role: "2",
       createdBy: "Admin",
       createdAt: "2024-12-15",
       updatedBy: "Admin",
@@ -51,48 +57,21 @@ function ServiceGroup() {
           <span style={{ textAlign: "center" }}>{cell.getValue()}</span>
         ),
       },
-      {
-        accessorKey: "id",
-        header: "",
-        enableHiding: false,
-        enableSorting: false,
-        size: 20,
-        Cell: ({ cell }) => (
-          <IconButton
-            onClick={(e) => {
-              e.stopPropagation();
-              setMenuAnchor(e.currentTarget);
-              setSelectedId(cell.getValue());
-            }}
-          >
-            <MoreVertIcon />
-          </IconButton>
-        ),
-      },
       { accessorKey: "name", enableHiding: false, header: "Name" },
       {
-        accessorKey: "order",
+        accessorKey: "email",
         enableHiding: false,
-        header: "Order",
+        header: "Email",
       },
       {
-        accessorKey: "base_price",
-        header: "Best Price",
+        accessorKey: "mobile",
+        header: "Mobile",
         enableHiding: false,
         size: 40,
       },
       {
-        accessorKey: "status",
-        enableHiding: false,
-        header: "Status",
-        Cell: ({ row }) => {
-          const status = row.original.status;
-          return status === "Active" ? (
-            <span className="badge badges-Green fw-light">Active</span>
-          ) : status === "Inactive" ? (
-            <span className="badge badges-orange fw-light">Inactive</span>
-          ) : null;
-        },
+        accessorKey: "role",
+        header: "Role",
       },
       { accessorKey: "createdBy", header: "Created By" },
       {
@@ -172,7 +151,7 @@ function ServiceGroup() {
           <span className="breadcrumb-separator"> &gt; </span>
         </li>
         <li className="breadcrumb-item active" aria-current="page">
-          &nbsp;Service Group
+          &nbsp;User
         </li>
       </ol>
       <div className="card">
@@ -183,20 +162,9 @@ function ServiceGroup() {
             </div>
             <span className="me-2 text-muted">
               This database shows the list of&nbsp;
-              <span className="database_name">Service Group</span>
+              <span className="database_name">User</span>
             </span>
           </div>
-        </div>
-        <div className="mb-3 d-flex justify-content-end">
-          <Link to="/servicegroup/add">
-            <button
-              type="button"
-              className="btn btn-button btn-sm me-2"
-              style={{ fontWeight: "600px !important" }}
-            >
-              &nbsp; Add &nbsp;&nbsp; <i class="bi bi-plus-lg"></i>
-            </button>
-          </Link>
         </div>
           <>
             <ThemeProvider theme={theme}>
@@ -209,6 +177,7 @@ function ServiceGroup() {
                 enableFullScreenToggle={false}
                 initialState={{
                   columnVisibility: {
+                    role: false,
                     createdBy: false,
                     createdAt: false,
                     updatedBy: false,
@@ -216,31 +185,15 @@ function ServiceGroup() {
                   },
                 }}
                 muiTableBodyRowProps={({ row }) => ({
-                  onClick: () => navigate(`/servicegroup/view`),
+                  onClick: () => navigate(`/user/view`),
                   style: { cursor: "pointer" },
                 })}
               />
             </ThemeProvider>
-            <Menu
-              id="action-menu"
-              anchorEl={menuAnchor}
-              open={Boolean(menuAnchor)}
-              onClose={handleMenuClose}
-            >
-              <MenuItem onClick={() => navigate(`/servicegroup/edit`)}>
-                Edit
-              </MenuItem>
-              {/* <MenuItem>
-                <Delete
-                  path={`/deleteCenter/${selectedId}`}
-                  onOpen={handleMenuClose}
-                />
-              </MenuItem> */}
-            </Menu>
           </>
       </div>
     </div>
   );
 }
 
-export default ServiceGroup;
+export default User;

@@ -100,10 +100,10 @@ function AdminSideBar({ handleLogout }) {
               <NavLink
                 className="nav-link"
                 style={{ borderRadius: "5px" }}
-                to="/customPackages"
+                to="/custompackage"
               >
                 <BiSolidPackage className="sidebar_icon" />
-                Custom packages
+                Custom Packages
               </NavLink>
             </li>
             <li className="nav-item px-3">
@@ -120,7 +120,7 @@ function AdminSideBar({ handleLogout }) {
               <NavLink
                 className="nav-link"
                 style={{ borderRadius: "5px" }}
-                to="/orders"
+                to="/order"
               >
                 <BsBagCheckFill className="sidebar_icon" />
                 Orders
@@ -130,7 +130,7 @@ function AdminSideBar({ handleLogout }) {
               <NavLink
                 className="nav-link"
                 style={{ borderRadius: "5px" }}
-                to="/serviceAssignments"
+                to="/assignment"
               >
                 <MdAssignmentInd className="sidebar_icon" />
                 Service Assignments

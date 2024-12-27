@@ -10,7 +10,7 @@ import {
   IconButton,
 } from "@mui/material";
 
-function ServiceGroup() {
+function Subscription() {
   const [menuAnchor, setMenuAnchor] = useState(null);
   const navigate = useNavigate();
 
@@ -18,9 +18,11 @@ function ServiceGroup() {
     {
       id: 1,
       name: "House Cleaning",
-      order: "HLP456",
-      base_price: "500",
-      status: "Active",
+      start_date: "2024-01-01",
+      end_date: "2024-01-15",
+      recurrence: "Weekly",
+      range: "Per Day",
+      best_price: "500",
       createdBy: "Admin",
       createdAt: "2024-12-15",
       updatedBy: "Admin",
@@ -28,10 +30,12 @@ function ServiceGroup() {
     },
     {
       id: 2,
-      name: "Electrician",
-      order: "HLP456",
-      base_price: "600",
-      status: "Inactive",
+      name: "House Cleaning",
+      start_date: "2024-01-16",
+      end_date: "2024-01-30",
+      recurrence: "Weekly",
+      range: "Per Day",
+      best_price: "1000",
       createdBy: "Admin",
       createdAt: "2024-12-15",
       updatedBy: "Admin",
@@ -71,12 +75,27 @@ function ServiceGroup() {
       },
       { accessorKey: "name", enableHiding: false, header: "Name" },
       {
-        accessorKey: "order",
+        accessorKey: "start_date",
         enableHiding: false,
-        header: "Order",
+        header: "Start Date",
       },
       {
-        accessorKey: "base_price",
+        accessorKey: "end_date",
+        enableHiding: false,
+        header: "End Date",
+      },
+      {
+        accessorKey: "recurrence",
+        enableHiding: false,
+        header: "Recurrence",
+      },
+      {
+        accessorKey: "range",
+        enableHiding: false,
+        header: "Range",
+      },
+      {
+        accessorKey: "best_price",
         header: "Best Price",
         enableHiding: false,
         size: 40,
@@ -172,7 +191,7 @@ function ServiceGroup() {
           <span className="breadcrumb-separator"> &gt; </span>
         </li>
         <li className="breadcrumb-item active" aria-current="page">
-          &nbsp;Service Group
+          &nbsp;Subscription
         </li>
       </ol>
       <div className="card">
@@ -183,12 +202,12 @@ function ServiceGroup() {
             </div>
             <span className="me-2 text-muted">
               This database shows the list of&nbsp;
-              <span className="database_name">Service Group</span>
+              <span className="database_name">Subscription</span>
             </span>
           </div>
         </div>
         <div className="mb-3 d-flex justify-content-end">
-          <Link to="/servicegroup/add">
+          <Link to="/subscription/add">
             <button
               type="button"
               className="btn btn-button btn-sm me-2"
@@ -216,7 +235,7 @@ function ServiceGroup() {
                   },
                 }}
                 muiTableBodyRowProps={({ row }) => ({
-                  onClick: () => navigate(`/servicegroup/view`),
+                  onClick: () => navigate(`/subscription/view`),
                   style: { cursor: "pointer" },
                 })}
               />
@@ -227,7 +246,7 @@ function ServiceGroup() {
               open={Boolean(menuAnchor)}
               onClose={handleMenuClose}
             >
-              <MenuItem onClick={() => navigate(`/servicegroup/edit`)}>
+              <MenuItem onClick={() => navigate(`/subscription/edit`)}>
                 Edit
               </MenuItem>
               {/* <MenuItem>
@@ -243,4 +262,4 @@ function ServiceGroup() {
   );
 }
 
-export default ServiceGroup;
+export default Subscription;

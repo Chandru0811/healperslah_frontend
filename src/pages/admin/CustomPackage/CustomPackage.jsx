@@ -10,17 +10,26 @@ import {
   IconButton,
 } from "@mui/material";
 
-function ServiceGroup() {
+function CustomPackage() {
   const [menuAnchor, setMenuAnchor] = useState(null);
   const navigate = useNavigate();
 
   const data = [
     {
       id: 1,
-      name: "House Cleaning",
-      order: "HLP456",
-      base_price: "500",
-      status: "Active",
+      service_id: [1, 2],
+      name: "Home Cleaning",
+      description: "Test",
+      start_date: "2025-01-01",
+      end_date: "2025-01-16",
+      status: 1,
+      recurrence: "Weekly",
+      property_type: "Raw land",
+      property_size: "100sqm",
+      cleaning_hours: 2,
+      range: "Per Hour",
+      price: "150",
+      offer_id: 1,
       createdBy: "Admin",
       createdAt: "2024-12-15",
       updatedBy: "Admin",
@@ -28,10 +37,19 @@ function ServiceGroup() {
     },
     {
       id: 2,
-      name: "Electrician",
-      order: "HLP456",
-      base_price: "600",
-      status: "Inactive",
+      service_id: [1, 2],
+      name: "Home Cleaning",
+      description: "Test 1",
+      start_date: "2025-01-16",
+      end_date: "2025-01-30",
+      status: 2,
+      recurrence: "Weekly",
+      property_type: "Raw land",
+      property_size: "100sqm",
+      cleaning_hours: 3,
+      range: "Per Day",
+      price: "200",
+      offer_id: 2,
       createdBy: "Admin",
       createdAt: "2024-12-15",
       updatedBy: "Admin",
@@ -69,31 +87,49 @@ function ServiceGroup() {
           </IconButton>
         ),
       },
-      { accessorKey: "name", enableHiding: false, header: "Name" },
-      {
-        accessorKey: "order",
-        enableHiding: false,
-        header: "Order",
-      },
-      {
-        accessorKey: "base_price",
-        header: "Best Price",
-        enableHiding: false,
-        size: 40,
-      },
       {
         accessorKey: "status",
         enableHiding: false,
         header: "Status",
         Cell: ({ row }) => {
           const status = row.original.status;
-          return status === "Active" ? (
+          return status === 1 ? (
             <span className="badge badges-Green fw-light">Active</span>
-          ) : status === "Inactive" ? (
+          ) : status === 0 ? (
             <span className="badge badges-orange fw-light">Inactive</span>
           ) : null;
         },
       },
+      { accessorKey: "name", enableHiding: false, header: "Name" },
+      {
+        accessorKey: "start_date",
+        enableHiding: false,
+        header: "Start Date",
+      },
+      {
+        accessorKey: "end_date",
+        enableHiding: false,
+        header: "End Date",
+      },
+      {
+        accessorKey: "recurrence",
+        enableHiding: false,
+        header: "Recurrence",
+      },
+      {
+        accessorKey: "range",
+        enableHiding: false,
+        header: "Range",
+      },
+      {
+        accessorKey: "price",
+        header: "Price",
+        enableHiding: false,
+        size: 40,
+      },
+      { accessorKey: "property_type", header: "Property Type" },
+      { accessorKey: "property_size", header: "Property Size" },
+      { accessorKey: "cleaning_hours", header: "Cleaning Hours" },
       { accessorKey: "createdBy", header: "Created By" },
       {
         accessorKey: "createdAt",
@@ -172,7 +208,7 @@ function ServiceGroup() {
           <span className="breadcrumb-separator"> &gt; </span>
         </li>
         <li className="breadcrumb-item active" aria-current="page">
-          &nbsp;Service Group
+          &nbsp;Custom Packages
         </li>
       </ol>
       <div className="card">
@@ -183,20 +219,9 @@ function ServiceGroup() {
             </div>
             <span className="me-2 text-muted">
               This database shows the list of&nbsp;
-              <span className="database_name">Service Group</span>
+              <span className="database_name">Custom Packages</span>
             </span>
           </div>
-        </div>
-        <div className="mb-3 d-flex justify-content-end">
-          <Link to="/servicegroup/add">
-            <button
-              type="button"
-              className="btn btn-button btn-sm me-2"
-              style={{ fontWeight: "600px !important" }}
-            >
-              &nbsp; Add &nbsp;&nbsp; <i class="bi bi-plus-lg"></i>
-            </button>
-          </Link>
         </div>
           <>
             <ThemeProvider theme={theme}>
@@ -209,6 +234,9 @@ function ServiceGroup() {
                 enableFullScreenToggle={false}
                 initialState={{
                   columnVisibility: {
+                    property_type: false,
+                    property_size: false,
+                    cleaning_hours: false,
                     createdBy: false,
                     createdAt: false,
                     updatedBy: false,
@@ -216,7 +244,7 @@ function ServiceGroup() {
                   },
                 }}
                 muiTableBodyRowProps={({ row }) => ({
-                  onClick: () => navigate(`/servicegroup/view`),
+                  onClick: () => navigate(`/custompackage/view`),
                   style: { cursor: "pointer" },
                 })}
               />
@@ -227,7 +255,7 @@ function ServiceGroup() {
               open={Boolean(menuAnchor)}
               onClose={handleMenuClose}
             >
-              <MenuItem onClick={() => navigate(`/servicegroup/edit`)}>
+              <MenuItem onClick={() => navigate(`/custompackage/edit`)}>
                 Edit
               </MenuItem>
               {/* <MenuItem>
@@ -243,4 +271,4 @@ function ServiceGroup() {
   );
 }
 
-export default ServiceGroup;
+export default CustomPackage;

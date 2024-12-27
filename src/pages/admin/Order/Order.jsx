@@ -10,17 +10,23 @@ import {
   IconButton,
 } from "@mui/material";
 
-function ServiceGroup() {
+function Order() {
   const [menuAnchor, setMenuAnchor] = useState(null);
   const navigate = useNavigate();
 
   const data = [
     {
       id: 1,
-      name: "House Cleaning",
-      order: "HLP456",
-      base_price: "500",
-      status: "Active",
+      order_number: "OR-100",
+      customer_id: 1,
+      total_amount: "10000",
+      paid_amount: "5000",
+      balance_amount: "5000",
+      start_date: "2024-12-13",
+      end_date: "2024-12-13",
+      duration: "2 hrs",
+      booking_type: "Service Group",
+      payment_status: 1,
       createdBy: "Admin",
       createdAt: "2024-12-15",
       updatedBy: "Admin",
@@ -28,10 +34,16 @@ function ServiceGroup() {
     },
     {
       id: 2,
-      name: "Electrician",
-      order: "HLP456",
-      base_price: "600",
-      status: "Inactive",
+      order_number: "OR-101",
+      customer_id: 2,
+      total_amount: "10000",
+      paid_amount: "6000",
+      balance_amount: "4000",
+      start_date: "2024-12-13",
+      end_date: "2024-12-13",
+      duration: "2 hrs",
+      booking_type: "Service Group",
+      payment_status: 1,
       createdBy: "Admin",
       createdAt: "2024-12-15",
       updatedBy: "Admin",
@@ -52,47 +64,55 @@ function ServiceGroup() {
         ),
       },
       {
-        accessorKey: "id",
-        header: "",
-        enableHiding: false,
-        enableSorting: false,
-        size: 20,
-        Cell: ({ cell }) => (
-          <IconButton
-            onClick={(e) => {
-              e.stopPropagation();
-              setMenuAnchor(e.currentTarget);
-              setSelectedId(cell.getValue());
-            }}
-          >
-            <MoreVertIcon />
-          </IconButton>
-        ),
-      },
-      { accessorKey: "name", enableHiding: false, header: "Name" },
-      {
-        accessorKey: "order",
-        enableHiding: false,
-        header: "Order",
-      },
-      {
-        accessorKey: "base_price",
-        header: "Best Price",
-        enableHiding: false,
-        size: 40,
-      },
-      {
-        accessorKey: "status",
+        accessorKey: "payment_status",
         enableHiding: false,
         header: "Status",
         Cell: ({ row }) => {
           const status = row.original.status;
-          return status === "Active" ? (
+          return status === 1 ? (
             <span className="badge badges-Green fw-light">Active</span>
-          ) : status === "Inactive" ? (
+          ) : status === 0 ? (
             <span className="badge badges-orange fw-light">Inactive</span>
           ) : null;
         },
+      },
+      { accessorKey: "order_number", enableHiding: false, header: "Order Number" },
+      {
+        accessorKey: "customer_id",
+        enableHiding: false,
+        header: "Customer Id",
+      },
+      {
+        accessorKey: "total_amount",
+        enableHiding: false,
+        header: "Total Amount",
+      },
+      {
+        accessorKey: "paid_amount",
+        header: "Paid Amount",
+        enableHiding: false,
+        size: 40,
+      },
+      {
+        accessorKey: "balance_amount",
+        enableHiding: false,
+        header: "Balance Amount",
+      },
+      {
+        accessorKey: "booking_type",
+        header: "Booking Type",
+      },
+      {
+        accessorKey: "start_date",
+        header: "Start Date",
+      },
+      {
+        accessorKey: "end_date",
+        header: "End Date",
+      },
+      {
+        accessorKey: "duration",
+        header: "Duration",
       },
       { accessorKey: "createdBy", header: "Created By" },
       {
@@ -172,7 +192,7 @@ function ServiceGroup() {
           <span className="breadcrumb-separator"> &gt; </span>
         </li>
         <li className="breadcrumb-item active" aria-current="page">
-          &nbsp;Service Group
+          &nbsp;Order
         </li>
       </ol>
       <div className="card">
@@ -183,20 +203,9 @@ function ServiceGroup() {
             </div>
             <span className="me-2 text-muted">
               This database shows the list of&nbsp;
-              <span className="database_name">Service Group</span>
+              <span className="database_name">Order</span>
             </span>
           </div>
-        </div>
-        <div className="mb-3 d-flex justify-content-end">
-          <Link to="/servicegroup/add">
-            <button
-              type="button"
-              className="btn btn-button btn-sm me-2"
-              style={{ fontWeight: "600px !important" }}
-            >
-              &nbsp; Add &nbsp;&nbsp; <i class="bi bi-plus-lg"></i>
-            </button>
-          </Link>
         </div>
           <>
             <ThemeProvider theme={theme}>
@@ -209,6 +218,10 @@ function ServiceGroup() {
                 enableFullScreenToggle={false}
                 initialState={{
                   columnVisibility: {
+                    booking_type: false,
+                    start_date: false,
+                    end_date: false,
+                    duration: false,
                     createdBy: false,
                     createdAt: false,
                     updatedBy: false,
@@ -216,31 +229,15 @@ function ServiceGroup() {
                   },
                 }}
                 muiTableBodyRowProps={({ row }) => ({
-                  onClick: () => navigate(`/servicegroup/view`),
+                  onClick: () => navigate(`/order/view`),
                   style: { cursor: "pointer" },
                 })}
               />
             </ThemeProvider>
-            <Menu
-              id="action-menu"
-              anchorEl={menuAnchor}
-              open={Boolean(menuAnchor)}
-              onClose={handleMenuClose}
-            >
-              <MenuItem onClick={() => navigate(`/servicegroup/edit`)}>
-                Edit
-              </MenuItem>
-              {/* <MenuItem>
-                <Delete
-                  path={`/deleteCenter/${selectedId}`}
-                  onOpen={handleMenuClose}
-                />
-              </MenuItem> */}
-            </Menu>
           </>
       </div>
     </div>
   );
 }
 
-export default ServiceGroup;
+export default Order;

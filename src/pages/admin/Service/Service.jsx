@@ -9,18 +9,21 @@ import {
   MenuItem,
   IconButton,
 } from "@mui/material";
+import Delete from "../../../components/common/Delete";
 
-function ServiceGroup() {
+function Service() {
+  const [loading, setLoading] = useState(false);
   const [menuAnchor, setMenuAnchor] = useState(null);
   const navigate = useNavigate();
 
   const data = [
     {
       id: 1,
-      name: "House Cleaning",
-      order: "HLP456",
-      base_price: "500",
+      service_group_id: "1",
+      name: "House Clearning",
       status: "Active",
+      order: "HLP100",
+      best_price: "1000",
       createdBy: "Admin",
       createdAt: "2024-12-15",
       updatedBy: "Admin",
@@ -28,10 +31,11 @@ function ServiceGroup() {
     },
     {
       id: 2,
-      name: "Electrician",
-      order: "HLP456",
-      base_price: "600",
-      status: "Inactive",
+      service_group_id: "2",
+      name: "House Clearning",
+      status: "Active",
+      order: "HLP101",
+      best_price: "1500",
       createdBy: "Admin",
       createdAt: "2024-12-15",
       updatedBy: "Admin",
@@ -69,6 +73,7 @@ function ServiceGroup() {
           </IconButton>
         ),
       },
+      { accessorKey: "service_group_id", enableHiding: false, header: "Service Group Id" },
       { accessorKey: "name", enableHiding: false, header: "Name" },
       {
         accessorKey: "order",
@@ -76,7 +81,7 @@ function ServiceGroup() {
         header: "Order",
       },
       {
-        accessorKey: "base_price",
+        accessorKey: "best_price",
         header: "Best Price",
         enableHiding: false,
         size: 40,
@@ -172,7 +177,7 @@ function ServiceGroup() {
           <span className="breadcrumb-separator"> &gt; </span>
         </li>
         <li className="breadcrumb-item active" aria-current="page">
-          &nbsp;Service Group
+          &nbsp;Service
         </li>
       </ol>
       <div className="card">
@@ -183,12 +188,12 @@ function ServiceGroup() {
             </div>
             <span className="me-2 text-muted">
               This database shows the list of&nbsp;
-              <span className="database_name">Service Group</span>
+              <span className="database_name">Service</span>
             </span>
           </div>
         </div>
         <div className="mb-3 d-flex justify-content-end">
-          <Link to="/servicegroup/add">
+          <Link to="/service/add">
             <button
               type="button"
               className="btn btn-button btn-sm me-2"
@@ -198,6 +203,17 @@ function ServiceGroup() {
             </button>
           </Link>
         </div>
+        {loading ? (
+          <div className="loader-container">
+            <div className="loading">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        ) : (
           <>
             <ThemeProvider theme={theme}>
               <MaterialReactTable
@@ -216,7 +232,7 @@ function ServiceGroup() {
                   },
                 }}
                 muiTableBodyRowProps={({ row }) => ({
-                  onClick: () => navigate(`/servicegroup/view`),
+                  onClick: () => navigate(`/service/view`),
                   style: { cursor: "pointer" },
                 })}
               />
@@ -227,7 +243,7 @@ function ServiceGroup() {
               open={Boolean(menuAnchor)}
               onClose={handleMenuClose}
             >
-              <MenuItem onClick={() => navigate(`/servicegroup/edit`)}>
+              <MenuItem onClick={() => navigate(`/service/edit`)}>
                 Edit
               </MenuItem>
               {/* <MenuItem>
@@ -238,9 +254,10 @@ function ServiceGroup() {
               </MenuItem> */}
             </Menu>
           </>
+        )}
       </div>
     </div>
   );
 }
 
-export default ServiceGroup;
+export default Service;

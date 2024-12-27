@@ -9,8 +9,10 @@ import {
   MenuItem,
   IconButton,
 } from "@mui/material";
+import PaymentTypeAdd from "./PaymentTypeAdd";
+import PaymentTypeEdit from "./PaymentTypeEdit";
 
-function ServiceGroup() {
+function PaymentType() {
   const [menuAnchor, setMenuAnchor] = useState(null);
   const navigate = useNavigate();
 
@@ -18,9 +20,7 @@ function ServiceGroup() {
     {
       id: 1,
       name: "House Cleaning",
-      order: "HLP456",
-      base_price: "500",
-      status: "Active",
+      description: "Test",
       createdBy: "Admin",
       createdAt: "2024-12-15",
       updatedBy: "Admin",
@@ -28,10 +28,8 @@ function ServiceGroup() {
     },
     {
       id: 2,
-      name: "Electrician",
-      order: "HLP456",
-      base_price: "600",
-      status: "Inactive",
+      name: "House Cleaning",
+      description: "Test",
       createdBy: "Admin",
       createdAt: "2024-12-15",
       updatedBy: "Admin",
@@ -70,30 +68,6 @@ function ServiceGroup() {
         ),
       },
       { accessorKey: "name", enableHiding: false, header: "Name" },
-      {
-        accessorKey: "order",
-        enableHiding: false,
-        header: "Order",
-      },
-      {
-        accessorKey: "base_price",
-        header: "Best Price",
-        enableHiding: false,
-        size: 40,
-      },
-      {
-        accessorKey: "status",
-        enableHiding: false,
-        header: "Status",
-        Cell: ({ row }) => {
-          const status = row.original.status;
-          return status === "Active" ? (
-            <span className="badge badges-Green fw-light">Active</span>
-          ) : status === "Inactive" ? (
-            <span className="badge badges-orange fw-light">Inactive</span>
-          ) : null;
-        },
-      },
       { accessorKey: "createdBy", header: "Created By" },
       {
         accessorKey: "createdAt",
@@ -172,7 +146,7 @@ function ServiceGroup() {
           <span className="breadcrumb-separator"> &gt; </span>
         </li>
         <li className="breadcrumb-item active" aria-current="page">
-          &nbsp;Service Group
+          &nbsp;Payment Type
         </li>
       </ol>
       <div className="card">
@@ -183,64 +157,54 @@ function ServiceGroup() {
             </div>
             <span className="me-2 text-muted">
               This database shows the list of&nbsp;
-              <span className="database_name">Service Group</span>
+              <span className="database_name">Payment Type</span>
             </span>
           </div>
         </div>
-        <div className="mb-3 d-flex justify-content-end">
-          <Link to="/servicegroup/add">
-            <button
-              type="button"
-              className="btn btn-button btn-sm me-2"
-              style={{ fontWeight: "600px !important" }}
-            >
-              &nbsp; Add &nbsp;&nbsp; <i class="bi bi-plus-lg"></i>
-            </button>
-          </Link>
-        </div>
-          <>
-            <ThemeProvider theme={theme}>
-              <MaterialReactTable
-                columns={columns}
-                data={data}
-                enableColumnActions={false}
-                enableColumnFilters={false}
-                enableDensityToggle={false}
-                enableFullScreenToggle={false}
-                initialState={{
-                  columnVisibility: {
-                    createdBy: false,
-                    createdAt: false,
-                    updatedBy: false,
-                    updatedAt: false,
-                  },
-                }}
-                muiTableBodyRowProps={({ row }) => ({
-                  onClick: () => navigate(`/servicegroup/view`),
-                  style: { cursor: "pointer" },
-                })}
-              />
-            </ThemeProvider>
-            <Menu
-              id="action-menu"
-              anchorEl={menuAnchor}
-              open={Boolean(menuAnchor)}
-              onClose={handleMenuClose}
-            >
-              <MenuItem onClick={() => navigate(`/servicegroup/edit`)}>
-                Edit
-              </MenuItem>
-              {/* <MenuItem>
+        <PaymentTypeAdd />
+        <>
+          <ThemeProvider theme={theme}>
+            <MaterialReactTable
+              columns={columns}
+              data={data}
+              enableColumnActions={false}
+              enableColumnFilters={false}
+              enableDensityToggle={false}
+              enableFullScreenToggle={false}
+              initialState={{
+                columnVisibility: {
+                  createdBy: false,
+                  createdAt: false,
+                  updatedBy: false,
+                  updatedAt: false,
+                },
+              }}
+              muiTableBodyRowProps={({ row }) => ({
+                onClick: () => navigate(`/paymenttype`),
+                style: { cursor: "pointer" },
+              })}
+            />
+          </ThemeProvider>
+          <Menu
+            id="action-menu"
+            anchorEl={menuAnchor}
+            open={Boolean(menuAnchor)}
+            onClose={handleMenuClose}
+          >
+            <MenuItem>
+              <PaymentTypeEdit />
+            </MenuItem>
+            {/* <MenuItem>
                 <Delete
                   path={`/deleteCenter/${selectedId}`}
                   onOpen={handleMenuClose}
                 />
               </MenuItem> */}
-            </Menu>
-          </>
+          </Menu>
+        </>
       </div>
     </div>
   );
 }
 
-export default ServiceGroup;
+export default PaymentType;

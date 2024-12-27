@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
-function ServiceGroupView() {
+function ServiceView() {
   const [data, setData] = useState({
+    service_group_id: 1,
     name: "House Cleaning",
     describtion: "Test",
     image: "",
@@ -23,13 +24,13 @@ function ServiceGroupView() {
           <span className="breadcrumb-separator"> &gt; </span>
         </li>
         <li>
-          <Link to="/servicegroup" className="custom-breadcrumb">
-            &nbsp;Service Group
+          <Link to="/service" className="custom-breadcrumb">
+            &nbsp;Service
           </Link>
           <span className="breadcrumb-separator"> &gt; </span>
         </li>
         <li className="breadcrumb-item active" aria-current="page">
-          &nbsp;Service Group View
+          &nbsp;Service View
         </li>
       </ol>
       <div className="card" style={{ border: "1px solid #dbd9d0" }}>
@@ -41,10 +42,10 @@ function ServiceGroupView() {
             <div class="d-flex">
               <div class="dot active"></div>
             </div>
-            <span class="me-2 text-muted">View Service Group</span>
+            <span class="me-2 text-muted">View Service</span>
           </div>
           <div className="my-2 pe-3 d-flex align-items-center">
-            <Link to="/servicegroup">
+            <Link to="/service">
               <button type="button " className="btn btn-sm btn-border">
                 Back
               </button>
@@ -57,6 +58,16 @@ function ServiceGroupView() {
         </div>
         <div className="container-fluid px-4">
           <div className="row pb-3">
+            <div className="col-md-6 col-12 my-2">
+              <div className="row">
+                <div className="col-6">
+                  <p className="fw-medium">Service Group Id</p>
+                </div>
+                <div className="col-6">
+                  <p className="text-muted text-sm">: {data.service_group_id}</p>
+                </div>
+              </div>
+            </div>
             <div className="col-md-6 col-12 my-2">
               <div className="row">
                 <div className="col-6">
@@ -116,4 +127,4 @@ function ServiceGroupView() {
   );
 }
 
-export default ServiceGroupView;
+export default ServiceView;

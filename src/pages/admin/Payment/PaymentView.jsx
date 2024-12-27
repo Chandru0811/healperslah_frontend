@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
-function ServiceGroupView() {
+function PaymentView() {
   const [data, setData] = useState({
-    name: "House Cleaning",
-    describtion: "Test",
-    image: "",
-    order: "100",
-    base_price: "500",
+    order_id: 1,
+    helper_id: 1,
+    company_id: 1,
+    booking_type: "Service Group",
+    amount_paid: "150",
+    balance_amount: "0",
+    total_amount: "150",
+    payment_mode: "UPI",
   });
 
   return (
@@ -23,13 +26,13 @@ function ServiceGroupView() {
           <span className="breadcrumb-separator"> &gt; </span>
         </li>
         <li>
-          <Link to="/servicegroup" className="custom-breadcrumb">
-            &nbsp;Service Group
+          <Link to="/payment" className="custom-breadcrumb">
+            &nbsp;Payment
           </Link>
           <span className="breadcrumb-separator"> &gt; </span>
         </li>
         <li className="breadcrumb-item active" aria-current="page">
-          &nbsp;Service Group View
+          &nbsp;Payment View
         </li>
       </ol>
       <div className="card" style={{ border: "1px solid #dbd9d0" }}>
@@ -41,18 +44,14 @@ function ServiceGroupView() {
             <div class="d-flex">
               <div class="dot active"></div>
             </div>
-            <span class="me-2 text-muted">View Service Group</span>
+            <span class="me-2 text-muted">View Payment</span>
           </div>
           <div className="my-2 pe-3 d-flex align-items-center">
-            <Link to="/servicegroup">
+            <Link to="/payment">
               <button type="button " className="btn btn-sm btn-border">
                 Back
               </button>
             </Link>
-            &nbsp;&nbsp;
-            <button type="button " className="btn btn-sm btn-border">
-              Activate
-            </button>
           </div>
         </div>
         <div className="container-fluid px-4">
@@ -60,51 +59,85 @@ function ServiceGroupView() {
             <div className="col-md-6 col-12 my-2">
               <div className="row">
                 <div className="col-6">
-                  <p className="fw-medium">Name</p>
+                  <p className="fw-medium">Order Id</p>
                 </div>
                 <div className="col-6">
-                  <p className="text-muted text-sm">: {data.name}</p>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-6 col-12 my-2">
-              <div className="row">
-                <div className="col-6">
-                  <p className="fw-medium">Order</p>
-                </div>
-                <div className="col-6">
-                  <p className="text-muted text-sm">: {data.order}</p>
+                  <p className="text-muted text-sm">: {data.order_id}</p>
                 </div>
               </div>
             </div>
             <div className="col-md-6 col-12 my-2">
               <div className="row">
                 <div className="col-6">
-                  <p className="fw-medium">Best Price</p>
+                  <p className="fw-medium">Helper Id</p>
                 </div>
                 <div className="col-6">
-                  <p className="text-muted text-sm">: {data.base_price}</p>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-6 col-12 my-2">
-              <div className="row">
-                <div className="col-6">
-                  <p className="fw-medium">Image</p>
-                </div>
-                <div className="col-6">
-                  <p className="text-muted text-sm">: {data.image}</p>
+                  <p className="text-muted text-sm">: {data.helper_id}</p>
                 </div>
               </div>
             </div>
             <div className="col-md-6 col-12 my-2">
               <div className="row">
                 <div className="col-6">
-                  <p className="fw-medium">Description</p>
+                  <p className="fw-medium">Company Id</p>
+                </div>
+                <div className="col-6">
+                  <p className="text-muted text-sm">: {data.company_id}</p>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-6 col-12 my-2">
+              <div className="row">
+                <div className="col-6">
+                  <p className="fw-medium">Booking Type</p>
+                </div>
+                <div className="col-6">
+                  <p className="text-muted text-sm">: {data.booking_type}</p>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-6 col-12 my-2">
+              <div className="row">
+                <div className="col-6">
+                  <p className="fw-medium">Amount Paid</p>
+                </div>
+                <div className="col-6">
+                  <p className="text-muted text-sm">: {data.amount_paid}</p>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-6 col-12 my-2">
+              <div className="row">
+                <div className="col-6">
+                  <p className="fw-medium">Balance Amount</p>
                 </div>
                 <div className="col-6">
                   <p className="text-muted text-sm text-break ">
-                    : {data.describtion}
+                    : {data.balance_amount}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-6 col-12 my-2">
+              <div className="row">
+                <div className="col-6">
+                  <p className="fw-medium">Total Amount</p>
+                </div>
+                <div className="col-6">
+                  <p className="text-muted text-sm text-break ">
+                    : {data.total_amount}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-6 col-12 my-2">
+              <div className="row">
+                <div className="col-6">
+                  <p className="fw-medium">Payment Mode</p>
+                </div>
+                <div className="col-6">
+                  <p className="text-muted text-sm text-break ">
+                    : {data.payment_mode}
                   </p>
                 </div>
               </div>
@@ -116,4 +149,4 @@ function ServiceGroupView() {
   );
 }
 
-export default ServiceGroupView;
+export default PaymentView;

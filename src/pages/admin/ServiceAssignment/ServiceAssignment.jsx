@@ -10,17 +10,18 @@ import {
   IconButton,
 } from "@mui/material";
 
-function ServiceGroup() {
+function ServiceAssignment() {
   const [menuAnchor, setMenuAnchor] = useState(null);
   const navigate = useNavigate();
 
   const data = [
     {
       id: 1,
-      name: "House Cleaning",
-      order: "HLP456",
-      base_price: "500",
-      status: "Active",
+      order_id: 1,
+      company_id: 1,
+      helper_id: 1,
+      assigned_at: "2024-12-16 13:06:38",
+      status: "Assigned",
       createdBy: "Admin",
       createdAt: "2024-12-15",
       updatedBy: "Admin",
@@ -28,10 +29,11 @@ function ServiceGroup() {
     },
     {
       id: 2,
-      name: "Electrician",
-      order: "HLP456",
-      base_price: "600",
-      status: "Inactive",
+      order_id: 2,
+      company_id: 1,
+      helper_id: 1,
+      assigned_at: "2024-12-17 13:06:38",
+      status: "Assigned",
       createdBy: "Admin",
       createdAt: "2024-12-15",
       updatedBy: "Admin",
@@ -69,30 +71,37 @@ function ServiceGroup() {
           </IconButton>
         ),
       },
-      { accessorKey: "name", enableHiding: false, header: "Name" },
-      {
-        accessorKey: "order",
-        enableHiding: false,
-        header: "Order",
-      },
-      {
-        accessorKey: "base_price",
-        header: "Best Price",
-        enableHiding: false,
-        size: 40,
-      },
       {
         accessorKey: "status",
         enableHiding: false,
         header: "Status",
         Cell: ({ row }) => {
           const status = row.original.status;
-          return status === "Active" ? (
-            <span className="badge badges-Green fw-light">Active</span>
-          ) : status === "Inactive" ? (
-            <span className="badge badges-orange fw-light">Inactive</span>
+          return status === "Assigned" ? (
+            <span className="badge badges-Green fw-light">Assigned</span>
+          ) : status === "Hold" ? (
+            <span className="badge badges-orange fw-light">Hold</span>
           ) : null;
         },
+      },
+      { accessorKey: "order_id", enableHiding: false, header: "Order Id" },
+      {
+        accessorKey: "company_id",
+        enableHiding: false,
+        header: "Company Id",
+      },
+      {
+        accessorKey: "helper_id",
+        header: "Helper Id",
+        enableHiding: false,
+        size: 40,
+      },
+      {
+        accessorKey: "assigned_at",
+        header: "Assigned Id",
+        enableHiding: false,
+        size: 40,
+        Cell: ({ cell }) => cell.getValue()?.substring(0, 10),
       },
       { accessorKey: "createdBy", header: "Created By" },
       {
@@ -172,7 +181,7 @@ function ServiceGroup() {
           <span className="breadcrumb-separator"> &gt; </span>
         </li>
         <li className="breadcrumb-item active" aria-current="page">
-          &nbsp;Service Group
+          &nbsp;Service Assignment
         </li>
       </ol>
       <div className="card">
@@ -183,20 +192,9 @@ function ServiceGroup() {
             </div>
             <span className="me-2 text-muted">
               This database shows the list of&nbsp;
-              <span className="database_name">Service Group</span>
+              <span className="database_name">Service Assignment</span>
             </span>
           </div>
-        </div>
-        <div className="mb-3 d-flex justify-content-end">
-          <Link to="/servicegroup/add">
-            <button
-              type="button"
-              className="btn btn-button btn-sm me-2"
-              style={{ fontWeight: "600px !important" }}
-            >
-              &nbsp; Add &nbsp;&nbsp; <i class="bi bi-plus-lg"></i>
-            </button>
-          </Link>
         </div>
           <>
             <ThemeProvider theme={theme}>
@@ -216,7 +214,7 @@ function ServiceGroup() {
                   },
                 }}
                 muiTableBodyRowProps={({ row }) => ({
-                  onClick: () => navigate(`/servicegroup/view`),
+                  onClick: () => navigate(`/assignment/view`),
                   style: { cursor: "pointer" },
                 })}
               />
@@ -227,7 +225,7 @@ function ServiceGroup() {
               open={Boolean(menuAnchor)}
               onClose={handleMenuClose}
             >
-              <MenuItem onClick={() => navigate(`/servicegroup/edit`)}>
+              <MenuItem onClick={() => navigate(`/assignment/edit`)}>
                 Edit
               </MenuItem>
               {/* <MenuItem>
@@ -243,4 +241,4 @@ function ServiceGroup() {
   );
 }
 
-export default ServiceGroup;
+export default ServiceAssignment;
