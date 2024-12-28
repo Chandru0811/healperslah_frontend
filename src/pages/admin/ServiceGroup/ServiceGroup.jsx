@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { MaterialReactTable } from "material-react-table";
 import { MoreVert as MoreVertIcon } from "@mui/icons-material";
@@ -10,36 +10,14 @@ import {
   IconButton,
 } from "@mui/material";
 import Delete from "../../../components/common/Delete";
+import api from "../../../config/URL";
 
 function ServiceGroup() {
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
-  const data = [
-    {
-      id: 1,
-      name: "House Cleaning",
-      order: "HLP456",
-      base_price: "500",
-      status: "Active",
-      createdBy: "Admin",
-      createdAt: "2024-12-15",
-      updatedBy: "Admin",
-      updatedAt: "2024-12-20",
-    },
-    {
-      id: 2,
-      name: "Electrician",
-      order: "HLP456",
-      base_price: "600",
-      status: "Inactive",
-      createdBy: "Admin",
-      createdAt: "2024-12-15",
-      updatedBy: "Admin",
-      updatedAt: "2024-12-20",
-    },
-  ];
 
   const columns = useMemo(
     () => [
@@ -76,13 +54,13 @@ function ServiceGroup() {
         enableHiding: false,
         header: "Status",
         Cell: ({ row }) => {
-          const status = row.original.status;
-          return status === "Active" ? (
+          const status = row.original.active;
+          return status === 1 ? (
             <div className="d-flex align-items-center">
               <div className="active_dot"></div>
               <span>Active</span>
             </div>
-          ) : status === "Inactive" ? (
+          ) : status === 0 ? (
             <div className="d-flex align-items-center">
               <div className="inactive_dot"></div>
               <span>Inactive</span>
@@ -102,25 +80,41 @@ function ServiceGroup() {
         enableHiding: false,
         size: 40,
       },
-      { accessorKey: "createdBy", header: "Created By" },
+      { accessorKey: "created_by", header: "Created By" },
       {
-        accessorKey: "createdAt",
+        accessorKey: "created_at",
         header: "Created At",
         Cell: ({ cell }) => cell.getValue()?.substring(0, 10),
       },
       {
-        accessorKey: "updatedBy",
+        accessorKey: "updated_by",
         header: "Updated By",
         Cell: ({ cell }) => cell.getValue() || "",
       },
       {
-        accessorKey: "updatedAt",
+        accessorKey: "updated_at",
         header: "Updated At",
         Cell: ({ cell }) => cell.getValue()?.substring(0, 10) || "",
       },
     ],
     []
   );
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get(`admin/serviceGroups`);
+      setData(response.data.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const theme = createTheme({
     components: {
@@ -206,46 +200,59 @@ function ServiceGroup() {
             </button>
           </Link>
         </div>
-        <>
-          <ThemeProvider theme={theme}>
-            <MaterialReactTable
-              columns={columns}
-              data={data}
-              enableColumnActions={false}
-              enableColumnFilters={false}
-              enableDensityToggle={false}
-              enableFullScreenToggle={false}
-              initialState={{
-                columnVisibility: {
-                  createdBy: false,
-                  createdAt: false,
-                  updatedBy: false,
-                  updatedAt: false,
-                },
-              }}
-              muiTableBodyRowProps={({ row }) => ({
-                onClick: () => navigate(`/servicegroup/view`),
-                style: { cursor: "pointer" },
-              })}
-            />
-          </ThemeProvider>
-          <Menu
-            id="action-menu"
-            anchorEl={menuAnchor}
-            open={Boolean(menuAnchor)}
-            onClose={handleMenuClose}
-          >
-            <MenuItem onClick={() => navigate(`/servicegroup/edit`)}>
-              Edit
-            </MenuItem>
-            <MenuItem>
-              <Delete
-                path={`/deleteServiceGroup/${selectedId}`}
-                onOpen={handleMenuClose}
+        {loading ? (
+          <div className="loader-container">
+            <div className="loading">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        ) : (
+          <>
+            <ThemeProvider theme={theme}>
+              <MaterialReactTable
+                columns={columns}
+                data={data}
+                enableColumnActions={false}
+                enableColumnFilters={false}
+                enableDensityToggle={false}
+                enableFullScreenToggle={false}
+                initialState={{
+                  columnVisibility: {
+                    created_by: false,
+                    created_at: false,
+                    updated_by: false,
+                    updated_at: false,
+                  },
+                }}
+                muiTableBodyRowProps={({ row }) => ({
+                  onClick: () => navigate(`/servicegroup/view/${row.original.id}`),
+                  style: { cursor: "pointer" },
+                })}
               />
-            </MenuItem>
-          </Menu>
-        </>
+            </ThemeProvider>
+            <Menu
+              id="action-menu"
+              anchorEl={menuAnchor}
+              open={Boolean(menuAnchor)}
+              onClose={handleMenuClose}
+            >
+              <MenuItem onClick={() => navigate(`/servicegroup/edit/${selectedId}`)}>
+                Edit
+              </MenuItem>
+              <MenuItem>
+                <Delete
+                  path={`admin/serviceGroup/delete/${selectedId}`}
+                  onDeleteSuccess={fetchData}
+                  onOpen={handleMenuClose}
+                />
+              </MenuItem>
+            </Menu>
+          </>
+        )}
       </div>
     </div>
   );

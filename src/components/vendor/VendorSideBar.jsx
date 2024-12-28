@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import helperlogo from "../../assets/helperlah_logo_side.png";
-import { BsBagCheckFill, BsBarChartFill } from "react-icons/bs";
+import { BsBagCheckFill, BsBarChart, BsBarChartFill } from "react-icons/bs";
 import { BiLogOut } from "react-icons/bi";
 import PropTypes from "prop-types";
+import { IoBagCheckOutline } from "react-icons/io5";
 
 function VendorSideBar({ handleLogout }) {
   const navigate = useNavigate();
@@ -57,7 +58,7 @@ function VendorSideBar({ handleLogout }) {
                 style={{ borderRadius: "5px" }}
                 to="/dashboard"
               >
-                <BsBarChartFill className="sidebar_icon" />
+                <BsBarChart className="sidebar_icon" />
                 Dashboard
               </NavLink>
             </li>
@@ -67,12 +68,12 @@ function VendorSideBar({ handleLogout }) {
                 style={{ borderRadius: "5px" }}
                 to="/orders"
               >
-                <BsBagCheckFill className="sidebar_icon" />
+                <IoBagCheckOutline className="sidebar_icon" />
                 Orders
               </NavLink>
             </li>
           </ul>
-          <div className="ps-4 mt-auto w-100 mb-4">
+          {/* <div className="ps-4 mt-auto w-100 mb-4">
             <div className="navbar-nav">
               <div className="nav-item">
                 <button
@@ -86,7 +87,7 @@ function VendorSideBar({ handleLogout }) {
                 </button>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </nav>

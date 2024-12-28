@@ -1,10 +1,16 @@
 import { useFormik } from "formik";
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import * as Yup from "yup";
 import Cropper from "react-easy-crop";
+import api from "../../../config/URL";
+import ImageURL from "../../../config/ImageURL";
 
 function ServiceGroupEdit() {
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const [loadIndicator, setLoadIndicator] = useState(false);
+  const [previewImage, setPreviewImage] = useState(null);
   const [imageSrc, setImageSrc] = useState(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
@@ -14,24 +20,31 @@ function ServiceGroupEdit() {
   const [originalFileType, setOriginalFileType] = useState("");
   const MAX_FILE_SIZE = 2 * 1024 * 1024;
 
+  const SUPPORTED_FORMATS = [
+    "image/png",
+    "image/jpeg",
+    "image/jpg",
+    "image/webp",
+  ];
+
   const imageValidation = Yup.mixed()
-    .required("*Image is required")
-    .test("fileFormat", "Unsupported format", (value) => {
-      return !value || (value && SUPPORTED_FORMATS.includes(value.type));
-    })
-    .test("fileSize", "File size is too large. Max 2MB.", (value) => {
-      return !value || (value && value.size <= MAX_FILE_SIZE);
-    });
+  .required("*Image is required")
+  .test("fileFormat", "Unsupported format", (value) => {
+    return !value || (value && SUPPORTED_FORMATS.includes(value.type));
+  })
+  .test("fileSize", "File size is too large. Max 2MB.", (value) => {
+    return !value || (value && value.size <= MAX_FILE_SIZE);
+  });
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required("*Name is required"),
     order: Yup.string().required("*Order is required"),
-    basicPrice: Yup.number()
+    base_price: Yup.number()
       .typeError("*Basic Price must be number")
       .required("*Basic Price is required")
       .positive("*Please enter a valid number")
       .integer("*Basic Price is must be number"),
-    icon: imageValidation,
+    image: imageValidation,
     description: Yup.string()
       .required("*Description is a required field")
       .max(200, "*The maximum length is 200 characters"),
@@ -40,16 +53,61 @@ function ServiceGroupEdit() {
   const formik = useFormik({
     initialValues: {
       name: "",
+      slug: "",
       order: "",
-      basicPrice: "",
-      icon: "",
+      base_price: "",
+      image: "",
       description: "",
     },
     validationSchema: validationSchema,
-    onSubmit: async (values) => {},
+    onSubmit: async (values) => {
+      setLoadIndicator(true);
+
+      const formData = new FormData();
+      formData.append("name", values.name);
+      formData.append("slug", values.slug);
+      formData.append("description", values.description);
+      formData.append("image", values.image);
+      formData.append("order", values.order);
+      formData.append("base_price", values.base_price);
+      try {
+        const response = await api.put(
+          `admin/serviceGroup/update/${id}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        if (response.status === 200) {
+          toast.success(response.data.message);
+          navigate("/servicegroup");
+        } else {
+          toast.error(response.data.message);
+        }
+      } catch (error) {
+        if (error.response.status === 409) {
+          toast.warning(error?.response?.data?.message);
+        } else {
+          toast.error(error.response.data.message);
+        }
+      } finally {
+        setLoadIndicator(false);
+      }
+    },
     validateOnChange: false,
     validateOnBlur: true,
   });
+
+  useEffect(() => {
+    const slug = formik.values.name
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, "_")
+      .replace(/[^\w\-]+/g, "");
+    formik.setFieldValue("slug", slug);
+  }, [formik.values.name]);
 
   const scrollToError = (errors) => {
     const errorField = Object.keys(errors)[0];
@@ -66,11 +124,24 @@ function ServiceGroupEdit() {
     }
   }, [formik.submitCount, formik.errors]);
 
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const response = await api.get(`admin/serviceGroup/${id}`);
+        formik.setValues(response.data.data);
+        setPreviewImage(`${ImageURL}${response.data.data.image}`);
+      } catch (error) {
+        toast.error("Error Fetching Data", error);
+      }
+    };
+    getData();
+  }, [id]);
+
   const handleFileChange = (event) => {
     const file = event?.target?.files[0];
     if (file) {
       if (file.size > MAX_FILE_SIZE) {
-        formik.setFieldError(`icon`, "File size is too large. Max 2MB.");
+        formik.setFieldError(`image`, "File size is too large. Max 2MB.");
         return;
       }
 
@@ -84,7 +155,7 @@ function ServiceGroupEdit() {
       reader.readAsDataURL(file);
 
       if (file.size > MAX_FILE_SIZE) {
-        formik.setFieldError(`icon`, "File size is too large. Max 2MB.");
+        formik.setFieldError(`image`, "File size is too large. Max 2MB.");
       }
     }
   };
@@ -141,7 +212,9 @@ function ServiceGroupEdit() {
         type: originalFileType,
       });
 
-      formik.setFieldValue("icon", file);
+      formik.setFieldValue("image", file);
+      const croppedImageURL = URL.createObjectURL(croppedImageBlob);
+      setPreviewImage(croppedImageURL);
       setShowCropper(false);
     } catch (error) {
       console.error("Error cropping the image:", error);
@@ -151,9 +224,17 @@ function ServiceGroupEdit() {
   const handleCropCancel = () => {
     setShowCropper(false);
     setImageSrc(null);
-    formik.setFieldValue("icon", "");
+    formik.setFieldValue("image", "");
     document.querySelector("input[type='file']").value = "";
   };
+
+  useEffect(() => {
+    return () => {
+      if (previewImage && previewImage.startsWith("blob:")) {
+        URL.revokeObjectURL(previewImage);
+      }
+    };
+  }, [previewImage]);
 
   return (
     <div className="container-fluid px-0">
@@ -203,8 +284,15 @@ function ServiceGroupEdit() {
               <button
                 type="submit"
                 className="btn btn-button btn-sm"
+                disabled={loadIndicator}
               >
-                <span className="fw-medium">Update</span>
+                {loadIndicator && (
+                  <span
+                    className="spinner-border spinner-border-sm me-2"
+                    aria-hidden="true"
+                  ></span>
+                )}
+                Update
               </button>
             </div>
           </div>
@@ -258,15 +346,15 @@ function ServiceGroupEdit() {
                 <input
                   type="text"
                   className={`form-control ${
-                    formik.touched.basicPrice && formik.errors.basicPrice
+                    formik.touched.base_price && formik.errors.base_price
                       ? "is-invalid"
                       : ""
                   }`}
-                  {...formik.getFieldProps("basicPrice")}
+                  {...formik.getFieldProps("base_price")}
                 />
-                {formik.touched.basicPrice && formik.errors.basicPrice && (
+                {formik.touched.base_price && formik.errors.base_price && (
                   <div className="invalid-feedback">
-                    {formik.errors.basicPrice}
+                    {formik.errors.base_price}
                   </div>
                 )}
               </div>
@@ -279,11 +367,11 @@ function ServiceGroupEdit() {
                   type="file"
                   accept=".png,.jpeg,.jpg,.svg,.webp"
                   className={`form-control ${
-                    formik.touched.icon && formik.errors.icon
+                    formik.touched.image && formik.errors.image
                       ? "is-invalid"
                       : ""
                   }`}
-                  name="icon"
+                  name="image"
                   onChange={handleFileChange}
                   onBlur={formik.handleBlur}
                 />
@@ -291,8 +379,18 @@ function ServiceGroupEdit() {
                   Note: Maximum file size is 2MB. Allowed: .png, .jpg, .jpeg,
                   .svg, .webp.
                 </p>
-                {formik.touched.icon && formik.errors.icon && (
-                  <div className="invalid-feedback">{formik.errors.icon}</div>
+                {formik.touched.image && formik.errors.image && (
+                  <div className="invalid-feedback">{formik.errors.image}</div>
+                )}
+
+                {previewImage && (
+                  <div className="my-3">
+                    <img
+                      src={previewImage}
+                      alt="Selected"
+                      style={{ maxWidth: "100px", maxHeight: "100px" }}
+                    />
+                  </div>
                 )}
 
                 {showCropper && imageSrc && (

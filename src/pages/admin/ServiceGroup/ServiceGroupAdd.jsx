@@ -1,10 +1,14 @@
 import { useFormik } from "formik";
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import Cropper from "react-easy-crop";
+import toast from "react-hot-toast";
+import api from "../../../config/URL";
 
 function ServiceGroupAdd() {
+  const navigate = useNavigate();
+  const [loadIndicator, setLoadIndicator] = useState(false);
   const [imageSrc, setImageSrc] = useState(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
@@ -14,24 +18,31 @@ function ServiceGroupAdd() {
   const [originalFileType, setOriginalFileType] = useState("");
   const MAX_FILE_SIZE = 2 * 1024 * 1024;
 
-  const SUPPORTED_FORMATS = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
+  const SUPPORTED_FORMATS = [
+    "image/png",
+    "image/jpeg",
+    "image/jpg",
+    "image/webp",
+  ];
+
+  const imageValidation = Yup.mixed()
+  .required("*Image is required")
+  .test("fileFormat", "Unsupported format", (value) => {
+    return !value || (value && SUPPORTED_FORMATS.includes(value.type));
+  })
+  .test("fileSize", "File size is too large. Max 2MB.", (value) => {
+    return !value || (value && value.size <= MAX_FILE_SIZE);
+  });
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required("*Name is required"),
     order: Yup.string().required("*Order is required"),
-    basicPrice: Yup.number()
+    base_price: Yup.number()
       .typeError("*Basic Price must be a number")
       .required("*Basic Price is required")
       .positive("*Please enter a valid number")
       .integer("*Basic Price must be a whole number"),
-    icon: Yup.mixed()
-      .required("*Image is required")
-      .test("fileFormat", "Unsupported format", (value) =>
-        value ? SUPPORTED_FORMATS.includes(value.type) : true
-      )
-      .test("fileSize", "File size is too large. Max 2MB.", (value) =>
-        value ? value.size <= MAX_FILE_SIZE : true
-      ),
+    image: imageValidation,
     description: Yup.string()
       .required("*Description is a required field")
       .max(200, "*The maximum length is 200 characters"),
@@ -40,28 +51,62 @@ function ServiceGroupAdd() {
   const formik = useFormik({
     initialValues: {
       name: "",
+      slug: "",
       order: "",
-      basicPrice: "",
-      icon: null,
+      base_price: "",
+      image: null,
       description: "",
     },
-    validationSchema,
+    validationSchema: validationSchema,
     onSubmit: async (values) => {
-      console.log("Form submitted with values:", values);
+      setLoadIndicator(true);
+      const formData = new FormData();
+      formData.append("name", values.name);
+      formData.append("slug", values.slug);
+      formData.append("description", values.description);
+      formData.append("image", values.image);
+      formData.append("order", values.order);
+      formData.append("base_price", values.base_price);
+      try {
+        const response = await api.post("admin/serviceGroup", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        if (response.status === 200) {
+          toast.success(response.data.message);
+          navigate("/servicegroup");
+        } else {
+          toast.error(response.data.message);
+        }
+      } catch (error) {
+        toast.error(error);
+      } finally {
+        setLoadIndicator(false);
+      }
     },
     validateOnChange: false,
     validateOnBlur: true,
   });
 
+  useEffect(() => {
+    const slug = formik.values.name
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, "_")
+      .replace(/[^\w\-]+/g, "");
+    formik.setFieldValue("slug", slug);
+  }, [formik.values.name]);
+
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
       if (file.size > MAX_FILE_SIZE) {
-        formik.setFieldError("icon", "File size is too large. Max 2MB.");
+        formik.setFieldError("image", "File size is too large. Max 2MB.");
         return;
       }
       if (!SUPPORTED_FORMATS.includes(file.type)) {
-        formik.setFieldError("icon", "Unsupported format.");
+        formik.setFieldError("image", "Unsupported format.");
         return;
       }
 
@@ -123,7 +168,7 @@ function ServiceGroupAdd() {
       const file = new File([croppedImageBlob], originalFileName, {
         type: originalFileType,
       });
-      formik.setFieldValue("icon", file);
+      formik.setFieldValue("image", file);
       setShowCropper(false);
     } catch (error) {
       console.error("Error cropping the image:", error);
@@ -133,7 +178,7 @@ function ServiceGroupAdd() {
   const handleCropCancel = () => {
     setShowCropper(false);
     setImageSrc(null);
-    formik.setFieldValue("icon", "");
+    formik.setFieldValue("image", "");
     document.querySelector("input[type='file']").value = "";
   };
 
@@ -163,7 +208,7 @@ function ServiceGroupAdd() {
         onSubmit={formik.handleSubmit}
         onKeyDown={(e) => {
           if (e.key === "Enter" && !formik.isSubmitting) {
-            e.preventDefault(); // Prevent default form submission
+            e.preventDefault();
           }
         }}
       >
@@ -185,7 +230,14 @@ function ServiceGroupAdd() {
               <button
                 type="submit"
                 className="btn btn-button"
+                disabled={loadIndicator}
               >
+                {loadIndicator && (
+                  <span
+                    className="spinner-border spinner-border-sm me-2"
+                    aria-hidden="true"
+                  ></span>
+                )}
                 Save
               </button>
             </div>
@@ -216,8 +268,7 @@ function ServiceGroupAdd() {
                 <select
                   aria-label="Default select example"
                   className={`form-select ${
-                    formik.touched.order &&
-                    formik.errors.order
+                    formik.touched.order && formik.errors.order
                       ? "is-invalid"
                       : ""
                   }`}
@@ -230,12 +281,9 @@ function ServiceGroupAdd() {
                     </option>
                   ))}
                 </select>
-                {formik.touched.order &&
-                  formik.errors.order && (
-                    <div className="invalid-feedback">
-                      {formik.errors.order}
-                    </div>
-                  )}
+                {formik.touched.order && formik.errors.order && (
+                  <div className="invalid-feedback">{formik.errors.order}</div>
+                )}
               </div>
               <div className="col-md-6 col-12 mb-3">
                 <label className="form-label">
@@ -244,14 +292,16 @@ function ServiceGroupAdd() {
                 <input
                   type="text"
                   className={`form-control ${
-                    formik.touched.basicPrice && formik.errors.basicPrice
+                    formik.touched.base_price && formik.errors.base_price
                       ? "is-invalid"
                       : ""
                   }`}
-                  {...formik.getFieldProps("basicPrice")}
+                  {...formik.getFieldProps("base_price")}
                 />
-                {formik.touched.basicPrice && formik.errors.basicPrice && (
-                  <div className="invalid-feedback">{formik.errors.basicPrice}</div>
+                {formik.touched.base_price && formik.errors.base_price && (
+                  <div className="invalid-feedback">
+                    {formik.errors.base_price}
+                  </div>
                 )}
               </div>
               <div className="col-md-6 col-12 mb-3">
@@ -263,11 +313,11 @@ function ServiceGroupAdd() {
                   type="file"
                   accept=".png,.jpeg,.jpg,.svg,.webp"
                   className={`form-control ${
-                    formik.touched.icon && formik.errors.icon
+                    formik.touched.image && formik.errors.image
                       ? "is-invalid"
                       : ""
                   }`}
-                  name="icon"
+                  name="image"
                   onChange={handleFileChange}
                   onBlur={formik.handleBlur}
                 />
@@ -275,8 +325,8 @@ function ServiceGroupAdd() {
                   Note: Maximum file size is 2MB. Allowed: .png, .jpg, .jpeg,
                   .svg, .webp.
                 </p>
-                {formik.touched.icon && formik.errors.icon && (
-                  <div className="invalid-feedback">{formik.errors.icon}</div>
+                {formik.touched.image && formik.errors.image && (
+                  <div className="invalid-feedback">{formik.errors.image}</div>
                 )}
 
                 {showCropper && imageSrc && (

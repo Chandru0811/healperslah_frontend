@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import { Dialog, DialogActions, DialogTitle, Slide } from "@mui/material";
+import api from "../../config/URL";
+import PropTypes from "prop-types";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
@@ -20,8 +22,23 @@ function Delete({ path, onDeleteSuccess, onOpen }) {
     document.body.style.overflow = "";
   };
 
-  const handleDelete = () => {
-    handleCloseDialog();
+  const handleDelete = async () => {
+    try {
+      const response = await api.delete(path);
+      if (response.status === 200 || response.status === 201) {
+        toast.success(response.data.data.message);
+        onDeleteSuccess();
+        if (typeof onOpen === "function") onOpen();
+      }
+    } catch (error) {
+      if (error?.response?.status === 409) {
+        toast.warning(error?.response?.data?.message);
+      } else {
+        toast.error("An error occurred while deleting the record.");
+      }
+    } finally {
+      handleCloseDialog();
+    }
   };
 
   return (
@@ -29,16 +46,16 @@ function Delete({ path, onDeleteSuccess, onOpen }) {
       <p
         className="text-start mb-0"
         style={{ whiteSpace: "nowrap", width: "100%" }}
-        onClick={handleOpenDialog} // Open dialog
+        onClick={handleOpenDialog}
       >
         Delete
       </p>
 
       <Dialog
         open={deleteDialogOpen}
-        onClose={handleCloseDialog} // Close dialog and reset scroll
-        TransitionComponent={Transition} // Add Transition Component
-        keepMounted // Keep mounted for smoother transitions
+        onClose={handleCloseDialog} 
+        TransitionComponent={Transition} 
+        keepMounted 
         sx={{
           "& .MuiDialog-paper": {
             margin: "0 auto",
@@ -60,5 +77,11 @@ function Delete({ path, onDeleteSuccess, onOpen }) {
     </>
   );
 }
+
+Delete.propTypes = {
+  path: PropTypes.func.isRequired,
+  onSuccess: PropTypes.func.isRequired,
+  onOpen: PropTypes.func.isRequired,
+};
 
 export default Delete;

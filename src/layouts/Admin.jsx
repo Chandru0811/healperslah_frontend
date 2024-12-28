@@ -52,19 +52,19 @@ function Admin({ handleLogout }) {
                 <Route path="/servicegroup" element={<ServiceGroup />} />
                 <Route path="/servicegroup/add" element={<ServiceGroupAdd />} />
                 <Route
-                  path="/servicegroup/edit"
+                  path="/servicegroup/edit/:id"
                   element={<ServiceGroupEdit />}
                 />
                 <Route
-                  path="/servicegroup/view"
+                  path="/servicegroup/view/:id"
                   element={<ServiceGroupView />}
                 />
 
                 {/* Service */}
                 <Route path="/service" element={<Service />} />
                 <Route path="/service/add" element={<ServiceAdd />} />
-                <Route path="/service/edit" element={<ServiceEdit />} />
-                <Route path="/service/view" element={<ServiceView />} />
+                <Route path="/service/edit/:id" element={<ServiceEdit />} />
+                <Route path="/service/view/:id" element={<ServiceView />} />
 
                 {/* Subscription */}
                 <Route path="/subscription" element={<Subscription />} />

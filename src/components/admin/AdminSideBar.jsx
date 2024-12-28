@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import helperlogo from "../../assets/helperlah_logo_side.png";
-import { BsBagCheckFill, BsBarChartFill } from "react-icons/bs";
+import { BsBagCheckFill, BsBarChart, BsBarChartFill } from "react-icons/bs";
 import { BiLogOut, BiSolidPackage } from "react-icons/bi";
 import PropTypes from "prop-types";
-import { MdAssignmentInd, MdHomeRepairService, MdMiscellaneousServices, MdSubscriptions } from "react-icons/md";
+import { MdAssignmentInd, MdHomeRepairService, MdMiscellaneousServices, MdOutlineAssignmentInd, MdOutlineHomeRepairService, MdOutlineMiscellaneousServices, MdOutlineSubscriptions, MdSubscriptions } from "react-icons/md";
 import { TbPackages } from "react-icons/tb";
-import { FaUserCircle } from "react-icons/fa";
-import { PiContactlessPaymentFill } from "react-icons/pi";
+import { FaRegUserCircle, FaUserCircle } from "react-icons/fa";
+import { PiContactlessPayment, PiContactlessPaymentFill } from "react-icons/pi";
 import { RiSecurePaymentFill } from "react-icons/ri";
+import { IoBagCheckOutline } from "react-icons/io5";
 
 function AdminSideBar({ handleLogout }) {
   const navigate = useNavigate();
@@ -62,7 +63,7 @@ function AdminSideBar({ handleLogout }) {
                 style={{ borderRadius: "5px" }}
                 to="/dashboard"
               >
-                <BsBarChartFill className="sidebar_icon" />
+                <BsBarChart className="sidebar_icon" />
                 Dashboard
               </NavLink>
             </li>
@@ -72,7 +73,7 @@ function AdminSideBar({ handleLogout }) {
                 style={{ borderRadius: "5px" }}
                 to="/servicegroup"
               >
-                <MdHomeRepairService className="sidebar_icon" />
+                <MdOutlineHomeRepairService className="sidebar_icon" />
                 Service Group
               </NavLink>
             </li>
@@ -82,7 +83,7 @@ function AdminSideBar({ handleLogout }) {
                 style={{ borderRadius: "5px" }}
                 to="/service"
               >
-                <MdMiscellaneousServices className="sidebar_icon" />
+                <MdOutlineMiscellaneousServices className="sidebar_icon" />
                 Service
               </NavLink>
             </li>
@@ -92,7 +93,7 @@ function AdminSideBar({ handleLogout }) {
                 style={{ borderRadius: "5px" }}
                 to="/subscription"
               >
-                <MdSubscriptions className="sidebar_icon" />
+                <MdOutlineSubscriptions className="sidebar_icon" />
                 Subscription
               </NavLink>
             </li>
@@ -112,7 +113,7 @@ function AdminSideBar({ handleLogout }) {
                 style={{ borderRadius: "5px" }}
                 to="/user"
               >
-                <FaUserCircle className="sidebar_icon" />
+                <FaRegUserCircle className="sidebar_icon" />
                 User
               </NavLink>
             </li>
@@ -122,7 +123,7 @@ function AdminSideBar({ handleLogout }) {
                 style={{ borderRadius: "5px" }}
                 to="/order"
               >
-                <BsBagCheckFill className="sidebar_icon" />
+                <IoBagCheckOutline className="sidebar_icon" />
                 Orders
               </NavLink>
             </li>
@@ -132,7 +133,7 @@ function AdminSideBar({ handleLogout }) {
                 style={{ borderRadius: "5px" }}
                 to="/assignment"
               >
-                <MdAssignmentInd className="sidebar_icon" />
+                <MdOutlineAssignmentInd className="sidebar_icon" />
                 Service Assignments
               </NavLink>
             </li>
@@ -142,7 +143,7 @@ function AdminSideBar({ handleLogout }) {
                 style={{ borderRadius: "5px" }}
                 to="/payment"
               >
-                <PiContactlessPaymentFill className="sidebar_icon" />
+                <PiContactlessPayment className="sidebar_icon" />
                 Payment
               </NavLink>
             </li>
@@ -157,7 +158,7 @@ function AdminSideBar({ handleLogout }) {
               </NavLink>
             </li>
           </ul>
-          <div className="ps-4 mt-auto w-100 mb-4">
+          {/* <div className="ps-4 mt-auto w-100 mb-4">
             <div className="navbar-nav">
               <div className="nav-item">
                 <button
@@ -171,7 +172,7 @@ function AdminSideBar({ handleLogout }) {
                 </button>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </nav>

@@ -1,15 +1,25 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import Deactivate from "../../../components/common/Deactivate";
+import toast from "react-hot-toast";
+import api from "../../../config/URL";
+import ImageURL from "../../../config/ImageURL";
 
 function ServiceGroupView() {
-  const [data, setData] = useState({
-    name: "House Cleaning",
-    describtion: "Test",
-    image: "",
-    order: "100",
-    base_price: "500",
-  });
+  const { id } = useParams();
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const response = await api.get(`admin/serviceGroup/${id}`);
+        setData(response.data.data);
+      } catch (error) {
+        toast.error("Error Fetching Data", error);
+      }
+    };
+    getData();
+  }, [id]);
 
   return (
     <div className="container-fluid px-0">
@@ -89,7 +99,14 @@ function ServiceGroupView() {
                   <p className="fw-medium text-sm">Image</p>
                 </div>
                 <div className="col-6">
-                  <p className="text-muted text-sm">: {data.image}</p>
+                  <p className="text-muted text-sm">
+                    :{" "}
+                    <img
+                      src={`${ImageURL}${data.image}`}
+                      alt="Shop Logo"
+                      style={{ maxWidth: "100px", maxHeight: "100px" }}
+                    />
+                  </p>
                 </div>
               </div>
             </div>
@@ -100,7 +117,7 @@ function ServiceGroupView() {
                 </div>
                 <div className="col-6">
                   <p className="text-muted text-sm text-break ">
-                    : {data.describtion}
+                    : {data.description}
                   </p>
                 </div>
               </div>
