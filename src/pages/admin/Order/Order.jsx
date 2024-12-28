@@ -43,7 +43,7 @@ function Order() {
       end_date: "2024-12-13",
       duration: "2 hrs",
       booking_type: "Service Group",
-      payment_status: 1,
+      payment_status: 0,
       createdBy: "Admin",
       createdAt: "2024-12-15",
       updatedBy: "Admin",
@@ -64,15 +64,21 @@ function Order() {
         ),
       },
       {
-        accessorKey: "payment_status",
+        accessorKey: "status",
         enableHiding: false,
         header: "Status",
         Cell: ({ row }) => {
-          const status = row.original.status;
+          const status = row.original.payment_status;
           return status === 1 ? (
-            <span className="badge badges-Green fw-light">Active</span>
+            <div className="d-flex align-items-center">
+              <div className="active_dot"></div>
+              <span>Active</span>
+            </div>
           ) : status === 0 ? (
-            <span className="badge badges-orange fw-light">Inactive</span>
+            <div className="d-flex align-items-center">
+              <div className="inactive_dot"></div>
+              <span>Inactive</span>
+            </div>
           ) : null;
         },
       },
@@ -180,7 +186,7 @@ function Order() {
   const handleMenuClose = () => setMenuAnchor(null);
 
   return (
-    <div className="container-fluid px-2 mb-4 center">
+    <div className="container-fluid px-0 mb-4 center">
       <ol
         className="breadcrumb my-3"
         style={{ listStyle: "none", padding: 0, margin: 0 }}

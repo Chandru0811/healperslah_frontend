@@ -1,43 +1,62 @@
-import React, { useEffect, useRef, useState } from "react";
-import Button from "react-bootstrap/Button";
-import Modal from "react-bootstrap/Modal";
-import { FaTrash } from "react-icons/fa";
-import toast from "react-hot-toast";
-import api from "../../config/URL";
+import React, { useState, useEffect } from "react";
+import { Button } from "react-bootstrap";
+import { Dialog, DialogActions, DialogTitle, Slide } from "@mui/material";
 
-function Delete({ disabled }) {
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="down" ref={ref} {...props} />;
+});
+
+function Delete({ path, onDeleteSuccess, onOpen }) {
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+  const handleOpenDialog = () => {
+    setDeleteDialogOpen(true);
+    document.body.style.overflow = "hidden";
+  };
+
+  const handleCloseDialog = () => {
+    if (typeof onOpen === "function") onOpen();
+    setDeleteDialogOpen(false);
+    document.body.style.overflow = "";
+  };
+
+  const handleDelete = () => {
+    handleCloseDialog();
+  };
 
   return (
     <>
-      <button
-        className="button-btn btn-sm m-2"
-        onClick={handleShow}
-        disabled={disabled}
+      <p
+        className="text-start mb-0"
+        style={{ whiteSpace: "nowrap", width: "100%" }}
+        onClick={handleOpenDialog} // Open dialog
       >
         Delete
-      </button>
+      </p>
 
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Delete</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>Are you sure you want to delete this item?</Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={handleCloseDialog} // Close dialog and reset scroll
+        TransitionComponent={Transition} // Add Transition Component
+        keepMounted // Keep mounted for smoother transitions
+        sx={{
+          "& .MuiDialog-paper": {
+            margin: "0 auto",
+            top: "10%",
+            position: "absolute",
+          },
+        }}
+      >
+        <DialogTitle>Are you sure you want to delete this record?</DialogTitle>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} className="btn btn-secondary btn-sm">
+            Cancel
           </Button>
-          <Button
-            variant="danger"
-            onClick={handelDelete}
-            className={show ? "focused-button" : ""}
-          >
+          <Button onClick={handleDelete} className="btn btn-button">
             Delete
           </Button>
-        </Modal.Footer>
-      </Modal>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

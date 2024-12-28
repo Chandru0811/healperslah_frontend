@@ -36,7 +36,7 @@ function PaymentEdit() {
   });
 
   return (
-    <div className="container-fluid">
+    <div className="container-fluid px-0">
       <ol
         className="breadcrumb my-3 px-2"
         style={{ listStyle: "none", padding: 0, margin: 0 }}
@@ -65,7 +65,7 @@ function PaymentEdit() {
           }
         }}
       >
-        <div className="card">
+        <div className="card vh-100">
           <div className="d-flex justify-content-between align-items-center card_header p-1 mb-4 px-4">
             <div class="d-flex align-items-center">
               <div class="d-flex">

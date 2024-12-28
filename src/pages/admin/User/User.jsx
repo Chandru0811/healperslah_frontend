@@ -139,7 +139,7 @@ function User() {
   const handleMenuClose = () => setMenuAnchor(null);
 
   return (
-    <div className="container-fluid px-2 mb-4 center">
+    <div className="container-fluid px-0 mb-4 center">
       <ol
         className="breadcrumb my-3"
         style={{ listStyle: "none", padding: 0, margin: 0 }}

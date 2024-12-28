@@ -138,7 +138,7 @@ function ServiceGroupAdd() {
   };
 
   return (
-    <div className="container-fluid">
+    <div className="container-fluid px-0">
       <ol
         className="breadcrumb my-3 px-2"
         style={{ listStyle: "none", padding: 0, margin: 0 }}
@@ -184,9 +184,9 @@ function ServiceGroupAdd() {
               &nbsp;&nbsp;
               <button
                 type="submit"
-                className="btn btn-button btn-sm"
+                className="btn btn-button"
               >
-                <span className="fw-medium">Save</span>
+                Save
               </button>
             </div>
           </div>
@@ -299,7 +299,7 @@ function ServiceGroupAdd() {
                   <div className="d-flex justify-content-start mt-3 gap-2">
                     <button
                       type="button"
-                      className="btn btn-primary mt-3"
+                      className="btn btn-button mt-3"
                       onClick={handleCropSave}
                     >
                       Save Cropped Image

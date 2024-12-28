@@ -139,7 +139,7 @@ function ServiceAdd() {
   };
 
   return (
-    <div className="container-fluid">
+    <div className="container-fluid px-0">
       <ol
         className="breadcrumb my-3 px-2"
         style={{ listStyle: "none", padding: 0, margin: 0 }}
@@ -185,9 +185,9 @@ function ServiceAdd() {
               &nbsp;&nbsp;
               <button
                 type="submit"
-                className="btn btn-button btn-sm"
+                className="btn btn-button"
               >
-                <span className="fw-medium">Save</span>
+                Save
               </button>
             </div>
           </div>

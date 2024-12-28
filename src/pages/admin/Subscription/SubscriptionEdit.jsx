@@ -57,7 +57,7 @@ function SubscriptionEdit() {
   });
 
   return (
-    <div className="container-fluid">
+    <div className="container-fluid px-0">
       <ol
         className="breadcrumb my-3 px-2"
         style={{ listStyle: "none", padding: 0, margin: 0 }}

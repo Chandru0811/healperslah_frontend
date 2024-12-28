@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import Deactivate from "../../../components/common/Deactivate";
 
 function ServiceView() {
   const [data, setData] = useState({
@@ -12,7 +13,7 @@ function ServiceView() {
   });
 
   return (
-    <div className="container-fluid">
+    <div className="container-fluid px-0">
       <ol
         className="breadcrumb my-2 px-2"
         style={{ listStyle: "none", padding: 0, margin: 0 }}
@@ -33,11 +34,8 @@ function ServiceView() {
           &nbsp;Service View
         </li>
       </ol>
-      <div className="card" style={{ border: "1px solid #dbd9d0" }}>
-        <div
-          className="d-flex px-4 justify-content-between align-items-center p-1 mb-4"
-          style={{ background: "#f5f7f9" }}
-        >
+      <div className="card vh-100" style={{ border: "1px solid #dbd9d0" }}>
+        <div className="d-flex px-4 justify-content-between align-items-center card_header p-1 mb-4">
           <div class="d-flex align-items-center">
             <div class="d-flex">
               <div class="dot active"></div>
@@ -51,9 +49,7 @@ function ServiceView() {
               </button>
             </Link>
             &nbsp;&nbsp;
-            <button type="button " className="btn btn-sm btn-border">
-              Activate
-            </button>
+            <Deactivate />
           </div>
         </div>
         <div className="container-fluid px-4">
@@ -61,17 +57,19 @@ function ServiceView() {
             <div className="col-md-6 col-12 my-2">
               <div className="row">
                 <div className="col-6">
-                  <p className="fw-medium">Service Group Id</p>
+                  <p className="fw-medium text-sm">Service Group Id</p>
                 </div>
                 <div className="col-6">
-                  <p className="text-muted text-sm">: {data.service_group_id}</p>
+                  <p className="text-muted text-sm">
+                    : {data.service_group_id}
+                  </p>
                 </div>
               </div>
             </div>
             <div className="col-md-6 col-12 my-2">
               <div className="row">
                 <div className="col-6">
-                  <p className="fw-medium">Name</p>
+                  <p className="fw-medium text-sm">Name</p>
                 </div>
                 <div className="col-6">
                   <p className="text-muted text-sm">: {data.name}</p>
@@ -81,7 +79,7 @@ function ServiceView() {
             <div className="col-md-6 col-12 my-2">
               <div className="row">
                 <div className="col-6">
-                  <p className="fw-medium">Order</p>
+                  <p className="fw-medium text-sm">Order</p>
                 </div>
                 <div className="col-6">
                   <p className="text-muted text-sm">: {data.order}</p>
@@ -91,7 +89,7 @@ function ServiceView() {
             <div className="col-md-6 col-12 my-2">
               <div className="row">
                 <div className="col-6">
-                  <p className="fw-medium">Best Price</p>
+                  <p className="fw-medium text-sm">Best Price</p>
                 </div>
                 <div className="col-6">
                   <p className="text-muted text-sm">: {data.base_price}</p>
@@ -101,7 +99,7 @@ function ServiceView() {
             <div className="col-md-6 col-12 my-2">
               <div className="row">
                 <div className="col-6">
-                  <p className="fw-medium">Image</p>
+                  <p className="fw-medium text-sm">Image</p>
                 </div>
                 <div className="col-6">
                   <p className="text-muted text-sm">: {data.image}</p>
@@ -111,7 +109,7 @@ function ServiceView() {
             <div className="col-md-6 col-12 my-2">
               <div className="row">
                 <div className="col-6">
-                  <p className="fw-medium">Description</p>
+                  <p className="fw-medium text-sm">Description</p>
                 </div>
                 <div className="col-6">
                   <p className="text-muted text-sm text-break ">

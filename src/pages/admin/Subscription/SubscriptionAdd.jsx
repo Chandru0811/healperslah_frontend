@@ -64,7 +64,7 @@ function SubscriptionAdd() {
   });
 
   return (
-    <div className="container-fluid">
+    <div className="container-fluid px-0">
       <ol
         className="breadcrumb my-3 px-2"
         style={{ listStyle: "none", padding: 0, margin: 0 }}
@@ -108,8 +108,11 @@ function SubscriptionAdd() {
                 </button>
               </Link>
               &nbsp;&nbsp;
-              <button type="submit" className="btn btn-button btn-sm">
-                <span className="fw-medium">Save</span>
+              <button
+                type="submit"
+                className="btn btn-button"
+              >
+                Save
               </button>
             </div>
           </div>

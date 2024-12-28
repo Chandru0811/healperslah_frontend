@@ -24,7 +24,7 @@ function Payment() {
       amount_paid: "150.5",
       balance_amount: "0",
       total_amount: "150.5",
-      payment_status: 2,
+      payment_status: 1,
       createdBy: "Admin",
       createdAt: "2024-12-15",
       updatedBy: "Admin",
@@ -39,7 +39,7 @@ function Payment() {
       amount_paid: "200",
       balance_amount: "0",
       total_amount: "200",
-      payment_status: 2,
+      payment_status: 0,
       createdBy: "Admin",
       createdAt: "2024-12-15",
       updatedBy: "Admin",
@@ -82,11 +82,17 @@ function Payment() {
         enableHiding: false,
         header: "Status",
         Cell: ({ row }) => {
-          const status = row.original.status;
-          return status === "Active" ? (
-            <span className="badge badges-Green fw-light">Active</span>
-          ) : status === "Inactive" ? (
-            <span className="badge badges-orange fw-light">Inactive</span>
+          const status = row.original.payment_status;
+          return status === 1 ? (
+            <div className="d-flex align-items-center">
+              <div className="active_dot"></div>
+              <span>Active</span>
+            </div>
+          ) : status === 0 ? (
+            <div className="d-flex align-items-center">
+              <div className="inactive_dot"></div>
+              <span>Inactive</span>
+            </div>
           ) : null;
         },
       },
@@ -189,7 +195,7 @@ function Payment() {
   const handleMenuClose = () => setMenuAnchor(null);
 
   return (
-    <div className="container-fluid px-2 mb-4 center">
+    <div className="container-fluid px-0 mb-4 center">
       <ol
         className="breadcrumb my-3"
         style={{ listStyle: "none", padding: 0, margin: 0 }}

@@ -57,7 +57,7 @@ function CustomPackageEdit() {
   });
 
   return (
-    <div className="container-fluid">
+    <div className="container-fluid px-0">
       <ol
         className="breadcrumb my-3 px-2"
         style={{ listStyle: "none", padding: 0, margin: 0 }}
@@ -69,7 +69,7 @@ function CustomPackageEdit() {
           <span className="breadcrumb-separator"> &gt; </span>
         </li>
         <li>
-          <Link to="/subscription" className="custom-breadcrumb">
+          <Link to="/custompackage" className="custom-breadcrumb">
             &nbsp;Custom Package
           </Link>
           <span className="breadcrumb-separator"> &gt; </span>
@@ -95,7 +95,7 @@ function CustomPackageEdit() {
               <span class="me-2 text-muted">Edit Custom Package</span>
             </div>
             <div className="my-2 pe-3 d-flex align-items-center">
-              <Link to="/subscription">
+              <Link to="/custompackage">
                 <button type="button " className="btn btn-sm btn-border">
                   Back
                 </button>

@@ -9,9 +9,11 @@ import {
   MenuItem,
   IconButton,
 } from "@mui/material";
+import Delete from "../../../components/common/Delete";
 
 function ServiceAssignment() {
   const [menuAnchor, setMenuAnchor] = useState(null);
+  const [selectedId, setSelectedId] = useState(null);
   const navigate = useNavigate();
 
   const data = [
@@ -33,7 +35,7 @@ function ServiceAssignment() {
       company_id: 1,
       helper_id: 1,
       assigned_at: "2024-12-17 13:06:38",
-      status: "Assigned",
+      status: "Notassigned",
       createdBy: "Admin",
       createdAt: "2024-12-15",
       updatedBy: "Admin",
@@ -78,9 +80,15 @@ function ServiceAssignment() {
         Cell: ({ row }) => {
           const status = row.original.status;
           return status === "Assigned" ? (
-            <span className="badge badges-Green fw-light">Assigned</span>
-          ) : status === "Hold" ? (
-            <span className="badge badges-orange fw-light">Hold</span>
+            <div className="d-flex align-items-center">
+              <div className="active_dot"></div>
+              <span>Assigned</span>
+            </div>
+          ) : status === "Notassigned" ? (
+            <div className="d-flex align-items-center">
+              <div className="inactive_dot"></div>
+              <span>Not Assigned</span>
+            </div>
           ) : null;
         },
       },
@@ -169,7 +177,7 @@ function ServiceAssignment() {
   const handleMenuClose = () => setMenuAnchor(null);
 
   return (
-    <div className="container-fluid px-2 mb-4 center">
+    <div className="container-fluid px-0 mb-4 center">
       <ol
         className="breadcrumb my-3"
         style={{ listStyle: "none", padding: 0, margin: 0 }}
@@ -228,12 +236,12 @@ function ServiceAssignment() {
               <MenuItem onClick={() => navigate(`/assignment/edit`)}>
                 Edit
               </MenuItem>
-              {/* <MenuItem>
+              <MenuItem>
                 <Delete
                   path={`/deleteCenter/${selectedId}`}
                   onOpen={handleMenuClose}
                 />
-              </MenuItem> */}
+              </MenuItem>
             </Menu>
           </>
       </div>

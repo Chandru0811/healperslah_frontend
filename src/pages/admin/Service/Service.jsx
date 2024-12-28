@@ -12,7 +12,7 @@ import {
 import Delete from "../../../components/common/Delete";
 
 function Service() {
-  const [loading, setLoading] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
   const [menuAnchor, setMenuAnchor] = useState(null);
   const navigate = useNavigate();
 
@@ -33,7 +33,7 @@ function Service() {
       id: 2,
       service_group_id: "2",
       name: "House Clearning",
-      status: "Active",
+      status: "Inactive",
       order: "HLP101",
       best_price: "1500",
       createdBy: "Admin",
@@ -73,6 +73,25 @@ function Service() {
           </IconButton>
         ),
       },
+      {
+        accessorKey: "status",
+        enableHiding: false,
+        header: "Status",
+        Cell: ({ row }) => {
+          const status = row.original.status;
+          return status === "Active" ? (
+            <div className="d-flex align-items-center">
+              <div className="active_dot"></div>
+              <span>Active</span>
+            </div>
+          ) : status === "Inactive" ? (
+            <div className="d-flex align-items-center">
+              <div className="inactive_dot"></div>
+              <span>Inactive</span>
+            </div>
+          ) : null;
+        },
+      },
       { accessorKey: "service_group_id", enableHiding: false, header: "Service Group Id" },
       { accessorKey: "name", enableHiding: false, header: "Name" },
       {
@@ -85,19 +104,6 @@ function Service() {
         header: "Best Price",
         enableHiding: false,
         size: 40,
-      },
-      {
-        accessorKey: "status",
-        enableHiding: false,
-        header: "Status",
-        Cell: ({ row }) => {
-          const status = row.original.status;
-          return status === "Active" ? (
-            <span className="badge badges-Green fw-light">Active</span>
-          ) : status === "Inactive" ? (
-            <span className="badge badges-orange fw-light">Inactive</span>
-          ) : null;
-        },
       },
       { accessorKey: "createdBy", header: "Created By" },
       {
@@ -165,7 +171,7 @@ function Service() {
   const handleMenuClose = () => setMenuAnchor(null);
 
   return (
-    <div className="container-fluid px-2 mb-4 center">
+    <div className="container-fluid px-0 mb-4 center">
       <ol
         className="breadcrumb my-3"
         style={{ listStyle: "none", padding: 0, margin: 0 }}
@@ -203,17 +209,6 @@ function Service() {
             </button>
           </Link>
         </div>
-        {loading ? (
-          <div className="loader-container">
-            <div className="loading">
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-          </div>
-        ) : (
           <>
             <ThemeProvider theme={theme}>
               <MaterialReactTable
@@ -246,15 +241,14 @@ function Service() {
               <MenuItem onClick={() => navigate(`/service/edit`)}>
                 Edit
               </MenuItem>
-              {/* <MenuItem>
+              <MenuItem>
                 <Delete
                   path={`/deleteCenter/${selectedId}`}
                   onOpen={handleMenuClose}
                 />
-              </MenuItem> */}
+              </MenuItem>
             </Menu>
           </>
-        )}
       </div>
     </div>
   );

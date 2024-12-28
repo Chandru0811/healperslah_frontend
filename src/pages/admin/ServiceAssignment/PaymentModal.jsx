@@ -225,10 +225,10 @@ function PaymentModal() {
           </form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
+          <Button className="btn btn-secondary btn-sm" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="primary" type="submit" onClick={formik.handleSubmit}>
+          <Button className="btn btn-button" type="submit" onClick={formik.handleSubmit}>
             Submit
           </Button>
         </Modal.Footer>

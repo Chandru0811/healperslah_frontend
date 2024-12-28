@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import {
   Dialog,
@@ -12,33 +12,33 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
 });
 
-function App() {
-  const [isActive, setIsActive] = useState(false); // Tracks whether Activate or Deactivate button is shown
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false); // Tracks modal visibility
+function Deactivate({ path, onDeleteSuccess, onOpen }) {
+  const [isActive, setIsActive] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const handleActivate = () => {
-    setIsActive(true); // Show the Deactivate button
+    setIsActive(true);
   };
 
   const handleOpenDialog = () => {
-    setDeleteDialogOpen(true); // Open the modal
+    setDeleteDialogOpen(true);
     document.body.style.overflow = "hidden";
   };
 
   const handleCloseDialog = () => {
-    setDeleteDialogOpen(false); // Close the modal
+    if (typeof onOpen === "function") onOpen();
+    setDeleteDialogOpen(false);
     document.body.style.overflow = "";
   };
 
   const handleDeactivateConfirm = () => {
-    setIsActive(false); // Switch back to Activate button
-    handleCloseDialog(); // Close the modal
+    setIsActive(false); 
+    handleCloseDialog();
   };
 
   return (
-    <div>
+    <>
       {!isActive ? (
-        // Activate Button
         <button
           type="button"
           className="btn btn-success btn-sm"
@@ -47,7 +47,6 @@ function App() {
           Activate
         </button>
       ) : (
-        // Deactivate Button
         <button
           type="button"
           className="btn btn-danger btn-sm"
@@ -57,7 +56,6 @@ function App() {
         </button>
       )}
 
-      {/* Modal */}
       <Dialog
         open={deleteDialogOpen}
         onClose={handleCloseDialog}
@@ -76,16 +74,16 @@ function App() {
           Are you sure you want to deactivate this Service Group?
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog} variant="outline-secondary">
+          <Button onClick={handleCloseDialog} className="btn btn-secondary btn-sm">
             Cancel
           </Button>
-          <Button onClick={handleDeactivateConfirm} variant="danger">
+          <Button onClick={handleDeactivateConfirm} className="btn btn-button">
             Deactivate
           </Button>
         </DialogActions>
       </Dialog>
-    </div>
+    </>
   );
 }
 
-export default App;
+export default Deactivate;

@@ -9,9 +9,11 @@ import {
   MenuItem,
   IconButton,
 } from "@mui/material";
+import Delete from "../../../components/common/Delete";
 
 function ServiceGroup() {
   const [menuAnchor, setMenuAnchor] = useState(null);
+  const [selectedId, setSelectedId] = useState(null);
   const navigate = useNavigate();
 
   const data = [
@@ -69,6 +71,25 @@ function ServiceGroup() {
           </IconButton>
         ),
       },
+      {
+        accessorKey: "status",
+        enableHiding: false,
+        header: "Status",
+        Cell: ({ row }) => {
+          const status = row.original.status;
+          return status === "Active" ? (
+            <div className="d-flex align-items-center">
+              <div className="active_dot"></div>
+              <span>Active</span>
+            </div>
+          ) : status === "Inactive" ? (
+            <div className="d-flex align-items-center">
+              <div className="inactive_dot"></div>
+              <span>Inactive</span>
+            </div>
+          ) : null;
+        },
+      },
       { accessorKey: "name", enableHiding: false, header: "Name" },
       {
         accessorKey: "order",
@@ -80,19 +101,6 @@ function ServiceGroup() {
         header: "Best Price",
         enableHiding: false,
         size: 40,
-      },
-      {
-        accessorKey: "status",
-        enableHiding: false,
-        header: "Status",
-        Cell: ({ row }) => {
-          const status = row.original.status;
-          return status === "Active" ? (
-            <span className="badge badges-Green fw-light">Active</span>
-          ) : status === "Inactive" ? (
-            <span className="badge badges-orange fw-light">Inactive</span>
-          ) : null;
-        },
       },
       { accessorKey: "createdBy", header: "Created By" },
       {
@@ -160,7 +168,7 @@ function ServiceGroup() {
   const handleMenuClose = () => setMenuAnchor(null);
 
   return (
-    <div className="container-fluid px-2 mb-4 center">
+    <div className="container-fluid mb-4 px-0">
       <ol
         className="breadcrumb my-3"
         style={{ listStyle: "none", padding: 0, margin: 0 }}
@@ -176,7 +184,7 @@ function ServiceGroup() {
         </li>
       </ol>
       <div className="card">
-        <div className="mb-3 d-flex justify-content-between align-items-center card_header p-1">
+        <div className="d-flex justify-content-between align-items-center card_header mb-3 p-1">
           <div className="d-flex align-items-center">
             <div className="d-flex">
               <div className="dot active"></div>
@@ -198,46 +206,46 @@ function ServiceGroup() {
             </button>
           </Link>
         </div>
-          <>
-            <ThemeProvider theme={theme}>
-              <MaterialReactTable
-                columns={columns}
-                data={data}
-                enableColumnActions={false}
-                enableColumnFilters={false}
-                enableDensityToggle={false}
-                enableFullScreenToggle={false}
-                initialState={{
-                  columnVisibility: {
-                    createdBy: false,
-                    createdAt: false,
-                    updatedBy: false,
-                    updatedAt: false,
-                  },
-                }}
-                muiTableBodyRowProps={({ row }) => ({
-                  onClick: () => navigate(`/servicegroup/view`),
-                  style: { cursor: "pointer" },
-                })}
+        <>
+          <ThemeProvider theme={theme}>
+            <MaterialReactTable
+              columns={columns}
+              data={data}
+              enableColumnActions={false}
+              enableColumnFilters={false}
+              enableDensityToggle={false}
+              enableFullScreenToggle={false}
+              initialState={{
+                columnVisibility: {
+                  createdBy: false,
+                  createdAt: false,
+                  updatedBy: false,
+                  updatedAt: false,
+                },
+              }}
+              muiTableBodyRowProps={({ row }) => ({
+                onClick: () => navigate(`/servicegroup/view`),
+                style: { cursor: "pointer" },
+              })}
+            />
+          </ThemeProvider>
+          <Menu
+            id="action-menu"
+            anchorEl={menuAnchor}
+            open={Boolean(menuAnchor)}
+            onClose={handleMenuClose}
+          >
+            <MenuItem onClick={() => navigate(`/servicegroup/edit`)}>
+              Edit
+            </MenuItem>
+            <MenuItem>
+              <Delete
+                path={`/deleteServiceGroup/${selectedId}`}
+                onOpen={handleMenuClose}
               />
-            </ThemeProvider>
-            <Menu
-              id="action-menu"
-              anchorEl={menuAnchor}
-              open={Boolean(menuAnchor)}
-              onClose={handleMenuClose}
-            >
-              <MenuItem onClick={() => navigate(`/servicegroup/edit`)}>
-                Edit
-              </MenuItem>
-              {/* <MenuItem>
-                <Delete
-                  path={`/deleteCenter/${selectedId}`}
-                  onOpen={handleMenuClose}
-                />
-              </MenuItem> */}
-            </Menu>
-          </>
+            </MenuItem>
+          </Menu>
+        </>
       </div>
     </div>
   );

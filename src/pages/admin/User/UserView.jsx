@@ -13,7 +13,7 @@ function UserView() {
   });
 
   return (
-    <div className="container-fluid">
+    <div className="container-fluid px-0">
       <ol
         className="breadcrumb my-2 px-2"
         style={{ listStyle: "none", padding: 0, margin: 0 }}
@@ -34,7 +34,7 @@ function UserView() {
           &nbsp;User View
         </li>
       </ol>
-      <div className="card" style={{ border: "1px solid #dbd9d0" }}>
+      <div className="card vh-100" style={{ border: "1px solid #dbd9d0" }}>
         <div
           className="d-flex px-4 justify-content-between align-items-center p-1 mb-4"
           style={{ background: "#f5f7f9" }}

@@ -129,7 +129,7 @@
 
 .btn-button {
   color: #fff;
-  padding: 0.3rem 0.6rem;
+  padding: 0.4rem 0.8rem;
   font-weight: 400;
   background-color: #e10064;
   border-color: #e10064;
@@ -186,6 +186,22 @@
   background-color: #e10064;
   border-color: #e10064;
   color: #fff;
+}
+
+.active_dot {
+  width: 10px;
+  height: 10px;
+  margin: 0 5px;
+  border-radius: 50%;
+  background-color: #287f71;
+}
+
+.inactive_dot {
+  width: 10px;
+  height: 10px;
+  margin: 0 5px;
+  border-radius: 50%;
+  background-color: red;
 }
 
 /*===== Table End =====  */

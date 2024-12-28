@@ -11,9 +11,11 @@ import {
 } from "@mui/material";
 import PaymentTypeAdd from "./PaymentTypeAdd";
 import PaymentTypeEdit from "./PaymentTypeEdit";
+import Delete from "../../../components/common/Delete";
 
 function PaymentType() {
   const [menuAnchor, setMenuAnchor] = useState(null);
+  const [selectedId, setSelectedId] = useState(null);
   const navigate = useNavigate();
 
   const data = [
@@ -134,7 +136,7 @@ function PaymentType() {
   const handleMenuClose = () => setMenuAnchor(null);
 
   return (
-    <div className="container-fluid px-2 mb-4 center">
+    <div className="container-fluid px-0 mb-4 center">
       <ol
         className="breadcrumb my-3"
         style={{ listStyle: "none", padding: 0, margin: 0 }}
@@ -194,12 +196,12 @@ function PaymentType() {
             <MenuItem>
               <PaymentTypeEdit />
             </MenuItem>
-            {/* <MenuItem>
+            <MenuItem>
                 <Delete
                   path={`/deleteCenter/${selectedId}`}
                   onOpen={handleMenuClose}
                 />
-              </MenuItem> */}
+              </MenuItem>
           </Menu>
         </>
       </div>

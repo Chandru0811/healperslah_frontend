@@ -125,7 +125,7 @@ function PaymentTypeEdit() {
             </Button>
             <button
               type="submit"
-              className="btn btn-button btn-sm"
+              className="btn btn-button"
               disabled={loadIndicator}
             >
               {loadIndicator && (

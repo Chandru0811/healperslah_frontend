@@ -9,9 +9,11 @@ import {
   MenuItem,
   IconButton,
 } from "@mui/material";
+import Delete from "../../../components/common/Delete";
 
 function CustomPackage() {
   const [menuAnchor, setMenuAnchor] = useState(null);
+  const [selectedId, setSelectedId] = useState(null);
   const navigate = useNavigate();
 
   const data = [
@@ -42,7 +44,7 @@ function CustomPackage() {
       description: "Test 1",
       start_date: "2025-01-16",
       end_date: "2025-01-30",
-      status: 2,
+      status: 0,
       recurrence: "Weekly",
       property_type: "Raw land",
       property_size: "100sqm",
@@ -94,9 +96,15 @@ function CustomPackage() {
         Cell: ({ row }) => {
           const status = row.original.status;
           return status === 1 ? (
-            <span className="badge badges-Green fw-light">Active</span>
+            <div className="d-flex align-items-center">
+              <div className="active_dot"></div>
+              <span>Active</span>
+            </div>
           ) : status === 0 ? (
-            <span className="badge badges-orange fw-light">Inactive</span>
+            <div className="d-flex align-items-center">
+              <div className="inactive_dot"></div>
+              <span>Inactive</span>
+            </div>
           ) : null;
         },
       },
@@ -196,7 +204,7 @@ function CustomPackage() {
   const handleMenuClose = () => setMenuAnchor(null);
 
   return (
-    <div className="container-fluid px-2 mb-4 center">
+    <div className="container-fluid px-0 mb-4 center">
       <ol
         className="breadcrumb my-3"
         style={{ listStyle: "none", padding: 0, margin: 0 }}
@@ -258,12 +266,12 @@ function CustomPackage() {
               <MenuItem onClick={() => navigate(`/custompackage/edit`)}>
                 Edit
               </MenuItem>
-              {/* <MenuItem>
+              <MenuItem>
                 <Delete
                   path={`/deleteCenter/${selectedId}`}
                   onOpen={handleMenuClose}
                 />
-              </MenuItem> */}
+              </MenuItem>
             </Menu>
           </>
       </div>

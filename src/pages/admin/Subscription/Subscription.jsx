@@ -9,9 +9,11 @@ import {
   MenuItem,
   IconButton,
 } from "@mui/material";
+import Delete from "../../../components/common/Delete";
 
 function Subscription() {
   const [menuAnchor, setMenuAnchor] = useState(null);
+  const [selectedId, setSelectedId] = useState(null);
   const navigate = useNavigate();
 
   const data = [
@@ -100,19 +102,6 @@ function Subscription() {
         enableHiding: false,
         size: 40,
       },
-      {
-        accessorKey: "status",
-        enableHiding: false,
-        header: "Status",
-        Cell: ({ row }) => {
-          const status = row.original.status;
-          return status === "Active" ? (
-            <span className="badge badges-Green fw-light">Active</span>
-          ) : status === "Inactive" ? (
-            <span className="badge badges-orange fw-light">Inactive</span>
-          ) : null;
-        },
-      },
       { accessorKey: "createdBy", header: "Created By" },
       {
         accessorKey: "createdAt",
@@ -179,7 +168,7 @@ function Subscription() {
   const handleMenuClose = () => setMenuAnchor(null);
 
   return (
-    <div className="container-fluid px-2 mb-4 center">
+    <div className="container-fluid px-0 mb-4 center">
       <ol
         className="breadcrumb my-3"
         style={{ listStyle: "none", padding: 0, margin: 0 }}
@@ -249,12 +238,12 @@ function Subscription() {
               <MenuItem onClick={() => navigate(`/subscription/edit`)}>
                 Edit
               </MenuItem>
-              {/* <MenuItem>
+              <MenuItem>
                 <Delete
                   path={`/deleteCenter/${selectedId}`}
                   onOpen={handleMenuClose}
                 />
-              </MenuItem> */}
+              </MenuItem>
             </Menu>
           </>
       </div>
