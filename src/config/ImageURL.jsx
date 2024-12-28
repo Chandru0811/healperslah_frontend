@@ -1,7 +1,3 @@
-function ImageURL() {
-  return (
-    <div>ImageURL</div>
-  )
-}
+const ImageURL = "https://sgitjobs.com/helperslah/";
 
-export default ImageURL
+export default ImageURL;

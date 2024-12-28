@@ -1,20 +1,22 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import headerlogo from "../../assets/Helperlah Logo.png";
 import "../../styles/custom.css";
+import api from "../../config/URL";
+import PropTypes from "prop-types";
+import toast from "react-hot-toast";
+import { FiAlertTriangle } from "react-icons/fi";
 
 function Login({ loginAsVendor, loginAsAdmin }) {
   const [showPassword, setShowPassword] = useState(false);
   const [loadIndicator, setLoadIndicator] = useState(false);
-
+  const navigate = useNavigate();
   const validationSchema = Yup.object({
-    email: Yup.string()
-      .email("Invalid email address")
-      .required("Email is required"),
+    email_or_mobile: Yup.string().required("Email or Mobile is required"),
     password: Yup.string()
       .required("Password is required")
       .max(8, "Password must not exceed 8 characters")
@@ -23,23 +25,81 @@ function Login({ loginAsVendor, loginAsAdmin }) {
 
   const formik = useFormik({
     initialValues: {
-      email: "",
+      email_or_mobile: "",
       password: "",
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
-      if (
-        values.email === "admin@gmail.com" &&
-        values.password === "12345678"
-      ) {
-        loginAsAdmin();
-      } else if (
-        values.email === "vendor@gmail.com" &&
-        values.password === "12345678"
-      ) {
-        loginAsVendor();
-      } else {
-        alert("Invalid credentials. Please try again.");
+      try {
+        setLoadIndicator(true);
+        let payload;
+        if (
+          values.email_or_mobile === "admin@gmail.com" ||
+          values.email_or_mobile === "8976543210"
+        ) {
+          payload = { ...values, role: "1" };
+        } else {
+          payload = { ...values, role: "2" };
+        }
+        const response = await api.post(`login`, payload);
+        if (response.status === 200) {
+          toast.success(response.data.message);
+
+          localStorage.setItem("helperlah_token", response.data.data.token);
+          localStorage.setItem(
+            "helperlah_name",
+            response.data.data.userDetails.name
+          );
+          localStorage.setItem(
+            "helperlah_id",
+            response.data.data.userDetails.id
+          );
+          localStorage.setItem(
+            "helperlah_email",
+            response.data.data.userDetails.email
+          );
+          localStorage.setItem(
+            "helperlah_role",
+            response.data.data.userDetails.role
+          );
+          localStorage.setItem(
+            "helperlah_mobile",
+            response.data.data.userDetails.mobile
+          );
+
+          if (response.data.data.userDetails.role === "1") {
+            loginAsAdmin();
+          } else if (response.data.data.userDetails.role === "2") {
+            navigate("/");
+            loginAsVendor();
+          } else {
+            toast(
+              "Oops! You don't have access to this page, but feel free to check out our amazing website! 😊",
+              {
+                icon: "😊",
+              }
+            );
+            setTimeout(() => {
+              window.location.href = "https://ecsaio.com";
+            }, 5000);
+          }
+        } else {
+          toast.error(response.data.message);
+        }
+      } catch (error) {
+        if (error.response.status === 400) {
+          const errorMessage = error.response.data.message;
+          if (errorMessage) {
+            toast(errorMessage, {
+              icon: <FiAlertTriangle className="text-warning" />,
+            });
+          }
+        } else {
+          console.error("API Error", error);
+          toast.error("An unexpected error occurred.");
+        }
+      } finally {
+        setLoadIndicator(false);
       }
     },
   });
@@ -47,14 +107,6 @@ function Login({ loginAsVendor, loginAsAdmin }) {
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
-
-  // const loginAsAdmin = () => {
-  //   navigate("/admin"); 
-  // };
-
-  // const loginAsVendor = () => {
-  //   navigate("/vendor"); 
-  // };
 
   return (
     <div className="container-fluid m-0" style={{ backgroundColor: "#fcfcfc" }}>
@@ -82,16 +134,20 @@ function Login({ loginAsVendor, loginAsAdmin }) {
           </div>
           <Form onSubmit={formik.handleSubmit}>
             <Form.Group controlId="formEmail" className="mb-3 pt-4">
-              <Form.Label>Email Address</Form.Label>
+              <Form.Label>Email or Mobile</Form.Label>
               <Form.Control
-                type="email"
-                placeholder="Enter email"
-                {...formik.getFieldProps("email")}
-                isInvalid={formik.touched.email && formik.errors.email}
+                type="text"
+                placeholder="Enter email or mobile number"
+                {...formik.getFieldProps("email_or_mobile")}
+                isInvalid={
+                  formik.touched.email_or_mobile &&
+                  formik.errors.email_or_mobile
+                }
               />
-              {formik.touched.email && formik.errors.email ? (
+              {formik.touched.email_or_mobile &&
+              formik.errors.email_or_mobile ? (
                 <Form.Control.Feedback type="invalid">
-                  {formik.errors.email}
+                  {formik.errors.email_or_mobile}
                 </Form.Control.Feedback>
               ) : null}
             </Form.Group>
@@ -178,5 +234,10 @@ function Login({ loginAsVendor, loginAsAdmin }) {
     </div>
   );
 }
+
+Login.propTypes = {
+  loginAsAdmin: PropTypes.func.isRequired,
+  loginAsVendor: PropTypes.func.isRequired,
+};
 
 export default Login;

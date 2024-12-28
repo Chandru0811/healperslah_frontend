@@ -7,47 +7,51 @@ import Vendor from "./layouts/Vendor";
 import Auth from "./layouts/Auth";
 
 function App() {
-  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
-  const [isVendorAuthenticated, setIsVendorAuthenticated] = useState(false);
+  const [helperlah_isAdminAuthenticated, sethelperlah_isAdminAuthenticated] =
+    useState(false);
+  const [helperlah_isVendorAuthenticated, sethelperlah_isVendorAuthenticated] =
+    useState(false);
 
   const loginAsAdmin = () => {
-    localStorage.setItem("isAdminAuthenticated", true);
-    setIsAdminAuthenticated(true);
+    localStorage.setItem("helperlah_isAdminAuthenticated", true);
+    sethelperlah_isAdminAuthenticated(true);
   };
 
   const loginAsVendor = () => {
-    localStorage.setItem("isVendorAuthenticated", true);
-    setIsVendorAuthenticated(true);
+    localStorage.setItem("helperlah_isVendorAuthenticated", true);
+    sethelperlah_isVendorAuthenticated(true);
   };
 
   const logout = async () => {
     try {
       toast.success("Logged out successfully");
-      setIsAdminAuthenticated(false);
-      setIsVendorAuthenticated(false);
-      localStorage.removeItem("isAdminAuthenticated");
-      localStorage.removeItem("isVendorAuthenticated");
-      localStorage.removeItem("token");
-      localStorage.removeItem("name");
-      localStorage.removeItem("id");
-      localStorage.removeItem("email");
-      localStorage.removeItem("role");
-      localStorage.removeItem("active");
+      sethelperlah_isAdminAuthenticated(false);
+      sethelperlah_isVendorAuthenticated(false);
+      localStorage.removeItem("helperlah_isAdminAuthenticated");
+      localStorage.removeItem("helperlah_isVendorAuthenticated");
+      localStorage.removeItem("helperlah_token");
+      localStorage.removeItem("helperlah_name");
+      localStorage.removeItem("helperlah_id");
+      localStorage.removeItem("helperlah_email");
+      localStorage.removeItem("helperlah_role");
+      localStorage.removeItem("helperlah_mobile");
     } catch (e) {
       toast.error("Logout unsuccessful", e?.response?.data?.message);
     }
   };
 
   useEffect(() => {
-    const isAdminAuthFromStorage = localStorage.getItem("isAdminAuthenticated");
+    const isAdminAuthFromStorage = localStorage.getItem(
+      "helperlah_isAdminAuthenticated"
+    );
     const isVendorAuthFromStorage = localStorage.getItem(
-      "isVendorAuthenticated"
+      "helperlah_isVendorAuthenticated"
     );
 
     if (isAdminAuthFromStorage === "true") {
-      setIsAdminAuthenticated(true);
+      sethelperlah_isAdminAuthenticated(true);
     } else if (isVendorAuthFromStorage === "true") {
-      setIsVendorAuthenticated(true);
+      sethelperlah_isVendorAuthenticated(true);
     }
   }, []);
 
@@ -61,16 +65,12 @@ function App() {
           },
         }}
       />
-      {isAdminAuthenticated ? (
+      {helperlah_isAdminAuthenticated ? (
         <Admin handleLogout={logout} />
-      ) : isVendorAuthenticated ? (
+      ) : helperlah_isVendorAuthenticated ? (
         <Vendor handleLogout={logout} />
       ) : (
-        <Auth
-          handleLogout={logout}
-          loginAsAdmin={loginAsAdmin}
-          loginAsVendor={loginAsVendor}
-        />
+        <Auth loginAsAdmin={loginAsAdmin} loginAsVendor={loginAsVendor} />
       )}
     </div>
   );

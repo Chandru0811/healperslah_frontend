@@ -5,8 +5,9 @@ import Login from "../components/auth/Login";
 import ForgotPage from "../components/auth/ForgotPage";
 import Register from "../components/auth/Register/Register";
 import ResetPage from "../components/auth/ResetPage";
+import PropTypes from "prop-types";
 
-function Auth({ handleLogout, loginAsAdmin, loginAsVendor }) {
+function Auth({ loginAsAdmin, loginAsVendor }) {
   return (
     <div>
       <div>
@@ -16,8 +17,8 @@ function Auth({ handleLogout, loginAsAdmin, loginAsVendor }) {
               path="/"
               element={
                 <Login
-                loginAsVendor={loginAsVendor}
-                loginAsAdmin={loginAsAdmin}
+                  loginAsVendor={loginAsVendor}
+                  loginAsAdmin={loginAsAdmin}
                 />
               }
             />
@@ -41,5 +42,10 @@ function Auth({ handleLogout, loginAsAdmin, loginAsVendor }) {
     </div>
   );
 }
+
+Auth.propTypes = {
+  loginAsAdmin: PropTypes.func.isRequired,
+  loginAsVendor: PropTypes.func.isRequired,
+};
 
 export default Auth;
