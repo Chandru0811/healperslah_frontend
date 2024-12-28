@@ -76,7 +76,7 @@ function ServiceEdit() {
       formData.append("price", values.price);
       try {
         const response = await api.post(
-          `admin/serviceGroup/update/${id}`,
+          `admin/service/update/${id}`,
           formData,
           {
             headers: {
