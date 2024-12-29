@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { MaterialReactTable } from "material-react-table";
 import { MoreVert as MoreVertIcon } from "@mui/icons-material";
@@ -12,32 +12,35 @@ import {
 import PaymentTypeAdd from "./PaymentTypeAdd";
 import PaymentTypeEdit from "./PaymentTypeEdit";
 import Delete from "../../../components/common/Delete";
+import api from "../../../config/URL";
 
 function PaymentType() {
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState([]);
   const navigate = useNavigate();
 
-  const data = [
-    {
-      id: 1,
-      name: "House Cleaning",
-      description: "Test",
-      createdBy: "Admin",
-      createdAt: "2024-12-15",
-      updatedBy: "Admin",
-      updatedAt: "2024-12-20",
-    },
-    {
-      id: 2,
-      name: "House Cleaning",
-      description: "Test",
-      createdBy: "Admin",
-      createdAt: "2024-12-15",
-      updatedBy: "Admin",
-      updatedAt: "2024-12-20",
-    },
-  ];
+  // const data = [
+  //   {
+  //     id: 1,
+  //     name: "House Cleaning",
+  //     description: "Test",
+  //     createdBy: "Admin",
+  //     createdAt: "2024-12-15",
+  //     updatedBy: "Admin",
+  //     updatedAt: "2024-12-20",
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "House Cleaning",
+  //     description: "Test",
+  //     createdBy: "Admin",
+  //     createdAt: "2024-12-15",
+  //     updatedBy: "Admin",
+  //     updatedAt: "2024-12-20",
+  //   },
+  // ];
 
   const columns = useMemo(
     () => [
@@ -89,6 +92,23 @@ function PaymentType() {
     ],
     []
   );
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get(`admin/paymentTypes`);
+      console.log("first",response.data.data);
+
+      setData(response.data.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const theme = createTheme({
     components: {
@@ -194,13 +214,13 @@ function PaymentType() {
             onClose={handleMenuClose}
           >
             <MenuItem>
-              <PaymentTypeEdit />
+              <PaymentTypeEdit  onSuccess={fetchData} id={selectedId}  handleMenuClose={handleMenuClose}/>
             </MenuItem>
             <MenuItem>
                 <Delete
-                  path={`/deleteCenter/${selectedId}`}
-                  onOpen={handleMenuClose}
-                />
+                  path={`/admin/paymentType/delete/${selectedId}`}
+                  onDeleteSuccess={fetchData}
+                  onOpen={handleMenuClose}                />
               </MenuItem>
           </Menu>
         </>

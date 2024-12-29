@@ -2,9 +2,16 @@ import { useFormik } from "formik";
 import { useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import * as yup from "yup";
+import api from "../../../config/URL";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 function PaymentTypeAdd() {
+  const navigate = useNavigate();
+
   const [show, setShow] = useState(false);
+    const [loadIndicator, setLoadIndicator] = useState(false);
+  
 
   const handleShow = () => {
     setShow(true);
@@ -26,12 +33,30 @@ function PaymentTypeAdd() {
       description: "",
     },
     validationSchema: validationSchema,
-    onSubmit: async (values) => {
-      console.log("Form Submitted:", values);
-      handleClose();
+   onSubmit: async (values) => {
+      setLoadIndicator(true); // Start loading
+      try {
+        const response = await api.post("admin/paymentType", values, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (response.status === 200) {
+          toast.success(response.data.message);
+          handleClose(); // Close modal after success
+          formik.resetForm();
+          navigate("/paymentType"); // Uncomment if navigation is required
+        } else {
+          toast.error(response.data.message || "An unexpected error occurred.");
+        }
+      } catch (error) {
+        const errorMessage =
+          error.response?.data?.message || "Something went wrong!";
+        toast.error(errorMessage);
+      } finally {
+        setLoadIndicator(false); // Stop loading
+      }
     },
-    validateOnChange: true,
-    validateOnBlur: true,
   });
 
   return (

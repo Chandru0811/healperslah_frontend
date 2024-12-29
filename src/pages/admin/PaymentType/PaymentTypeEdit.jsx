@@ -8,25 +8,20 @@ import {
   DialogActions,
 } from "@mui/material";
 import * as yup from "yup";
+import api from "../../../config/URL";
+import toast from "react-hot-toast";
 
-function PaymentTypeEdit() {
-  const [show, setShow] = useState(false);
+function PaymentTypeEdit({ id, onSuccess, handleMenuClose }) {
   const [loadIndicator, setLoadIndicator] = useState(false);
+  const [open, setOpen] = useState(false); // Local state to control dialog visibility
 
-  const handleShow = () => {
-    setShow(true);
-  };
-
-  const handleClose = () => {
-    setShow(false);
-    formik.resetForm();
-  };
-
+  // Validation schema for the form
   const validationSchema = yup.object().shape({
     name: yup.string().required("*Name is required"),
     description: yup.string().required("*Description is required"),
   });
 
+  // Formik configuration
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -36,14 +31,27 @@ function PaymentTypeEdit() {
     onSubmit: async (values) => {
       setLoadIndicator(true);
       try {
-        console.log("Form Submitted:", values);
-        // Simulate API call or further processing
-        setTimeout(() => {
-          setLoadIndicator(false);
-          handleClose();
-        }, 1000);
+        const response = await api.put(`/admin/paymentType/update/${id}`, values, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (response.status === 200) {
+          onSuccess(); 
+          handleMenuClose(); 
+          toast.success(
+            response.data.message || "Payment type updated successfully!"
+          );
+
+        } else {
+          toast.error(response.data.message || "Failed to update payment type.");
+        }
       } catch (error) {
-        console.error("Submission error:", error);
+        toast.error(
+          error.response?.data?.message || "An error occurred while updating."
+        );
+      } finally {
         setLoadIndicator(false);
       }
     },
@@ -51,10 +59,38 @@ function PaymentTypeEdit() {
     validateOnBlur: true,
   });
 
+  // Fetch existing data
+  const getData = async () => {
+    try {
+      const response = await api.get(`/admin/paymentType/${id}`);
+      if (response?.data?.data) {
+        formik.setValues(response.data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      toast.error("Failed to fetch payment type details.");
+    }
+  };
+
+  // Open dialog and fetch data
+  const handleOpen = () => {
+    getData();
+    setOpen(true); // Open the dialog
+  };
+
+  // Close dialog and reset form
+  const handleClose = () => {
+    setOpen(false); // Close the dialog
+    formik.resetForm(); // Reset the form
+    if (handleMenuClose) {
+      handleMenuClose(); // Optional: Trigger parent menu close if applicable
+    }
+  };
+
   return (
     <>
       <span
-        onClick={handleShow}
+        onClick={handleOpen}
         style={{
           whiteSpace: "nowrap",
           cursor: "pointer",
@@ -63,7 +99,12 @@ function PaymentTypeEdit() {
         Edit
       </span>
 
-      <Dialog open={show} onClose={handleClose} fullWidth maxWidth="md">
+      <Dialog
+        open={open} // Controlled by local state
+        onClose={handleClose} // Trigger handleClose on dialog close
+        fullWidth
+        maxWidth="md"
+      >
         <form
           onSubmit={formik.handleSubmit}
           onKeyDown={(e) => {
@@ -81,7 +122,6 @@ function PaymentTypeEdit() {
                     Name<span className="text-danger">*</span>
                   </label>
                   <input
-                    aria-label="Default select example"
                     className={`form-control ${
                       formik.touched.name && formik.errors.name
                         ? "is-invalid"
@@ -120,13 +160,14 @@ function PaymentTypeEdit() {
             <Button
               className="btn btn-sm btn-border bg-light text-dark"
               onClick={handleClose}
+              disabled={loadIndicator} // Disable close button during submission
             >
               Cancel
             </Button>
             <button
               type="submit"
               className="btn btn-button"
-              disabled={loadIndicator}
+              disabled={loadIndicator} // Disable submit button during submission
             >
               {loadIndicator && (
                 <span
@@ -142,5 +183,6 @@ function PaymentTypeEdit() {
     </>
   );
 }
+
 
 export default PaymentTypeEdit;

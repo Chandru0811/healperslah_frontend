@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { MaterialReactTable } from "material-react-table";
 import { MoreVert as MoreVertIcon } from "@mui/icons-material";
@@ -9,41 +9,44 @@ import {
   MenuItem,
   IconButton,
 } from "@mui/material";
+import api from "../../../config/URL";
 
 function User() {
   const [menuAnchor, setMenuAnchor] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState([]);
   const navigate = useNavigate();
 
-  const data = [
-    {
-      id: 1,
-      name: "Raja",
-      email: "raja@gmail.com",
-      mobile: "9123456780",
-      social_id: "",
-      social_provider: "",
-      email_verified_at: "",
-      role: "2",
-      createdBy: "Admin",
-      createdAt: "2024-12-15",
-      updatedBy: "Admin",
-      updatedAt: "2024-12-20",
-    },
-    {
-      id: 2,
-      name: "Saran",
-      email: "saran@gmail.com",
-      mobile: "9123456781",
-      social_id: "",
-      social_provider: "",
-      email_verified_at: "",
-      role: "2",
-      createdBy: "Admin",
-      createdAt: "2024-12-15",
-      updatedBy: "Admin",
-      updatedAt: "2024-12-20",
-    },
-  ];
+  // const data = [
+  //   {
+  //     id: 1,
+  //     name: "Raja",
+  //     email: "raja@gmail.com",
+  //     mobile: "9123456780",
+  //     social_id: "",
+  //     social_provider: "",
+  //     email_verified_at: "",
+  //     role: "2",
+  //     createdBy: "Admin",
+  //     createdAt: "2024-12-15",
+  //     updatedBy: "Admin",
+  //     updatedAt: "2024-12-20",
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "Saran",
+  //     email: "saran@gmail.com",
+  //     mobile: "9123456781",
+  //     social_id: "",
+  //     social_provider: "",
+  //     email_verified_at: "",
+  //     role: "2",
+  //     createdBy: "Admin",
+  //     createdAt: "2024-12-15",
+  //     updatedBy: "Admin",
+  //     updatedAt: "2024-12-20",
+  //   },
+  // ];
 
   const columns = useMemo(
     () => [
@@ -92,6 +95,21 @@ function User() {
     ],
     []
   );
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get(`admin/users`);
+      setData(response.data.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const theme = createTheme({
     components: {

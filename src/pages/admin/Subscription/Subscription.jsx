@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { MaterialReactTable } from "material-react-table";
 import { MoreVert as MoreVertIcon } from "@mui/icons-material";
@@ -10,40 +10,45 @@ import {
   IconButton,
 } from "@mui/material";
 import Delete from "../../../components/common/Delete";
+import api from "../../../config/URL";
 
 function Subscription() {
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState([]);
+
+
   const navigate = useNavigate();
 
-  const data = [
-    {
-      id: 1,
-      name: "House Cleaning",
-      start_date: "2024-01-01",
-      end_date: "2024-01-15",
-      recurrence: "Weekly",
-      range: "Per Day",
-      best_price: "500",
-      createdBy: "Admin",
-      createdAt: "2024-12-15",
-      updatedBy: "Admin",
-      updatedAt: "2024-12-20",
-    },
-    {
-      id: 2,
-      name: "House Cleaning",
-      start_date: "2024-01-16",
-      end_date: "2024-01-30",
-      recurrence: "Weekly",
-      range: "Per Day",
-      best_price: "1000",
-      createdBy: "Admin",
-      createdAt: "2024-12-15",
-      updatedBy: "Admin",
-      updatedAt: "2024-12-20",
-    },
-  ];
+  // const data = [
+  //   {
+  //     id: 1,
+  //     name: "House Cleaning",
+  //     start_date: "2024-01-01",
+  //     end_date: "2024-01-15",
+  //     recurrence: "Weekly",
+  //     range: "Per Day",
+  //     best_price: "500",
+  //     createdBy: "Admin",
+  //     createdAt: "2024-12-15",
+  //     updatedBy: "Admin",
+  //     updatedAt: "2024-12-20",
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "House Cleaning",
+  //     start_date: "2024-01-16",
+  //     end_date: "2024-01-30",
+  //     recurrence: "Weekly",
+  //     range: "Per Day",
+  //     best_price: "1000",
+  //     createdBy: "Admin",
+  //     createdAt: "2024-12-15",
+  //     updatedBy: "Admin",
+  //     updatedAt: "2024-12-20",
+  //   },
+  // ];
 
   const columns = useMemo(
     () => [
@@ -121,7 +126,21 @@ function Subscription() {
     ],
     []
   );
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get(`admin/subscriptions`);
+      setData(response.data.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
+    fetchData();
+  }, []);
   const theme = createTheme({
     components: {
       MuiTableCell: {

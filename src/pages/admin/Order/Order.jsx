@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { MaterialReactTable } from "material-react-table";
 import { MoreVert as MoreVertIcon } from "@mui/icons-material";
@@ -9,47 +9,50 @@ import {
   MenuItem,
   IconButton,
 } from "@mui/material";
+import api from "../../../config/URL";
 
 function Order() {
   const [menuAnchor, setMenuAnchor] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState([]);
   const navigate = useNavigate();
 
-  const data = [
-    {
-      id: 1,
-      order_number: "OR-100",
-      customer_id: 1,
-      total_amount: "10000",
-      paid_amount: "5000",
-      balance_amount: "5000",
-      start_date: "2024-12-13",
-      end_date: "2024-12-13",
-      duration: "2 hrs",
-      booking_type: "Service Group",
-      payment_status: 1,
-      createdBy: "Admin",
-      createdAt: "2024-12-15",
-      updatedBy: "Admin",
-      updatedAt: "2024-12-20",
-    },
-    {
-      id: 2,
-      order_number: "OR-101",
-      customer_id: 2,
-      total_amount: "10000",
-      paid_amount: "6000",
-      balance_amount: "4000",
-      start_date: "2024-12-13",
-      end_date: "2024-12-13",
-      duration: "2 hrs",
-      booking_type: "Service Group",
-      payment_status: 0,
-      createdBy: "Admin",
-      createdAt: "2024-12-15",
-      updatedBy: "Admin",
-      updatedAt: "2024-12-20",
-    },
-  ];
+  // const data = [
+  //   {
+  //     id: 1,
+  //     order_number: "OR-100",
+  //     customer_id: 1,
+  //     total_amount: "10000",
+  //     paid_amount: "5000",
+  //     balance_amount: "5000",
+  //     start_date: "2024-12-13",
+  //     end_date: "2024-12-13",
+  //     duration: "2 hrs",
+  //     booking_type: "Service Group",
+  //     payment_status: 1,
+  //     createdBy: "Admin",
+  //     createdAt: "2024-12-15",
+  //     updatedBy: "Admin",
+  //     updatedAt: "2024-12-20",
+  //   },
+  //   {
+  //     id: 2,
+  //     order_number: "OR-101",
+  //     customer_id: 2,
+  //     total_amount: "10000",
+  //     paid_amount: "6000",
+  //     balance_amount: "4000",
+  //     start_date: "2024-12-13",
+  //     end_date: "2024-12-13",
+  //     duration: "2 hrs",
+  //     booking_type: "Service Group",
+  //     payment_status: 0,
+  //     createdBy: "Admin",
+  //     createdAt: "2024-12-15",
+  //     updatedBy: "Admin",
+  //     updatedAt: "2024-12-20",
+  //   },
+  // ];
 
   const columns = useMemo(
     () => [
@@ -139,6 +142,23 @@ function Order() {
     ],
     []
   );
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get(`admin/orders`);
+      setData(response.data.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
 
   const theme = createTheme({
     components: {

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { MaterialReactTable } from "material-react-table";
 import { MoreVert as MoreVertIcon } from "@mui/icons-material";
@@ -10,38 +10,41 @@ import {
   IconButton,
 } from "@mui/material";
 import Delete from "../../../components/common/Delete";
+import api from "../../../config/URL";
 
 function ServiceAssignment() {
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState([]);
   const navigate = useNavigate();
 
-  const data = [
-    {
-      id: 1,
-      order_id: 1,
-      company_id: 1,
-      helper_id: 1,
-      assigned_at: "2024-12-16 13:06:38",
-      status: "Assigned",
-      createdBy: "Admin",
-      createdAt: "2024-12-15",
-      updatedBy: "Admin",
-      updatedAt: "2024-12-20",
-    },
-    {
-      id: 2,
-      order_id: 2,
-      company_id: 1,
-      helper_id: 1,
-      assigned_at: "2024-12-17 13:06:38",
-      status: "Notassigned",
-      createdBy: "Admin",
-      createdAt: "2024-12-15",
-      updatedBy: "Admin",
-      updatedAt: "2024-12-20",
-    },
-  ];
+  // const data = [
+  //   {
+  //     id: 1,
+  //     order_id: 1,
+  //     company_id: 1,
+  //     helper_id: 1,
+  //     assigned_at: "2024-12-16 13:06:38",
+  //     status: "Assigned",
+  //     createdBy: "Admin",
+  //     createdAt: "2024-12-15",
+  //     updatedBy: "Admin",
+  //     updatedAt: "2024-12-20",
+  //   },
+  //   {
+  //     id: 2,
+  //     order_id: 2,
+  //     company_id: 1,
+  //     helper_id: 1,
+  //     assigned_at: "2024-12-17 13:06:38",
+  //     status: "Notassigned",
+  //     createdBy: "Admin",
+  //     createdAt: "2024-12-15",
+  //     updatedBy: "Admin",
+  //     updatedAt: "2024-12-20",
+  //   },
+  // ];
 
   const columns = useMemo(
     () => [
@@ -130,6 +133,23 @@ function ServiceAssignment() {
     ],
     []
   );
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get(`admin/serviceAssignments`);
+      setData(response.data.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
 
   const theme = createTheme({
     components: {

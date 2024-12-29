@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { MaterialReactTable } from "material-react-table";
 import { MoreVert as MoreVertIcon } from "@mui/icons-material";
@@ -10,54 +10,57 @@ import {
   IconButton,
 } from "@mui/material";
 import Delete from "../../../components/common/Delete";
+import api from "../../../config/URL";
 
 function CustomPackage() {
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState([]);
   const navigate = useNavigate();
 
-  const data = [
-    {
-      id: 1,
-      service_id: [1, 2],
-      name: "Home Cleaning",
-      description: "Test",
-      start_date: "2025-01-01",
-      end_date: "2025-01-16",
-      status: 1,
-      recurrence: "Weekly",
-      property_type: "Raw land",
-      property_size: "100sqm",
-      cleaning_hours: 2,
-      range: "Per Hour",
-      price: "150",
-      offer_id: 1,
-      createdBy: "Admin",
-      createdAt: "2024-12-15",
-      updatedBy: "Admin",
-      updatedAt: "2024-12-20",
-    },
-    {
-      id: 2,
-      service_id: [1, 2],
-      name: "Home Cleaning",
-      description: "Test 1",
-      start_date: "2025-01-16",
-      end_date: "2025-01-30",
-      status: 0,
-      recurrence: "Weekly",
-      property_type: "Raw land",
-      property_size: "100sqm",
-      cleaning_hours: 3,
-      range: "Per Day",
-      price: "200",
-      offer_id: 2,
-      createdBy: "Admin",
-      createdAt: "2024-12-15",
-      updatedBy: "Admin",
-      updatedAt: "2024-12-20",
-    },
-  ];
+  // const data = [
+  //   {
+  //     id: 1,
+  //     service_id: [1, 2],
+  //     name: "Home Cleaning",
+  //     description: "Test",
+  //     start_date: "2025-01-01",
+  //     end_date: "2025-01-16",
+  //     status: 1,
+  //     recurrence: "Weekly",
+  //     property_type: "Raw land",
+  //     property_size: "100sqm",
+  //     cleaning_hours: 2,
+  //     range: "Per Hour",
+  //     price: "150",
+  //     offer_id: 1,
+  //     createdBy: "Admin",
+  //     createdAt: "2024-12-15",
+  //     updatedBy: "Admin",
+  //     updatedAt: "2024-12-20",
+  //   },
+  //   {
+  //     id: 2,
+  //     service_id: [1, 2],
+  //     name: "Home Cleaning",
+  //     description: "Test 1",
+  //     start_date: "2025-01-16",
+  //     end_date: "2025-01-30",
+  //     status: 0,
+  //     recurrence: "Weekly",
+  //     property_type: "Raw land",
+  //     property_size: "100sqm",
+  //     cleaning_hours: 3,
+  //     range: "Per Day",
+  //     price: "200",
+  //     offer_id: 2,
+  //     createdBy: "Admin",
+  //     createdAt: "2024-12-15",
+  //     updatedBy: "Admin",
+  //     updatedAt: "2024-12-20",
+  //   },
+  // ];
 
   const columns = useMemo(
     () => [
@@ -157,6 +160,22 @@ function CustomPackage() {
     ],
     []
   );
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get(`admin/custom_packages`);
+      setData(response.data.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const theme = createTheme({
     components: {
