@@ -19,49 +19,6 @@ function CustomPackage() {
   const [data, setData] = useState([]);
   const navigate = useNavigate();
 
-  // const data = [
-  //   {
-  //     id: 1,
-  //     service_id: [1, 2],
-  //     name: "Home Cleaning",
-  //     description: "Test",
-  //     start_date: "2025-01-01",
-  //     end_date: "2025-01-16",
-  //     status: 1,
-  //     recurrence: "Weekly",
-  //     property_type: "Raw land",
-  //     property_size: "100sqm",
-  //     cleaning_hours: 2,
-  //     range: "Per Hour",
-  //     price: "150",
-  //     offer_id: 1,
-  //     createdBy: "Admin",
-  //     createdAt: "2024-12-15",
-  //     updatedBy: "Admin",
-  //     updatedAt: "2024-12-20",
-  //   },
-  //   {
-  //     id: 2,
-  //     service_id: [1, 2],
-  //     name: "Home Cleaning",
-  //     description: "Test 1",
-  //     start_date: "2025-01-16",
-  //     end_date: "2025-01-30",
-  //     status: 0,
-  //     recurrence: "Weekly",
-  //     property_type: "Raw land",
-  //     property_size: "100sqm",
-  //     cleaning_hours: 3,
-  //     range: "Per Day",
-  //     price: "200",
-  //     offer_id: 2,
-  //     createdBy: "Admin",
-  //     createdAt: "2024-12-15",
-  //     updatedBy: "Admin",
-  //     updatedAt: "2024-12-20",
-  //   },
-  // ];
-
   const columns = useMemo(
     () => [
       {
@@ -235,7 +192,7 @@ function CustomPackage() {
           <span className="breadcrumb-separator"> &gt; </span>
         </li>
         <li className="breadcrumb-item active" aria-current="page">
-          &nbsp;Custom Packages
+          &nbsp;Custom Subscription
         </li>
       </ol>
       <div className="card">
@@ -246,10 +203,21 @@ function CustomPackage() {
             </div>
             <span className="me-2 text-muted">
               This database shows the list of&nbsp;
-              <span className="database_name">Custom Packages</span>
+              <span className="database_name">Custom Subscription</span>
             </span>
           </div>
         </div>
+        {loading ? (
+          <div className="loader-container">
+            <div className="loader">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        ) : (
           <>
             <ThemeProvider theme={theme}>
               <MaterialReactTable
@@ -271,7 +239,7 @@ function CustomPackage() {
                   },
                 }}
                 muiTableBodyRowProps={({ row }) => ({
-                  onClick: () => navigate(`/custompackage/view`),
+                  onClick: () => navigate(`/custompackage/view/${row.original.id}`),
                   style: { cursor: "pointer" },
                 })}
               />
@@ -282,17 +250,19 @@ function CustomPackage() {
               open={Boolean(menuAnchor)}
               onClose={handleMenuClose}
             >
-              <MenuItem onClick={() => navigate(`/custompackage/edit`)}>
+              <MenuItem onClick={() => navigate(`/custompackage/edit/${selectedId}`)}>
                 Edit
               </MenuItem>
               <MenuItem>
                 <Delete
-                  path={`/deleteCenter/${selectedId}`}
+                  path={`admin/custom_package/delete/${selectedId}`}
+                  onDeleteSuccess={fetchData}
                   onOpen={handleMenuClose}
                 />
               </MenuItem>
             </Menu>
           </>
+        )}
       </div>
     </div>
   );

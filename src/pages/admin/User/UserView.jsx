@@ -1,16 +1,24 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import api from "../../../config/URL";
 
 function UserView() {
-  const [data, setData] = useState({
-    name: "Raja",
-    email: "raja@gmail.com",
-    mobile: "9123456780",
-    social_id: "",
-    social_provider: "",
-    email_verified_at: "",
-    role: 2,
-  });
+  const { id } = useParams();
+  const [data, setData] = useState([]);
+
+  const getData = async () => {
+    try {
+      const response = await api.get(`admin/user/${id}`);
+      setData(response.data.data);
+    } catch (error) {
+      toast.error("Error Fetching Data", error);
+    }
+  };
+  
+  useEffect(() => {
+    getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="container-fluid px-0">

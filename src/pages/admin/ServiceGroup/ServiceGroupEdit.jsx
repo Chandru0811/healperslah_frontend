@@ -267,7 +267,7 @@ function ServiceGroupEdit() {
         onSubmit={formik.handleSubmit}
         onKeyDown={(e) => {
           if (e.key === "Enter" && !formik.isSubmitting) {
-            e.preventDefault(); // Prevent default form submission
+            e.preventDefault();
           }
         }}
       >

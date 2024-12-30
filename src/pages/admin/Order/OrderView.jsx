@@ -1,25 +1,25 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import AssignModal from "./AssignModal";
+import api from "../../../config/URL";
 
 function OrderView() {
-  const [data, setData] = useState({
-    order_number: "HELPERSLAH_O1",
-    customer_id: 2,
-    total_amount: "40.00",
-    paid_amount: "20.00",
-    balance_amount: "20.00",
-    paid_at: "UPI",
-    paid_for: "Service",
-    offer_id: 1,
-    booking_id: 1,
-    booking_type: "Service Group",
-    date_time: "2024-12-13 10.30",
-    duration: "2 hrs",
-    start_date: "2024-12-13",
-    end_date: "2024-12-13",
-    specifications: "Use eco-friendly products",
-  });
+  const { id } = useParams();
+  const [data, setData] = useState([]);
+
+  const getData = async () => {
+    try {
+      const response = await api.get(`admin/order/${id}`);
+      setData(response.data.data);
+    } catch (error) {
+      toast.error("Error Fetching Data", error);
+    }
+  };
+  
+  useEffect(() => {
+    getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="container-fluid px-0">

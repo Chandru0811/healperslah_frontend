@@ -1,30 +1,34 @@
 import { useFormik } from "formik";
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import * as Yup from "yup";
 import { MultiSelect } from "react-multi-select-component";
+import api from "../../../config/URL";
 
 function CustomPackageEdit() {
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const [loadIndicator, setLoadIndicator] = useState(false);
+  const [selectedService, setSelectedService] = useState([]);
   const serviceOption = [
     { label: "Service A", value: "1" },
     { label: "Service B", value: "2" },
     { label: "Service C", value: "3" },
   ];
-  const [selectedService, setSelectedService] = useState([]);
 
   const validationSchema = Yup.object().shape({
     serviceId: Yup.array()
       .min(1, "*At least one service must be selected")
       .required("*Service Id is required"),
     name: Yup.string().required("*Name is required"),
-    startDate: Yup.string().required("*Start Date is required"),
-    endDate: Yup.string().required("*End Date is required"),
+    start_date: Yup.string().required("*Start Date is required"),
+    end_date: Yup.string().required("*End Date is required"),
     recurrence: Yup.string().required("*Recurrence is required"),
     propertyType: Yup.string().required("*Property Type is required"),
     propertySize: Yup.string().required("*Property Size is required"),
     cleaning_hours: Yup.string().required("*Cleaning Hours is required"),
     range: Yup.string().required("*Range is required"),
-    basicPrice: Yup.number()
+    price: Yup.number()
       .typeError("*Price must be a number")
       .required("*Price is required")
       .positive("*Please enter a valid number")
@@ -38,23 +42,70 @@ function CustomPackageEdit() {
     initialValues: {
       serviceId: [],
       name: "",
-      startDate: "",
-      endDate: "",
+      start_date: "",
+      end_date: "",
       recurrence: "",
       propertyType: "",
       propertySize: "",
       cleaning_hours: "",
       range: "",
-      basicPrice: "",
+      price: "",
       description: "",
     },
     validationSchema,
     onSubmit: async (values) => {
-      console.log("Form submitted with values:", values);
+      setLoadIndicator(true);
+      try {
+        const response = await api.post(
+          `admin/custom_package/update/${id}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        if (response.status === 200) {
+          toast.success(response.data.message);
+          navigate("/custompackage");
+        } else {
+          toast.error(response.data.message);
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 422) {
+          const errors = error.response.data.errors;
+          if (errors) {
+            Object.keys(errors).forEach((key) => {
+              errors[key].forEach((errorMsg) => {
+                toast(errorMsg, {
+                  icon: <FiAlertTriangle className="text-warning" />,
+                });
+              });
+            });
+          }
+        } else {
+          toast.error("An error occurred while deleting the record.");
+        }
+      } finally {
+        setLoadIndicator(false);
+      }
     },
     validateOnChange: false,
     validateOnBlur: true,
   });
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const response = await api.get(`admin/custom_package/${id}`);
+        formik.setValues(response.data.data);
+      } catch (error) {
+        toast.error("Error Fetching Data", error);
+      }
+    };
+    getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="container-fluid px-0">
@@ -70,12 +121,12 @@ function CustomPackageEdit() {
         </li>
         <li>
           <Link to="/custompackage" className="custom-breadcrumb">
-            &nbsp;Custom Package
+            &nbsp;Custom Subscription
           </Link>
           <span className="breadcrumb-separator"> &gt; </span>
         </li>
         <li className="breadcrumb-item active" aria-current="page">
-          &nbsp;Custom Package Edit
+          &nbsp;Custom Subscription Edit
         </li>
       </ol>
       <form
@@ -92,7 +143,7 @@ function CustomPackageEdit() {
               <div class="d-flex">
                 <div class="dot active"></div>
               </div>
-              <span class="me-2 text-muted">Edit Custom Package</span>
+              <span class="me-2 text-muted">Edit Custom Subscription</span>
             </div>
             <div className="my-2 pe-3 d-flex align-items-center">
               <Link to="/custompackage">
@@ -101,8 +152,18 @@ function CustomPackageEdit() {
                 </button>
               </Link>
               &nbsp;&nbsp;
-              <button type="submit" className="btn btn-button btn-sm">
-                <span className="fw-medium">Update</span>
+              <button
+                type="submit"
+                className="btn btn-button btn-sm"
+                disabled={loadIndicator}
+              >
+                {loadIndicator && (
+                  <span
+                    className="spinner-border spinner-border-sm me-2"
+                    aria-hidden="true"
+                  ></span>
+                )}
+                Update
               </button>
             </div>
           </div>
@@ -163,15 +224,15 @@ function CustomPackageEdit() {
                 <input
                   type="date"
                   className={`form-control ${
-                    formik.touched.startDate && formik.errors.startDate
+                    formik.touched.start_date && formik.errors.start_date
                       ? "is-invalid"
                       : ""
                   }`}
-                  {...formik.getFieldProps("startDate")}
+                  {...formik.getFieldProps("start_date")}
                 />
-                {formik.touched.startDate && formik.errors.startDate && (
+                {formik.touched.start_date && formik.errors.start_date && (
                   <div className="invalid-feedback">
-                    {formik.errors.startDate}
+                    {formik.errors.start_date}
                   </div>
                 )}
               </div>
@@ -182,15 +243,15 @@ function CustomPackageEdit() {
                 <input
                   type="date"
                   className={`form-control ${
-                    formik.touched.endDate && formik.errors.endDate
+                    formik.touched.end_date && formik.errors.end_date
                       ? "is-invalid"
                       : ""
                   }`}
-                  {...formik.getFieldProps("endDate")}
+                  {...formik.getFieldProps("end_date")}
                 />
-                {formik.touched.endDate && formik.errors.endDate && (
+                {formik.touched.end_date && formik.errors.end_date && (
                   <div className="invalid-feedback">
-                    {formik.errors.endDate}
+                    {formik.errors.end_date}
                   </div>
                 )}
               </div>
@@ -208,7 +269,7 @@ function CustomPackageEdit() {
                   {...formik.getFieldProps("recurrence")}
                 >
                   <option value=""></option>
-                  <option value="Weekly">Weekly</option>
+                  <option value="weekly">Weekly</option>
                   <option value="Alternate Week">Alternate Week</option>
                 </select>
                 {formik.touched.recurrence && formik.errors.recurrence && (
@@ -231,9 +292,9 @@ function CustomPackageEdit() {
                   {...formik.getFieldProps("propertyType")}
                 >
                   <option value=""></option>
-                  <option value="Office">Office</option>
-                  <option value="Apartment">Apartment</option>
-                  <option value="Resenditial">Resenditial</option>
+                  <option value="office">Office</option>
+                  <option value="apartment">Apartment</option>
+                  <option value="resenditial">Resenditial</option>
                 </select>
                 {formik.touched.propertyType && formik.errors.propertyType && (
                   <div className="invalid-feedback">
@@ -307,7 +368,7 @@ function CustomPackageEdit() {
                   {...formik.getFieldProps("range")}
                 >
                   <option value=""></option>
-                  <option value="Per Hour">Per Hour</option>
+                  <option value="per hour">Per Hour</option>
                   <option value="Per Day">Per Day</option>
                 </select>
                 {formik.touched.range && formik.errors.range && (
@@ -338,15 +399,15 @@ function CustomPackageEdit() {
                 <input
                   type="text"
                   className={`form-control ${
-                    formik.touched.basicPrice && formik.errors.basicPrice
+                    formik.touched.price && formik.errors.price
                       ? "is-invalid"
                       : ""
                   }`}
-                  {...formik.getFieldProps("basicPrice")}
+                  {...formik.getFieldProps("price")}
                 />
-                {formik.touched.basicPrice && formik.errors.basicPrice && (
+                {formik.touched.price && formik.errors.price && (
                   <div className="invalid-feedback">
-                    {formik.errors.basicPrice}
+                    {formik.errors.price}
                   </div>
                 )}
               </div>

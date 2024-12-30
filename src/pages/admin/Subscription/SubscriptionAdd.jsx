@@ -1,22 +1,17 @@
 import { useFormik } from "formik";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { MultiSelect } from "react-multi-select-component";
 
 function SubscriptionAdd() {
+  const navigate = useNavigate();
+  const [loadIndicator, setLoadIndicator] = useState(false);
+  const [selectedService, setSelectedService] = useState([]);
   const serviceOption = [
     { label: "Service A", value: "1" },
     { label: "Service B", value: "2" },
     { label: "Service C", value: "3" },
-  ];
-  const [selectedService, setSelectedService] = useState([]);
-
-  const SUPPORTED_FORMATS = [
-    "image/png",
-    "image/jpeg",
-    "image/jpg",
-    "image/webp",
   ];
 
   const validationSchema = Yup.object().shape({
@@ -31,7 +26,7 @@ function SubscriptionAdd() {
     propertySize: Yup.string().required("*Property Size is required"),
     cleaning_hours: Yup.string().required("*Cleaning Hours is required"),
     range: Yup.string().required("*Range is required"),
-    basicPrice: Yup.number()
+    price: Yup.number()
       .typeError("*Price must be a number")
       .required("*Price is required")
       .positive("*Please enter a valid number")
@@ -52,12 +47,38 @@ function SubscriptionAdd() {
       propertySize: "",
       cleaning_hours: "",
       range: "",
-      basicPrice: "",
+      price: "",
       description: "",
     },
     validationSchema,
     onSubmit: async (values) => {
-      console.log("Form submitted with values:", values);
+      setLoadIndicator(true);
+      try {
+        const response = await api.post("admin/subscription", values);
+        if (response.status === 200) {
+          toast.success(response.data.message);
+          navigate("/subscription");
+        } else {
+          toast.error(response.data.message);
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 422) {
+          const errors = error.response.data.errors;
+          if (errors) {
+            Object.keys(errors).forEach((key) => {
+              errors[key].forEach((errorMsg) => {
+                toast(errorMsg, {
+                  icon: <FiAlertTriangle className="text-warning" />,
+                });
+              });
+            });
+          }
+        } else {
+          toast.error("An error occurred while deleting the record.");
+        }
+      } finally {
+        setLoadIndicator(false);
+      }
     },
     validateOnChange: false,
     validateOnBlur: true,
@@ -111,7 +132,14 @@ function SubscriptionAdd() {
               <button
                 type="submit"
                 className="btn btn-button"
+                disabled={loadIndicator}
               >
+                {loadIndicator && (
+                  <span
+                    className="spinner-border spinner-border-sm me-2"
+                    aria-hidden="true"
+                  ></span>
+                )}
                 Save
               </button>
             </div>
@@ -348,15 +376,15 @@ function SubscriptionAdd() {
                 <input
                   type="text"
                   className={`form-control ${
-                    formik.touched.basicPrice && formik.errors.basicPrice
+                    formik.touched.price && formik.errors.price
                       ? "is-invalid"
                       : ""
                   }`}
-                  {...formik.getFieldProps("basicPrice")}
+                  {...formik.getFieldProps("price")}
                 />
-                {formik.touched.basicPrice && formik.errors.basicPrice && (
+                {formik.touched.price && formik.errors.price && (
                   <div className="invalid-feedback">
-                    {formik.errors.basicPrice}
+                    {formik.errors.price}
                   </div>
                 )}
               </div>

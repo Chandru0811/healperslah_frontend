@@ -255,7 +255,7 @@ function Order() {
                   },
                 }}
                 muiTableBodyRowProps={({ row }) => ({
-                  onClick: () => navigate(`/order/view`),
+                  onClick: () => navigate(`/order/view/${row.original.id}`),
                   style: { cursor: "pointer" },
                 })}
               />

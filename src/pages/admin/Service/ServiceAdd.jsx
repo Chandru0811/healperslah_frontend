@@ -5,12 +5,12 @@ import * as Yup from "yup";
 import Cropper from "react-easy-crop";
 import toast from "react-hot-toast";
 import api from "../../../config/URL";
-// import fetchAllServiceGroupWithIds from "../../List/ServiceGroupList";
+import fetchAllServiceGroupWithIds from "../../List/ServiceGroupList";
 
 function ServiceAdd() {
   const navigate = useNavigate();
   const [loadIndicator, setLoadIndicator] = useState(false);
-  // const [serviceGroup, setServiceGroup] = useState(null);
+  const [serviceGroup, setServiceGroup] = useState(null);
   const [imageSrc, setImageSrc] = useState(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
@@ -200,18 +200,18 @@ function ServiceAdd() {
     document.querySelector("input[type='file']").value = "";
   };
 
-  // const fetchServiceGroup = async () => {
-  //   try {
-  //     const service = await fetchAllServiceGroupWithIds();
-  //     setServiceGroup(service);
-  //   } catch (error) {
-  //     toast.error(error);
-  //   }
-  // };
+  const fetchServiceGroup = async () => {
+    try {
+      const service = await fetchAllServiceGroupWithIds();
+      setServiceGroup(service);
+    } catch (error) {
+      toast.error(error);
+    }
+  };
 
-  // useEffect(() => {
-  //   fetchServiceGroup();
-  // }, []);
+  useEffect(() => {
+    fetchServiceGroup();
+  }, []);
 
   return (
     <div className="container-fluid px-0">
@@ -290,14 +290,12 @@ function ServiceAdd() {
                   {...formik.getFieldProps("service_group_id")}
                 >
                   <option selected></option>
-                  {/* {serviceGroup &&
-                    serviceGroup.map((service) => (
-                      <option key={service.id} value={service.id}>
-                        {service.userNames}
+                  {serviceGroup &&
+                    serviceGroup.map((data) => (
+                      <option key={data.id} value={data.id}>
+                        {data.name}
                       </option>
-                    ))} */}
-                  <option value="16">Plumbing</option>
-                  <option value="18">Home Cleaning</option>
+                    ))}
                 </select>
                 {formik.touched.service_group_id &&
                   formik.errors.service_group_id && (

@@ -17,38 +17,7 @@ function Subscription() {
   const [selectedId, setSelectedId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
-
-
   const navigate = useNavigate();
-
-  // const data = [
-  //   {
-  //     id: 1,
-  //     name: "House Cleaning",
-  //     start_date: "2024-01-01",
-  //     end_date: "2024-01-15",
-  //     recurrence: "Weekly",
-  //     range: "Per Day",
-  //     best_price: "500",
-  //     createdBy: "Admin",
-  //     createdAt: "2024-12-15",
-  //     updatedBy: "Admin",
-  //     updatedAt: "2024-12-20",
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "House Cleaning",
-  //     start_date: "2024-01-16",
-  //     end_date: "2024-01-30",
-  //     recurrence: "Weekly",
-  //     range: "Per Day",
-  //     best_price: "1000",
-  //     createdBy: "Admin",
-  //     createdAt: "2024-12-15",
-  //     updatedBy: "Admin",
-  //     updatedAt: "2024-12-20",
-  //   },
-  // ];
 
   const columns = useMemo(
     () => [
@@ -102,8 +71,8 @@ function Subscription() {
         header: "Range",
       },
       {
-        accessorKey: "best_price",
-        header: "Best Price",
+        accessorKey: "price",
+        header: "Price",
         enableHiding: false,
         size: 40,
       },
@@ -126,10 +95,11 @@ function Subscription() {
     ],
     []
   );
+
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await api.get(`admin/subscriptions`);
+      const response = await api.get(`admin/subscription`);
       setData(response.data.data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -141,6 +111,7 @@ function Subscription() {
   useEffect(() => {
     fetchData();
   }, []);
+
   const theme = createTheme({
     components: {
       MuiTableCell: {
@@ -225,6 +196,17 @@ function Subscription() {
             </button>
           </Link>
         </div>
+        {loading ? (
+          <div className="loader-container">
+            <div className="loader">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        ) : (
           <>
             <ThemeProvider theme={theme}>
               <MaterialReactTable
@@ -243,7 +225,8 @@ function Subscription() {
                   },
                 }}
                 muiTableBodyRowProps={({ row }) => ({
-                  onClick: () => navigate(`/subscription/view`),
+                  onClick: () =>
+                    navigate(`/subscription/view/${row.original.id}`),
                   style: { cursor: "pointer" },
                 })}
               />
@@ -254,17 +237,20 @@ function Subscription() {
               open={Boolean(menuAnchor)}
               onClose={handleMenuClose}
             >
-              <MenuItem onClick={() => navigate(`/subscription/edit`)}>
+              <MenuItem
+                onClick={() => navigate(`/subscription/edit/${selectedId}`)}
+              >
                 Edit
               </MenuItem>
               <MenuItem>
                 <Delete
-                  path={`/deleteCenter/${selectedId}`}
+                  path={`admin/subscription/delete/${selectedId}`}
                   onOpen={handleMenuClose}
                 />
               </MenuItem>
             </Menu>
           </>
+        )}
       </div>
     </div>
   );

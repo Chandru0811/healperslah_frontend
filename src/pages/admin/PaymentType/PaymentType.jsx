@@ -21,27 +21,6 @@ function PaymentType() {
   const [data, setData] = useState([]);
   const navigate = useNavigate();
 
-  // const data = [
-  //   {
-  //     id: 1,
-  //     name: "House Cleaning",
-  //     description: "Test",
-  //     createdBy: "Admin",
-  //     createdAt: "2024-12-15",
-  //     updatedBy: "Admin",
-  //     updatedAt: "2024-12-20",
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "House Cleaning",
-  //     description: "Test",
-  //     createdBy: "Admin",
-  //     createdAt: "2024-12-15",
-  //     updatedBy: "Admin",
-  //     updatedAt: "2024-12-20",
-  //   },
-  // ];
-
   const columns = useMemo(
     () => [
       {
@@ -92,11 +71,12 @@ function PaymentType() {
     ],
     []
   );
+
   const fetchData = async () => {
     try {
       setLoading(true);
       const response = await api.get(`admin/paymentTypes`);
-      console.log("first",response.data.data);
+      console.log("first", response.data.data);
 
       setData(response.data.data);
     } catch (error) {
@@ -183,47 +163,64 @@ function PaymentType() {
             </span>
           </div>
         </div>
-        <PaymentTypeAdd />
-        <>
-          <ThemeProvider theme={theme}>
-            <MaterialReactTable
-              columns={columns}
-              data={data}
-              enableColumnActions={false}
-              enableColumnFilters={false}
-              enableDensityToggle={false}
-              enableFullScreenToggle={false}
-              initialState={{
-                columnVisibility: {
-                  createdBy: false,
-                  createdAt: false,
-                  updatedBy: false,
-                  updatedAt: false,
-                },
-              }}
-              muiTableBodyRowProps={({ row }) => ({
-                onClick: () => navigate(`/paymenttype`),
-                style: { cursor: "pointer" },
-              })}
-            />
-          </ThemeProvider>
-          <Menu
-            id="action-menu"
-            anchorEl={menuAnchor}
-            open={Boolean(menuAnchor)}
-            onClose={handleMenuClose}
-          >
-            <MenuItem>
-              <PaymentTypeEdit  onSuccess={fetchData} id={selectedId}  handleMenuClose={handleMenuClose}/>
-            </MenuItem>
-            <MenuItem>
+        <PaymentTypeAdd onSuccess={fetchData} />
+        {loading ? (
+          <div className="loader-container">
+            <div className="loader">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        ) : (
+          <>
+            <ThemeProvider theme={theme}>
+              <MaterialReactTable
+                columns={columns}
+                data={data}
+                enableColumnActions={false}
+                enableColumnFilters={false}
+                enableDensityToggle={false}
+                enableFullScreenToggle={false}
+                initialState={{
+                  columnVisibility: {
+                    createdBy: false,
+                    createdAt: false,
+                    updatedBy: false,
+                    updatedAt: false,
+                  },
+                }}
+                muiTableBodyRowProps={({ row }) => ({
+                  onClick: () => navigate(`/paymenttype`),
+                  style: { cursor: "pointer" },
+                })}
+              />
+            </ThemeProvider>
+            <Menu
+              id="action-menu"
+              anchorEl={menuAnchor}
+              open={Boolean(menuAnchor)}
+              onClose={handleMenuClose}
+            >
+              <MenuItem>
+                <PaymentTypeEdit
+                  onSuccess={fetchData}
+                  id={selectedId}
+                  handleMenuClose={handleMenuClose}
+                />
+              </MenuItem>
+              <MenuItem>
                 <Delete
                   path={`/admin/paymentType/delete/${selectedId}`}
                   onDeleteSuccess={fetchData}
-                  onOpen={handleMenuClose}                />
+                  onOpen={handleMenuClose}
+                />
               </MenuItem>
-          </Menu>
-        </>
+            </Menu>
+          </>
+        )}
       </div>
     </div>
   );

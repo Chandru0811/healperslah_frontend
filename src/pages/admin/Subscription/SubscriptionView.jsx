@@ -2,20 +2,22 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
 function SubscriptionView() {
-  const [data, setData] = useState({
-    serviceId: [1,2],
-    name: "House Cleaning",
-    startDate: "2025-01-01",
-    endDate: "2025-01-15",
-    recurrence: "Weekly",
-    propertyType: "Apartment",
-    propertySize: "100sqm",
-    cleaningHours: "3",
-    range: "Per Day",
-    basicPrice: "1500",
-    offer_id: "1",
-    description: "500",
-  });
+  const { id } = useParams();
+  const [data, setData] = useState([]);
+
+  const getData = async () => {
+    try {
+      const response = await api.get(`admin/subscription/${id}`);
+      setData(response.data.data);
+    } catch (error) {
+      toast.error("Error Fetching Data", error);
+    }
+  };
+  
+  useEffect(() => {
+    getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="container-fluid px-0">

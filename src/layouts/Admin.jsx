@@ -82,32 +82,32 @@ function Admin({ handleLogout }) {
                 <Route path="/subscription" element={<Subscription />} />
                 <Route path="/subscription/add" element={<SubscriptionAdd />} />
                 <Route
-                  path="/subscription/edit"
+                  path="/subscription/edit/:id"
                   element={<SubscriptionEdit />}
                 />
                 <Route
-                  path="/subscription/view"
+                  path="/subscription/view/:id"
                   element={<SubscriptionView />}
                 />
 
                 {/* Custom Package */}
                 <Route path="/custompackage" element={<CustomPackage />} />
                 <Route
-                  path="/custompackage/edit"
+                  path="/custompackage/edit/:id"
                   element={<CustomPackageEdit />}
                 />
                 <Route
-                  path="/custompackage/view"
+                  path="/custompackage/view/:id"
                   element={<CustomPackageView />}
                 />
 
                 {/* User */}
                 <Route path="/user" element={<User />} />
-                <Route path="/user/view" element={<UserView />} />
+                <Route path="/user/view/:id" element={<UserView />} />
 
                 {/* Order */}
                 <Route path="/order" element={<Order />} />
-                <Route path="/order/view" element={<OrderView />} />
+                <Route path="/order/view/:id" element={<OrderView />} />
 
                 {/* Service Assignment */}
                 <Route path="/assignment" element={<ServiceAssignment />} />

@@ -1,52 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { MaterialReactTable } from "material-react-table";
-import { MoreVert as MoreVertIcon } from "@mui/icons-material";
-import {
-  ThemeProvider,
-  createTheme,
-  Menu,
-  MenuItem,
-  IconButton,
-} from "@mui/material";
+import { ThemeProvider, createTheme } from "@mui/material";
 import api from "../../../config/URL";
 
 function User() {
-  const [menuAnchor, setMenuAnchor] = useState(null);
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const navigate = useNavigate();
-
-  // const data = [
-  //   {
-  //     id: 1,
-  //     name: "Raja",
-  //     email: "raja@gmail.com",
-  //     mobile: "9123456780",
-  //     social_id: "",
-  //     social_provider: "",
-  //     email_verified_at: "",
-  //     role: "2",
-  //     createdBy: "Admin",
-  //     createdAt: "2024-12-15",
-  //     updatedBy: "Admin",
-  //     updatedAt: "2024-12-20",
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "Saran",
-  //     email: "saran@gmail.com",
-  //     mobile: "9123456781",
-  //     social_id: "",
-  //     social_provider: "",
-  //     email_verified_at: "",
-  //     role: "2",
-  //     createdBy: "Admin",
-  //     createdAt: "2024-12-15",
-  //     updatedBy: "Admin",
-  //     updatedAt: "2024-12-20",
-  //   },
-  // ];
 
   const columns = useMemo(
     () => [
@@ -95,6 +56,7 @@ function User() {
     ],
     []
   );
+
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -154,8 +116,6 @@ function User() {
     },
   });
 
-  const handleMenuClose = () => setMenuAnchor(null);
-
   return (
     <div className="container-fluid px-0 mb-4 center">
       <ol
@@ -184,6 +144,17 @@ function User() {
             </span>
           </div>
         </div>
+        {loading ? (
+          <div className="loader-container">
+            <div className="loader">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        ) : (
           <>
             <ThemeProvider theme={theme}>
               <MaterialReactTable
@@ -203,12 +174,13 @@ function User() {
                   },
                 }}
                 muiTableBodyRowProps={({ row }) => ({
-                  onClick: () => navigate(`/user/view`),
+                  onClick: () => navigate(`/user/view/${row.original.id}`),
                   style: { cursor: "pointer" },
                 })}
               />
             </ThemeProvider>
           </>
+        )}
       </div>
     </div>
   );

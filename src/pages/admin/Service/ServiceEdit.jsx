@@ -6,11 +6,13 @@ import Cropper from "react-easy-crop";
 import api from "../../../config/URL";
 import ImageURL from "../../../config/ImageURL";
 import toast from "react-hot-toast";
+import fetchAllServiceGroupWithIds from "../../List/ServiceGroupList";
 
 function ServiceEdit() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [loadIndicator, setLoadIndicator] = useState(false);
+  const [serviceGroup, setServiceGroup] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
   const [imageSrc, setImageSrc] = useState(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -245,6 +247,19 @@ function ServiceEdit() {
     };
   }, [previewImage]);
 
+  const fetchServiceGroup = async () => {
+    try {
+      const service = await fetchAllServiceGroupWithIds();
+      setServiceGroup(service);
+    } catch (error) {
+      toast.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchServiceGroup();
+  }, []);
+
   return (
     <div className="container-fluid px-0">
       <ol
@@ -321,9 +336,13 @@ function ServiceEdit() {
                   }`}
                   {...formik.getFieldProps("service_group_id")}
                 >
-                  <option></option>
-                  <option value="16">Plumbing</option>
-                  <option value="18">Home Cleaning</option>
+                  <option selected></option>
+                  {serviceGroup &&
+                    serviceGroup.map((data) => (
+                      <option key={data.id} value={data.id}>
+                        {data.name}
+                      </option>
+                    ))}
                 </select>
                 {formik.touched.service_group_id &&
                   formik.errors.service_group_id && (
@@ -375,7 +394,7 @@ function ServiceEdit() {
               </div>
               <div className="col-md-6 col-12 mb-3">
                 <label className="form-label">
-                  Basic Price<span className="text-danger">*</span>
+                  Price<span className="text-danger">*</span>
                 </label>
                 <input
                   type="text"

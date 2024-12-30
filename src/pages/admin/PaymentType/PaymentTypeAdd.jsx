@@ -8,10 +8,13 @@ import { useNavigate } from "react-router-dom";
 
 function PaymentTypeAdd() {
   const navigate = useNavigate();
-
   const [show, setShow] = useState(false);
-    const [loadIndicator, setLoadIndicator] = useState(false);
-  
+  const [loadIndicator, setLoadIndicator] = useState(false);
+
+  const validationSchema = yup.object().shape({
+    name: yup.string().required("*Name is required"),
+    description: yup.string().required("*Description is required"),
+  });
 
   const handleShow = () => {
     setShow(true);
@@ -22,30 +25,21 @@ function PaymentTypeAdd() {
     formik.resetForm();
   };
 
-  const validationSchema = yup.object().shape({
-    name: yup.string().required("*Name is required"),
-    description: yup.string().required("*Description is required"),
-  });
-
   const formik = useFormik({
     initialValues: {
       name: "",
       description: "",
     },
     validationSchema: validationSchema,
-   onSubmit: async (values) => {
-      setLoadIndicator(true); // Start loading
+    onSubmit: async (values) => {
+      setLoadIndicator(true);
       try {
-        const response = await api.post("admin/paymentType", values, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await api.post("admin/paymentType", values);
         if (response.status === 200) {
           toast.success(response.data.message);
-          handleClose(); // Close modal after success
+          handleClose();
           formik.resetForm();
-          navigate("/paymentType"); // Uncomment if navigation is required
+          navigate("/paymentType");
         } else {
           toast.error(response.data.message || "An unexpected error occurred.");
         }
@@ -70,7 +64,6 @@ function PaymentTypeAdd() {
           &nbsp; Add &nbsp;&nbsp; <i className="bx bx-plus"></i>
         </button>
       </div>
-
 
       <Modal show={show} onHide={handleClose} size="lg">
         <Modal.Header closeButton>
@@ -125,7 +118,18 @@ function PaymentTypeAdd() {
           <Button className="btn btn-secondary btn-sm" onClick={handleClose}>
             Close
           </Button>
-          <Button className="btn btn-button" type="submit" onClick={formik.handleSubmit}>
+          <Button
+            className="btn btn-button"
+            type="submit"
+            disabled={loadIndicator}
+            onClick={formik.handleSubmit}
+          >
+            {loadIndicator && (
+              <span
+                className="spinner-border spinner-border-sm me-2"
+                aria-hidden="true"
+              ></span>
+            )}
             Submit
           </Button>
         </Modal.Footer>

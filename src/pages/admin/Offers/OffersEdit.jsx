@@ -38,7 +38,7 @@ function OffersAdd() {
     onSubmit: async (values) => {
       setLoadIndicator(true);
       try {
-        const response = await api.post(`admin/offer/update/${id}`, values);
+        const response = await api.put(`admin/offer/update/${id}`, values);
         if (response.status === 200) {
           toast.success(response.data.message);
           navigate("/offers");

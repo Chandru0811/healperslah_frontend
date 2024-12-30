@@ -1,16 +1,19 @@
 import { useFormik } from "formik";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import * as Yup from "yup";
 import { MultiSelect } from "react-multi-select-component";
 
 function SubscriptionEdit() {
+  const [selectedService, setSelectedService] = useState([]);
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const [loadIndicator, setLoadIndicator] = useState(false);
   const serviceOption = [
     { label: "Service A", value: "1" },
     { label: "Service B", value: "2" },
     { label: "Service C", value: "3" },
   ];
-  const [selectedService, setSelectedService] = useState([]);
 
   const validationSchema = Yup.object().shape({
     serviceId: Yup.array()
@@ -50,11 +53,53 @@ function SubscriptionEdit() {
     },
     validationSchema,
     onSubmit: async (values) => {
-      console.log("Form submitted with values:", values);
+      setLoadIndicator(true);
+      try {
+        const response = await api.post(
+          `admin/subscription/update/${id}`,
+          values
+        );
+        if (response.status === 200) {
+          toast.success(response.data.message);
+          navigate("/subscription");
+        } else {
+          toast.error(response.data.message);
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 422) {
+          const errors = error.response.data.errors;
+          if (errors) {
+            Object.keys(errors).forEach((key) => {
+              errors[key].forEach((errorMsg) => {
+                toast(errorMsg, {
+                  icon: <FiAlertTriangle className="text-warning" />,
+                });
+              });
+            });
+          }
+        } else {
+          toast.error("An error occurred while deleting the record.");
+        }
+      } finally {
+        setLoadIndicator(false);
+      }
     },
     validateOnChange: false,
     validateOnBlur: true,
   });
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const response = await api.get(`admin/subscription/${id}`);
+        formik.setValues(response.data.data);
+      } catch (error) {
+        toast.error("Error Fetching Data", error);
+      }
+    };
+    getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="container-fluid px-0">
@@ -101,8 +146,18 @@ function SubscriptionEdit() {
                 </button>
               </Link>
               &nbsp;&nbsp;
-              <button type="submit" className="btn btn-button btn-sm">
-                <span className="fw-medium">Update</span>
+              <button
+                type="submit"
+                className="btn btn-button btn-sm"
+                disabled={loadIndicator}
+              >
+                {loadIndicator && (
+                  <span
+                    className="spinner-border spinner-border-sm me-2"
+                    aria-hidden="true"
+                  ></span>
+                )}
+                Update
               </button>
             </div>
           </div>

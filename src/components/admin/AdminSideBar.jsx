@@ -119,7 +119,7 @@ function AdminSideBar({ handleLogout }) {
                 to="/custompackage"
               >
                 <BiSolidPackage className="sidebar_icon" />
-                Custom Packages
+                Custom Subscription
               </NavLink>
             </li>
             <li className="nav-item px-3">

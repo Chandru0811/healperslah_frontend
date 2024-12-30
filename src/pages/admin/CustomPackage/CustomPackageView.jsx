@@ -1,21 +1,24 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import api from "../../../config/URL";
 
 function CustomPackageView() {
-  const [data, setData] = useState({
-    serviceId: [1,2],
-    name: "House Cleaning",
-    startDate: "2025-01-01",
-    endDate: "2025-01-15",
-    recurrence: "Weekly",
-    propertyType: "Apartment",
-    propertySize: "100sqm",
-    cleaningHours: "3",
-    range: "Per Day",
-    basicPrice: "1500",
-    offer_id: "1",
-    description: "500",
-  });
+  const { id } = useParams();
+  const [data, setData] = useState([]);
+
+  const getData = async () => {
+    try {
+      const response = await api.get(`admin/custom_package/${id}`);
+      setData(response.data.data);
+    } catch (error) {
+      toast.error("Error Fetching Data", error);
+    }
+  };
+  
+  useEffect(() => {
+    getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="container-fluid px-0">
@@ -31,12 +34,12 @@ function CustomPackageView() {
         </li>
         <li>
           <Link to="/custompackage" className="custom-breadcrumb">
-            &nbsp;Custom Package
+            &nbsp;Custom Subscription
           </Link>
           <span className="breadcrumb-separator"> &gt; </span>
         </li>
         <li className="breadcrumb-item active" aria-current="page">
-          &nbsp;Custom Package View
+          &nbsp;Custom Subscription View
         </li>
       </ol>
       <div className="card vh-100" style={{ border: "1px solid #dbd9d0" }}>
@@ -48,7 +51,7 @@ function CustomPackageView() {
             <div class="d-flex">
               <div class="dot active"></div>
             </div>
-            <span class="me-2 text-muted">View Subscription</span>
+            <span class="me-2 text-muted">View Custom Subscription</span>
           </div>
           <div className="my-2 pe-3 d-flex align-items-center">
             <Link to="/custompackage">
@@ -86,7 +89,7 @@ function CustomPackageView() {
                   <p className="fw-medium text-sm">Start Date</p>
                 </div>
                 <div className="col-6">
-                  <p className="text-muted text-sm">: {data.startDate}</p>
+                  <p className="text-muted text-sm">: {data.start_date}</p>
                 </div>
               </div>
             </div>
@@ -96,7 +99,7 @@ function CustomPackageView() {
                   <p className="fw-medium text-sm">End Date</p>
                 </div>
                 <div className="col-6">
-                  <p className="text-muted text-sm">: {data.endDate}</p>
+                  <p className="text-muted text-sm">: {data.end_date}</p>
                 </div>
               </div>
             </div>
@@ -149,18 +152,6 @@ function CustomPackageView() {
             <div className="col-md-6 col-12 my-2">
               <div className="row">
                 <div className="col-6">
-                  <p className="fw-medium text-sm">Property Type</p>
-                </div>
-                <div className="col-6">
-                  <p className="text-muted text-sm text-break ">
-                    : {data.propertyType}
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-6 col-12 my-2">
-              <div className="row">
-                <div className="col-6">
                   <p className="fw-medium text-sm">Range</p>
                 </div>
                 <div className="col-6">
@@ -173,11 +164,11 @@ function CustomPackageView() {
             <div className="col-md-6 col-12 my-2">
               <div className="row">
                 <div className="col-6">
-                  <p className="fw-medium text-sm">Basic Price</p>
+                  <p className="fw-medium text-sm">Price</p>
                 </div>
                 <div className="col-6">
                   <p className="text-muted text-sm text-break ">
-                    : {data.basicPrice}
+                    : {data.price}
                   </p>
                 </div>
               </div>
