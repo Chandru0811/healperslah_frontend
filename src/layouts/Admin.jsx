@@ -34,6 +34,10 @@ import PaymentTypeAdd from "../pages/admin/PaymentType/PaymentTypeAdd";
 import PaymentTypeEdit from "../pages/admin/PaymentType/PaymentTypeEdit";
 import PaymentTypeView from "../pages/admin/PaymentType/PaymentTypeView";
 import PaymentType from "../pages/admin/PaymentType/PaymentType";
+import Offers from "../pages/admin/Offers/Offers";
+import OffersAdd from "../pages/admin/Offers/OffersAdd";
+import OffersEdit from "../pages/admin/Offers/OffersEdit";
+import OffersView from "../pages/admin/Offers/OffersView";
 
 function Admin({ handleLogout }) {
   return (
@@ -49,6 +53,8 @@ function Admin({ handleLogout }) {
                 <Route path="*" element={<AdminDashboard />} />
 
                 {/* Side Menu  */}
+
+                {/* Service Group */}
                 <Route path="/servicegroup" element={<ServiceGroup />} />
                 <Route path="/servicegroup/add" element={<ServiceGroupAdd />} />
                 <Route
@@ -65,6 +71,12 @@ function Admin({ handleLogout }) {
                 <Route path="/service/add" element={<ServiceAdd />} />
                 <Route path="/service/edit/:id" element={<ServiceEdit />} />
                 <Route path="/service/view/:id" element={<ServiceView />} />
+
+                {/* Offers */}
+                <Route path="/offers" element={<Offers />} />
+                <Route path="/offers/add" element={<OffersAdd />} />
+                <Route path="/offers/edit" element={<OffersEdit />} />
+                <Route path="/offers/view" element={<OffersView />} />
 
                 {/* Subscription */}
                 <Route path="/subscription" element={<Subscription />} />

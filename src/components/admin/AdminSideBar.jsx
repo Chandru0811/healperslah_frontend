@@ -1,25 +1,30 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import helperlogo from "../../assets/helperlah_logo_side.png";
-import { BsBagCheckFill, BsBarChart, BsBarChartFill } from "react-icons/bs";
-import { BiLogOut, BiSolidPackage } from "react-icons/bi";
+import { BsBarChart } from "react-icons/bs";
+import { BiSolidPackage } from "react-icons/bi";
 import PropTypes from "prop-types";
-import { MdAssignmentInd, MdHomeRepairService, MdMiscellaneousServices, MdOutlineAssignmentInd, MdOutlineHomeRepairService, MdOutlineMiscellaneousServices, MdOutlineSubscriptions, MdSubscriptions } from "react-icons/md";
-import { TbPackages } from "react-icons/tb";
-import { FaRegUserCircle, FaUserCircle } from "react-icons/fa";
-import { PiContactlessPayment, PiContactlessPaymentFill } from "react-icons/pi";
+import {
+  MdOutlineAssignmentInd,
+  MdOutlineHomeRepairService,
+  MdOutlineMiscellaneousServices,
+  MdOutlineSubscriptions,
+} from "react-icons/md";
+import { TbRosetteDiscount } from "react-icons/tb";
+import { FaRegUserCircle } from "react-icons/fa";
+import { PiContactlessPayment } from "react-icons/pi";
 import { RiSecurePaymentFill } from "react-icons/ri";
 import { IoBagCheckOutline } from "react-icons/io5";
 
 function AdminSideBar({ handleLogout }) {
   const navigate = useNavigate();
-  const handelLogOutClick = () => {
-    handleLogout();
-    navigate("/");
-  };
+
+  // const handelLogOutClick = () => {
+  //   handleLogout();
+  //   navigate("/");
+  // };
 
   const [leadMenuOpen] = useState(false);
-
   const [activeSubmenu] = useState(null);
 
   return (
@@ -85,6 +90,16 @@ function AdminSideBar({ handleLogout }) {
               >
                 <MdOutlineMiscellaneousServices className="sidebar_icon" />
                 Service
+              </NavLink>
+            </li>
+            <li className="nav-item px-3">
+              <NavLink
+                className="nav-link"
+                style={{ borderRadius: "5px" }}
+                to="/offers"
+              >
+                <TbRosetteDiscount className="sidebar_icon" />
+                Offers
               </NavLink>
             </li>
             <li className="nav-item px-3">
@@ -178,7 +193,9 @@ function AdminSideBar({ handleLogout }) {
     </nav>
   );
 }
+
 AdminSideBar.propTypes = {
   handleLogout: PropTypes.func.isRequired,
 };
+
 export default AdminSideBar;
