@@ -5,6 +5,7 @@ import * as Yup from "yup";
 import Cropper from "react-easy-crop";
 import api from "../../../config/URL";
 import ImageURL from "../../../config/ImageURL";
+import toast from "react-hot-toast";
 
 function ServiceEdit() {
   const navigate = useNavigate();
@@ -86,15 +87,24 @@ function ServiceEdit() {
         );
         if (response.status === 200) {
           toast.success(response.data.message);
-          navigate("/servicegroup");
+          navigate("/service");
         } else {
           toast.error(response.data.message);
         }
       } catch (error) {
-        if (error.response.status === 409) {
-          toast.warning(error?.response?.data?.message);
+        if (error.response && error.response.status === 422) {
+          const errors = error.response.data.errors;
+          if (errors) {
+            Object.keys(errors).forEach((key) => {
+              errors[key].forEach((errorMsg) => {
+                toast(errorMsg, {
+                  icon: <FiAlertTriangle className="text-warning" />,
+                });
+              });
+            });
+          }
         } else {
-          toast.error(error.response.data.message);
+          toast.error("An error occurred while deleting the record.");
         }
       } finally {
         setLoadIndicator(false);
@@ -280,8 +290,18 @@ function ServiceEdit() {
                 </button>
               </Link>
               &nbsp;&nbsp;
-              <button type="submit" className="btn btn-button btn-sm">
-                <span className="fw-medium">Update</span>
+              <button
+                type="submit"
+                className="btn btn-button"
+                disabled={loadIndicator}
+              >
+                {loadIndicator && (
+                  <span
+                    className="spinner-border spinner-border-sm me-2"
+                    aria-hidden="true"
+                  ></span>
+                )}
+                Update
               </button>
             </div>
           </div>
@@ -302,8 +322,8 @@ function ServiceEdit() {
                   {...formik.getFieldProps("service_group_id")}
                 >
                   <option></option>
-                  <option value="1">Home Cleaning</option>
-                  <option value="2">Plumber</option>
+                  <option value="16">Plumbing</option>
+                  <option value="18">Home Cleaning</option>
                 </select>
                 {formik.touched.service_group_id &&
                   formik.errors.service_group_id && (
@@ -425,7 +445,7 @@ function ServiceEdit() {
                   <div className="d-flex justify-content-start mt-3 gap-2">
                     <button
                       type="button"
-                      className="btn btn-primary mt-3"
+                      className="btn btn-button mt-3"
                       onClick={handleCropSave}
                     >
                       Save Cropped Image

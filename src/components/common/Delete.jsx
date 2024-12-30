@@ -11,6 +11,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 function Delete({ path, onDeleteSuccess, onOpen }) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [loadIndicator, setLoadIndicator] = useState(false);
 
   const handleOpenDialog = () => {
     setDeleteDialogOpen(true);
@@ -25,6 +26,7 @@ function Delete({ path, onDeleteSuccess, onOpen }) {
 
   const handleDelete = async () => {
     try {
+      setLoadIndicator(true);
       const response = await api.delete(path);
       if (response.status === 200 || response.status === 201) {
         onDeleteSuccess();
@@ -32,13 +34,23 @@ function Delete({ path, onDeleteSuccess, onOpen }) {
         if (typeof onOpen === "function") onOpen();
       }
     } catch (error) {
-      if (error?.response?.status === 409) {
-        toast.warning(error?.response?.data?.message);
+      if (error.response && error.response.status === 422) {
+        const errors = error.response.data.errors;
+        if (errors) {
+          Object.keys(errors).forEach((key) => {
+            errors[key].forEach((errorMsg) => {
+              toast(errorMsg, {
+                icon: <FiAlertTriangle className="text-warning" />,
+              });
+            });
+          });
+        }
       } else {
         toast.error("An error occurred while deleting the record.");
       }
     } finally {
       handleCloseDialog();
+      setLoadIndicator(false);
     }
   };
 
@@ -69,11 +81,18 @@ function Delete({ path, onDeleteSuccess, onOpen }) {
         <DialogActions>
           <Button
             onClick={handleCloseDialog}
+            disabled={loadIndicator}
             className="btn btn-secondary btn-sm"
           >
             Cancel
           </Button>
           <Button onClick={handleDelete} className="btn btn-button">
+            {loadIndicator && (
+              <span
+                className="spinner-border spinner-border-sm me-2"
+                aria-hidden="true"
+              ></span>
+            )}
             Delete
           </Button>
         </DialogActions>

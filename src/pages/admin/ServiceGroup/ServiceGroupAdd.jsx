@@ -80,7 +80,20 @@ function ServiceGroupAdd() {
           toast.error(response.data.message);
         }
       } catch (error) {
-        toast.error(error);
+        if (error.response && error.response.status === 422) {
+          const errors = error.response.data.errors;
+          if (errors) {
+            Object.keys(errors).forEach((key) => {
+              errors[key].forEach((errorMsg) => {
+                toast(errorMsg, {
+                  icon: <FiAlertTriangle className="text-warning" />,
+                });
+              });
+            });
+          }
+        } else {
+          toast.error("An error occurred while deleting the record.");
+        }
       } finally {
         setLoadIndicator(false);
       }

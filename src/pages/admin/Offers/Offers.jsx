@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { MaterialReactTable } from "material-react-table";
 import { MoreVert as MoreVertIcon } from "@mui/icons-material";
@@ -10,34 +10,14 @@ import {
   IconButton,
 } from "@mui/material";
 import Delete from "../../../components/common/Delete";
+import api from "../../../config/URL";
 
 function Offers() {
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
   const navigate = useNavigate();
-
-  const data = [
-    {
-      id: 1,
-      expiry_date: "2024-12-31",
-      discount_percent: "10",
-      discount_amount: "20",
-      created_by: "Admin",
-      created_at: "2024-12-31",
-      updated_by: "Admin",
-      updated_at: "2024-12-31",
-    },
-    {
-      id: 2,
-      expiry_date: "2025-01-01",
-      discount_percent: "5",
-      discount_amount: "10",
-      created_by: "Admin",
-      created_at: "2024-12-31",
-      updated_by: "Admin",
-      updated_at: "2024-12-31",
-    },
-  ];
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const columns = useMemo(
     () => [
@@ -75,6 +55,11 @@ function Offers() {
         header: "Expiry Date",
       },
       {
+        accessorKey: "coupon_code",
+        enableHiding: false,
+        header: "Coupon Code",
+      },
+      {
         accessorKey: "discount_percent",
         enableHiding: false,
         header: "Discount Percent",
@@ -104,6 +89,22 @@ function Offers() {
     ],
     []
   );
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get(`admin/offers`);
+      setData(response.data.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const theme = createTheme({
     components: {
@@ -189,44 +190,59 @@ function Offers() {
             </button>
           </Link>
         </div>
-        <>
-          <ThemeProvider theme={theme}>
-            <MaterialReactTable
-              columns={columns}
-              data={data}
-              enableColumnActions={false}
-              enableColumnFilters={false}
-              enableDensityToggle={false}
-              enableFullScreenToggle={false}
-              initialState={{
-                columnVisibility: {
-                  created_by: false,
-                  created_at: false,
-                  updated_by: false,
-                  updated_at: false,
-                },
-              }}
-              muiTableBodyRowProps={({ row }) => ({
-                onClick: () => navigate(`/offers/view`),
-                style: { cursor: "pointer" },
-              })}
-            />
-          </ThemeProvider>
-          <Menu
-            id="action-menu"
-            anchorEl={menuAnchor}
-            open={Boolean(menuAnchor)}
-            onClose={handleMenuClose}
-          >
-            <MenuItem onClick={() => navigate(`/offers/edit`)}>Edit</MenuItem>
-            <MenuItem>
-              <Delete
-                path={`admin/offers/delete/${selectedId}`}
-                onOpen={handleMenuClose}
+        {loading ? (
+          <div className="loader-container">
+            <div className="loader">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        ) : (
+          <>
+            <ThemeProvider theme={theme}>
+              <MaterialReactTable
+                columns={columns}
+                data={data}
+                enableColumnActions={false}
+                enableColumnFilters={false}
+                enableDensityToggle={false}
+                enableFullScreenToggle={false}
+                initialState={{
+                  columnVisibility: {
+                    created_by: false,
+                    created_at: false,
+                    updated_by: false,
+                    updated_at: false,
+                  },
+                }}
+                muiTableBodyRowProps={({ row }) => ({
+                  onClick: () => navigate(`/offers/view/${row.original.id}`),
+                  style: { cursor: "pointer" },
+                })}
               />
-            </MenuItem>
-          </Menu>
-        </>
+            </ThemeProvider>
+            <Menu
+              id="action-menu"
+              anchorEl={menuAnchor}
+              open={Boolean(menuAnchor)}
+              onClose={handleMenuClose}
+            >
+              <MenuItem onClick={() => navigate(`/offers/edit/${id}`)}>
+                Edit
+              </MenuItem>
+              <MenuItem>
+                <Delete
+                  path={`admin/offer/delete/${selectedId}`}
+                  onDeleteSuccess={fetchData}
+                  onOpen={handleMenuClose}
+                />
+              </MenuItem>
+            </Menu>
+          </>
+        )}
       </div>
     </div>
   );

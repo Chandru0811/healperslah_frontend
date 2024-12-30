@@ -9,6 +9,7 @@ import { FiAlertTriangle } from "react-icons/fi";
 function ServiceGroupView() {
   const { id } = useParams();
   const [data, setData] = useState([]);
+
   const getData = async () => {
     try {
       const response = await api.get(`admin/serviceGroup/${id}`);
@@ -17,10 +18,11 @@ function ServiceGroupView() {
       toast.error("Error Fetching Data", error);
     }
   };
+  
   useEffect(() => {
     getData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  }, []);
 
   const handelStatusChange = async () => {
     try {
@@ -82,7 +84,7 @@ function ServiceGroupView() {
               </button>
             </Link>
             &nbsp;&nbsp;
-            {data.active === 1 ? (
+            {data.active === 0 ? (
               <button
                 type="button"
                 onClick={handelStatusChange}

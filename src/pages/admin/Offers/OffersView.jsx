@@ -1,14 +1,25 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { Link, useParams } from "react-router-dom";
+import api from "../../../config/URL";
 
 function OffersView() {
-  
-  const [data] = useState({
-    expiry_date: "2024-12-31",
-    discount_percent: 10,
-    discount_amount: 20,
-    description: "Hurry Up!",
-  });
+  const { id } = useParams();
+  const [data, setData] = useState([]);
+
+  const getData = async () => {
+    try {
+      const response = await api.get(`admin/offer/${id}`);
+      setData(response.data.data);
+    } catch (error) {
+      toast.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="container-fluid px-0">
@@ -34,11 +45,11 @@ function OffersView() {
       </ol>
       <div className="card vh-100" style={{ border: "1px solid #dbd9d0" }}>
         <div className="d-flex px-4 justify-content-between align-items-center card_header p-1 mb-4">
-          <div class="d-flex align-items-center">
-            <div class="d-flex">
-              <div class="dot active"></div>
+          <div className="d-flex align-items-center">
+            <div className="d-flex">
+              <div className="dot active"></div>
             </div>
-            <span class="me-2 text-muted">View Offers</span>
+            <span className="me-2 text-muted">View Offers</span>
           </div>
           <div className="my-2 pe-3 d-flex align-items-center">
             <Link to="/offers">

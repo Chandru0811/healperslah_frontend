@@ -5,10 +5,12 @@ import * as Yup from "yup";
 import Cropper from "react-easy-crop";
 import toast from "react-hot-toast";
 import api from "../../../config/URL";
+// import fetchAllServiceGroupWithIds from "../../List/ServiceGroupList";
 
 function ServiceAdd() {
   const navigate = useNavigate();
   const [loadIndicator, setLoadIndicator] = useState(false);
+  // const [serviceGroup, setServiceGroup] = useState(null);
   const [imageSrc, setImageSrc] = useState(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
@@ -83,7 +85,20 @@ function ServiceAdd() {
           toast.error(response.data.message);
         }
       } catch (error) {
-        toast.error(error);
+        if (error.response && error.response.status === 422) {
+          const errors = error.response.data.errors;
+          if (errors) {
+            Object.keys(errors).forEach((key) => {
+              errors[key].forEach((errorMsg) => {
+                toast(errorMsg, {
+                  icon: <FiAlertTriangle className="text-warning" />,
+                });
+              });
+            });
+          }
+        } else {
+          toast.error("An error occurred while deleting the record.");
+        }
       } finally {
         setLoadIndicator(false);
       }
@@ -185,6 +200,19 @@ function ServiceAdd() {
     document.querySelector("input[type='file']").value = "";
   };
 
+  // const fetchServiceGroup = async () => {
+  //   try {
+  //     const service = await fetchAllServiceGroupWithIds();
+  //     setServiceGroup(service);
+  //   } catch (error) {
+  //     toast.error(error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   fetchServiceGroup();
+  // }, []);
+
   return (
     <div className="container-fluid px-0">
       <ol
@@ -261,9 +289,15 @@ function ServiceAdd() {
                   }`}
                   {...formik.getFieldProps("service_group_id")}
                 >
-                  <option></option>
-                  <option value="1">Home Cleaning</option>
-                  <option value="2">Plumber</option>
+                  <option selected></option>
+                  {/* {serviceGroup &&
+                    serviceGroup.map((service) => (
+                      <option key={service.id} value={service.id}>
+                        {service.userNames}
+                      </option>
+                    ))} */}
+                  <option value="16">Plumbing</option>
+                  <option value="18">Home Cleaning</option>
                 </select>
                 {formik.touched.service_group_id &&
                   formik.errors.service_group_id && (
@@ -375,7 +409,7 @@ function ServiceAdd() {
                   <div className="d-flex justify-content-start mt-3 gap-2">
                     <button
                       type="button"
-                      className="btn btn-primary mt-3"
+                      className="btn btn-button mt-3"
                       onClick={handleCropSave}
                     >
                       Save Cropped Image

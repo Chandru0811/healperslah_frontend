@@ -75,8 +75,8 @@ function Admin({ handleLogout }) {
                 {/* Offers */}
                 <Route path="/offers" element={<Offers />} />
                 <Route path="/offers/add" element={<OffersAdd />} />
-                <Route path="/offers/edit" element={<OffersEdit />} />
-                <Route path="/offers/view" element={<OffersView />} />
+                <Route path="/offers/edit/:id" element={<OffersEdit />} />
+                <Route path="/offers/view/:id" element={<OffersView />} />
 
                 {/* Subscription */}
                 <Route path="/subscription" element={<Subscription />} />

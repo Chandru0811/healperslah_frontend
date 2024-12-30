@@ -19,7 +19,6 @@ function Service() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-
   const columns = useMemo(
     () => [
       {
@@ -61,7 +60,7 @@ function Service() {
               <div className="active_dot"></div>
               <span>Active</span>
             </div>
-          ) : status === 2 ? (
+          ) : status === 0 ? (
             <div className="d-flex align-items-center">
               <div className="inactive_dot"></div>
               <span>Inactive</span>
@@ -69,7 +68,11 @@ function Service() {
           ) : null;
         },
       },
-      { accessorKey: "service_group_id", enableHiding: false, header: "Service Group Id" },
+      {
+        accessorKey: "service_group_id",
+        enableHiding: false,
+        header: "Service Group Id",
+      },
       { accessorKey: "name", enableHiding: false, header: "Name" },
       {
         accessorKey: "order",
@@ -202,6 +205,17 @@ function Service() {
             </button>
           </Link>
         </div>
+        {loading ? (
+          <div className="loader-container">
+            <div className="loader">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        ) : (
           <>
             <ThemeProvider theme={theme}>
               <MaterialReactTable
@@ -243,6 +257,7 @@ function Service() {
               </MenuItem>
             </Menu>
           </>
+        )}
       </div>
     </div>
   );

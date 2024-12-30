@@ -12,6 +12,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 function Delete({ path, handelSuccess }) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [loadIndicator, setLoadIndicator] = useState(false);
 
   const handleOpenDialog = () => {
     setDeleteDialogOpen(true);
@@ -23,8 +24,9 @@ function Delete({ path, handelSuccess }) {
     document.body.style.overflow = "";
   };
 
-  const handleDelete = async () => {
+  const handleStatus = async () => {
     try {
+      setLoadIndicator(true);
       const response = await api.post(path);
       if (response.status === 200 || response.status === 201) {
         handelSuccess();
@@ -47,6 +49,7 @@ function Delete({ path, handelSuccess }) {
       }
     } finally {
       handleCloseDialog();
+      setLoadIndicator(false);
     }
   };
 
@@ -83,8 +86,18 @@ function Delete({ path, handelSuccess }) {
           >
             Cancel
           </Button>
-          <Button onClick={handleDelete} className="btn btn-button">
-            Delete
+          <Button
+            onClick={handleStatus}
+            disabled={loadIndicator}
+            className="btn btn-button"
+          >
+            {loadIndicator && (
+              <span
+                className="spinner-border spinner-border-sm me-2"
+                aria-hidden="true"
+              ></span>
+            )}
+            Deactivate
           </Button>
         </DialogActions>
       </Dialog>

@@ -1,8 +1,14 @@
 import { useFormik } from "formik";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import * as Yup from "yup";
+import api from "../../../config/URL";
+import toast from "react-hot-toast";
 
 function OffersAdd() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [loadIndicator, setLoadIndicator] = useState(false);
 
   const validationSchema = Yup.object().shape({
     expiry_date: Yup.string().required("*Expiry Date is required"),
@@ -29,10 +35,52 @@ function OffersAdd() {
       description: "",
     },
     validationSchema: validationSchema,
-    onSubmit: async () => {},
+    onSubmit: async (values) => {
+      setLoadIndicator(true);
+      try {
+        const response = await api.post(`admin/offer/update/${id}`, values);
+        if (response.status === 200) {
+          toast.success(response.data.message);
+          navigate("/offers");
+        } else {
+          toast.error(response.data.message);
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 422) {
+          const errors = error.response.data.errors;
+          if (errors) {
+            Object.keys(errors).forEach((key) => {
+              errors[key].forEach((errorMsg) => {
+                toast(errorMsg, {
+                  icon: <FiAlertTriangle className="text-warning" />,
+                });
+              });
+            });
+          }
+        } else {
+          toast.error("An error occurred while deleting the record.");
+        }
+      } finally {
+        setLoadIndicator(false);
+      }
+    },
     validateOnChange: false,
     validateOnBlur: true,
   });
+
+  const getData = async () => {
+    try {
+      const response = await api.get(`admin/offer/${id}`);
+      formik.setValues(response.data.data);
+    } catch (error) {
+      toast.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="container-fluid px-0">
@@ -79,7 +127,17 @@ function OffersAdd() {
                 </button>
               </Link>
               &nbsp;&nbsp;
-              <button type="submit" className="btn btn-button">
+              <button
+                type="submit"
+                className="btn btn-button btn-sm"
+                disabled={loadIndicator}
+              >
+                {loadIndicator && (
+                  <span
+                    className="spinner-border spinner-border-sm me-2"
+                    aria-hidden="true"
+                  ></span>
+                )}
                 Update
               </button>
             </div>

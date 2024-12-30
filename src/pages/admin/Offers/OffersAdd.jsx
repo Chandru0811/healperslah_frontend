@@ -1,13 +1,13 @@
 import { useFormik } from "formik";
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
-import Cropper from "react-easy-crop";
-import toast from "react-hot-toast";
 import api from "../../../config/URL";
+import toast from "react-hot-toast";
 
 function OffersAdd() {
   const navigate = useNavigate();
+  const [loadIndicator, setLoadIndicator] = useState(false);
 
   const validationSchema = Yup.object().shape({
     expiry_date: Yup.string().required("*Expiry Date is required"),
@@ -34,7 +34,35 @@ function OffersAdd() {
       description: "",
     },
     validationSchema: validationSchema,
-    onSubmit: async () => {},
+    onSubmit: async (values) => {
+      setLoadIndicator(true);
+      try {
+        const response = await api.post("admin/offer", values);
+        if (response.status === 200) {
+          toast.success(response.data.message);
+          navigate("/offers");
+        } else {
+          toast.error(response.data.message);
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 422) {
+          const errors = error.response.data.errors;
+          if (errors) {
+            Object.keys(errors).forEach((key) => {
+              errors[key].forEach((errorMsg) => {
+                toast(errorMsg, {
+                  icon: <FiAlertTriangle className="text-warning" />,
+                });
+              });
+            });
+          }
+        } else {
+          toast.error("An error occurred while deleting the record.");
+        }
+      } finally {
+        setLoadIndicator(false);
+      }
+    },
     validateOnChange: false,
     validateOnBlur: true,
   });
@@ -84,7 +112,17 @@ function OffersAdd() {
                 </button>
               </Link>
               &nbsp;&nbsp;
-              <button type="submit" className="btn btn-button">
+              <button
+                type="submit"
+                className="btn btn-button"
+                disabled={loadIndicator}
+              >
+                {loadIndicator && (
+                  <span
+                    className="spinner-border spinner-border-sm me-2"
+                    aria-hidden="true"
+                  ></span>
+                )}
                 Save
               </button>
             </div>

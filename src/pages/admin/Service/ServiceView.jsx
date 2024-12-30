@@ -3,22 +3,47 @@ import { Link, useParams } from "react-router-dom";
 import Deactivate from "../../../components/common/Deactivate";
 import api from "../../../config/URL";
 import ImageURL from "../../../config/ImageURL";
+import toast from "react-hot-toast";
 
 function ServiceView() {
   const { id } = useParams();
   const [data, setData] = useState([]);
 
+  const getData = async () => {
+    try {
+      const response = await api.get(`admin/service/${id}`);
+      setData(response.data.data);
+    } catch (error) {
+      toast.error("Error Fetching Data", error);
+    }
+  };
+
   useEffect(() => {
-    const getData = async () => {
-      try {
-        const response = await api.get(`admin/service/${id}`);
-        setData(response.data.data);
-      } catch (error) {
-        toast.error("Error Fetching Data", error);
-      }
-    };
     getData();
   }, [id]);
+
+  const handelStatusChange = async () => {
+    try {
+      const response = await api.post(`admin/service/status/${id}`);
+      toast.success(response?.data?.message);
+      getData();
+    } catch (error) {
+      if (error.response && error.response.status === 422) {
+        const errors = error.response.data.errors;
+        if (errors) {
+          Object.keys(errors).forEach((key) => {
+            errors[key].forEach((errorMsg) => {
+              toast(errorMsg, {
+                icon: <FiAlertTriangle className="text-warning" />,
+              });
+            });
+          });
+        }
+      } else {
+        toast.error("An error occurred while deleting the record.");
+      }
+    }
+  };
 
   return (
     <div className="container-fluid px-0">
@@ -57,7 +82,20 @@ function ServiceView() {
               </button>
             </Link>
             &nbsp;&nbsp;
-            <Deactivate />
+            {data.active === 0 ? (
+              <button
+                type="button"
+                onClick={handelStatusChange}
+                className="btn btn-success btn-sm"
+              >
+                Activate
+              </button>
+            ) : (
+              <Deactivate
+                path={`admin/service/status/${id}`}
+                handelSuccess={getData}
+              />
+            )}
           </div>
         </div>
         <div className="container-fluid px-4">
