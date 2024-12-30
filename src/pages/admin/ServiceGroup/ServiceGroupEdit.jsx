@@ -1,10 +1,11 @@
 import { useFormik } from "formik";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import * as Yup from "yup";
 import Cropper from "react-easy-crop";
 import api from "../../../config/URL";
 import ImageURL from "../../../config/ImageURL";
+import toast from "react-hot-toast";
 
 function ServiceGroupEdit() {
   const navigate = useNavigate();
@@ -20,21 +21,12 @@ function ServiceGroupEdit() {
   const [originalFileType, setOriginalFileType] = useState("");
   const MAX_FILE_SIZE = 2 * 1024 * 1024;
 
-  const SUPPORTED_FORMATS = [
-    "image/png",
-    "image/jpeg",
-    "image/jpg",
-    "image/webp",
-  ];
-
-  const imageValidation = Yup.mixed()
-  .required("*Image is required")
-  .test("fileFormat", "Unsupported format", (value) => {
-    return !value || (value && SUPPORTED_FORMATS.includes(value.type));
-  })
-  .test("fileSize", "File size is too large. Max 2MB.", (value) => {
-    return !value || (value && value.size <= MAX_FILE_SIZE);
-  });
+  // const SUPPORTED_FORMATS = [
+  //   "image/png",
+  //   "image/jpeg",
+  //   "image/jpg",
+  //   "image/webp",
+  // ];
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required("*Name is required"),
@@ -44,7 +36,6 @@ function ServiceGroupEdit() {
       .required("*Basic Price is required")
       .positive("*Please enter a valid number")
       .integer("*Basic Price is must be number"),
-    image: imageValidation,
     description: Yup.string()
       .required("*Description is a required field")
       .max(200, "*The maximum length is 200 characters"),
@@ -64,14 +55,17 @@ function ServiceGroupEdit() {
       setLoadIndicator(true);
 
       const formData = new FormData();
+      formData.append("_method", "PUT");
       formData.append("name", values.name);
       formData.append("slug", values.slug);
       formData.append("description", values.description);
-      formData.append("image", values.image);
+      if (values.image) {
+        formData.append("image", values.image);
+      }
       formData.append("order", values.order);
       formData.append("base_price", values.base_price);
       try {
-        const response = await api.put(
+        const response = await api.post(
           `admin/serviceGroup/update/${id}`,
           formData,
           {
@@ -105,8 +99,9 @@ function ServiceGroupEdit() {
       .toLowerCase()
       .trim()
       .replace(/\s+/g, "_")
-      .replace(/[^\w\-]+/g, "");
+      .replace(/[^\w-]+/g, "");
     formik.setFieldValue("slug", slug);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formik.values.name]);
 
   const scrollToError = (errors) => {
@@ -135,7 +130,8 @@ function ServiceGroupEdit() {
       }
     };
     getData();
-  }, [id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleFileChange = (event) => {
     const file = event?.target?.files[0];
@@ -268,11 +264,11 @@ function ServiceGroupEdit() {
       >
         <div className="card">
           <div className="d-flex justify-content-between align-items-center card_header p-1 mb-4 px-4">
-            <div class="d-flex align-items-center">
-              <div class="d-flex">
-                <div class="dot active"></div>
+            <div className="d-flex align-items-center">
+              <div className="d-flex">
+                <div className="dot active"></div>
               </div>
-              <span class="me-2 text-muted">Edit Service Group</span>
+              <span className="me-2 text-muted">Edit Service Group</span>
             </div>
             <div className="my-2 pe-3 d-flex align-items-center">
               <Link to="/servicegroup">

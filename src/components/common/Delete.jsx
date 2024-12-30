@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Button } from "react-bootstrap";
 import { Dialog, DialogActions, DialogTitle, Slide } from "@mui/material";
 import api from "../../config/URL";
 import PropTypes from "prop-types";
+import toast from "react-hot-toast";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
@@ -26,8 +27,8 @@ function Delete({ path, onDeleteSuccess, onOpen }) {
     try {
       const response = await api.delete(path);
       if (response.status === 200 || response.status === 201) {
-        toast.success(response.data.data.message);
         onDeleteSuccess();
+        toast.success(response?.data?.message);
         if (typeof onOpen === "function") onOpen();
       }
     } catch (error) {
@@ -53,9 +54,9 @@ function Delete({ path, onDeleteSuccess, onOpen }) {
 
       <Dialog
         open={deleteDialogOpen}
-        onClose={handleCloseDialog} 
-        TransitionComponent={Transition} 
-        keepMounted 
+        onClose={handleCloseDialog}
+        TransitionComponent={Transition}
+        keepMounted
         sx={{
           "& .MuiDialog-paper": {
             margin: "0 auto",
@@ -66,7 +67,10 @@ function Delete({ path, onDeleteSuccess, onOpen }) {
       >
         <DialogTitle>Are you sure you want to delete this record?</DialogTitle>
         <DialogActions>
-          <Button onClick={handleCloseDialog} className="btn btn-secondary btn-sm">
+          <Button
+            onClick={handleCloseDialog}
+            className="btn btn-secondary btn-sm"
+          >
             Cancel
           </Button>
           <Button onClick={handleDelete} className="btn btn-button">
@@ -82,6 +86,7 @@ Delete.propTypes = {
   path: PropTypes.func.isRequired,
   onSuccess: PropTypes.func.isRequired,
   onOpen: PropTypes.func.isRequired,
+  onDeleteSuccess: PropTypes.func.isRequired,
 };
 
 export default Delete;

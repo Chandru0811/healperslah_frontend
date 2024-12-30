@@ -1,24 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Button } from "react-bootstrap";
-import {
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Slide,
-} from "@mui/material";
+import { Dialog, DialogActions, DialogTitle, Slide } from "@mui/material";
+import api from "../../config/URL";
+import PropTypes from "prop-types";
+import toast from "react-hot-toast";
+import { FiAlertTriangle } from "react-icons/fi";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
 });
 
-function Deactivate({ path, onDeleteSuccess, onOpen }) {
-  const [isActive, setIsActive] = useState(false);
+function Delete({ path, handelSuccess }) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-
-  const handleActivate = () => {
-    setIsActive(true);
-  };
 
   const handleOpenDialog = () => {
     setDeleteDialogOpen(true);
@@ -26,35 +19,46 @@ function Deactivate({ path, onDeleteSuccess, onOpen }) {
   };
 
   const handleCloseDialog = () => {
-    if (typeof onOpen === "function") onOpen();
     setDeleteDialogOpen(false);
     document.body.style.overflow = "";
   };
 
-  const handleDeactivateConfirm = () => {
-    setIsActive(false); 
-    handleCloseDialog();
+  const handleDelete = async () => {
+    try {
+      const response = await api.post(path);
+      if (response.status === 200 || response.status === 201) {
+        handelSuccess();
+        toast.success(response?.data?.message);
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 422) {
+        const errors = error.response.data.errors;
+        if (errors) {
+          Object.keys(errors).forEach((key) => {
+            errors[key].forEach((errorMsg) => {
+              toast(errorMsg, {
+                icon: <FiAlertTriangle className="text-warning" />,
+              });
+            });
+          });
+        }
+      } else {
+        toast.error("An error occurred while deleting the record.");
+      }
+    } finally {
+      handleCloseDialog();
+    }
   };
 
   return (
     <>
-      {!isActive ? (
-        <button
-          type="button"
-          className="btn btn-success btn-sm"
-          onClick={handleActivate}
-        >
-          Activate
-        </button>
-      ) : (
-        <button
-          type="button"
-          className="btn btn-danger btn-sm"
-          onClick={handleOpenDialog}
-        >
-          Deactivate
-        </button>
-      )}
+      <button
+        type="button"
+        className="btn btn-danger btn-sm"
+        onClick={handleOpenDialog}
+      >
+        Deactivate
+      </button>
 
       <Dialog
         open={deleteDialogOpen}
@@ -69,16 +73,18 @@ function Deactivate({ path, onDeleteSuccess, onOpen }) {
           },
         }}
       >
-        <DialogTitle>Deactivate Service Group</DialogTitle>
-        <DialogContent>
-          Are you sure you want to deactivate this Service Group?
-        </DialogContent>
+        <DialogTitle>
+          Are you sure you want to Deactivate this record?
+        </DialogTitle>
         <DialogActions>
-          <Button onClick={handleCloseDialog} className="btn btn-secondary btn-sm">
+          <Button
+            onClick={handleCloseDialog}
+            className="btn btn-secondary btn-sm"
+          >
             Cancel
           </Button>
-          <Button onClick={handleDeactivateConfirm} className="btn btn-button">
-            Deactivate
+          <Button onClick={handleDelete} className="btn btn-button">
+            Delete
           </Button>
         </DialogActions>
       </Dialog>
@@ -86,4 +92,11 @@ function Deactivate({ path, onDeleteSuccess, onOpen }) {
   );
 }
 
-export default Deactivate;
+Delete.propTypes = {
+  path: PropTypes.func.isRequired,
+  onSuccess: PropTypes.func.isRequired,
+  onOpen: PropTypes.func.isRequired,
+  handelSuccess: PropTypes.func.isRequired,
+};
+
+export default Delete;

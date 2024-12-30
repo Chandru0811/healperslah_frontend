@@ -1,25 +1,49 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Deactivate from "../../../components/common/Deactivate";
 import toast from "react-hot-toast";
 import api from "../../../config/URL";
 import ImageURL from "../../../config/ImageURL";
+import { FiAlertTriangle } from "react-icons/fi";
 
 function ServiceGroupView() {
   const { id } = useParams();
   const [data, setData] = useState([]);
-
+  const getData = async () => {
+    try {
+      const response = await api.get(`admin/serviceGroup/${id}`);
+      setData(response.data.data);
+    } catch (error) {
+      toast.error("Error Fetching Data", error);
+    }
+  };
   useEffect(() => {
-    const getData = async () => {
-      try {
-        const response = await api.get(`admin/serviceGroup/${id}`);
-        setData(response.data.data);
-      } catch (error) {
-        toast.error("Error Fetching Data", error);
-      }
-    };
     getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
+
+  const handelStatusChange = async () => {
+    try {
+      const response = await api.post(`admin/serviceGroup/status/${id}`);
+      toast.success(response?.data?.message);
+      getData();
+    } catch (error) {
+      if (error.response && error.response.status === 422) {
+        const errors = error.response.data.errors;
+        if (errors) {
+          Object.keys(errors).forEach((key) => {
+            errors[key].forEach((errorMsg) => {
+              toast(errorMsg, {
+                icon: <FiAlertTriangle className="text-warning" />,
+              });
+            });
+          });
+        }
+      } else {
+        toast.error("An error occurred while deleting the record.");
+      }
+    }
+  };
 
   return (
     <div className="container-fluid px-0">
@@ -45,11 +69,11 @@ function ServiceGroupView() {
       </ol>
       <div className="card vh-100" style={{ border: "1px solid #dbd9d0" }}>
         <div className="d-flex px-4 justify-content-between align-items-center card_header p-1 mb-4">
-          <div class="d-flex align-items-center">
-            <div class="d-flex">
-              <div class="dot active"></div>
+          <div className="d-flex align-items-center">
+            <div className="d-flex">
+              <div className="dot active"></div>
             </div>
-            <span class="me-2 text-muted">View Service Group</span>
+            <span className="me-2 text-muted">View Service Group</span>
           </div>
           <div className="my-2 pe-3 d-flex align-items-center">
             <Link to="/servicegroup">
@@ -58,7 +82,20 @@ function ServiceGroupView() {
               </button>
             </Link>
             &nbsp;&nbsp;
-            <Deactivate />
+            {data.active === 1 ? (
+              <button
+                type="button"
+                onClick={handelStatusChange}
+                className="btn btn-success btn-sm"
+              >
+                Activate
+              </button>
+            ) : (
+              <Deactivate
+                path={`admin/serviceGroup/status/${id}`}
+                handelSuccess={getData}
+              />
+            )}
           </div>
         </div>
         <div className="container-fluid px-4">
