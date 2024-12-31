@@ -233,6 +233,17 @@ function Order() {
             </span>
           </div>
         </div>
+        {loading ? (
+          <div className="loader-container">
+            <div className="loader">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        ) : (
           <>
             <ThemeProvider theme={theme}>
               <MaterialReactTable
@@ -260,7 +271,8 @@ function Order() {
                 })}
               />
             </ThemeProvider>
-          </>
+            </>
+        )}
       </div>
     </div>
   );

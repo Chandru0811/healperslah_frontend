@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { MaterialReactTable } from "material-react-table";
 import { MoreVert as MoreVertIcon } from "@mui/icons-material";
@@ -9,43 +9,14 @@ import {
   MenuItem,
   IconButton,
 } from "@mui/material";
+import api from "../../../config/URL";
 
 function Payment() {
   const [menuAnchor, setMenuAnchor] = useState(null);
+  const [selectedId, setSelectedId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState([]);
   const navigate = useNavigate();
-
-  const data = [
-    {
-      id: 1,
-      order_id: 1,
-      helper_id: 1,
-      company_id: 1,
-      booking_type: "Service Group",
-      amount_paid: "150.5",
-      balance_amount: "0",
-      total_amount: "150.5",
-      payment_status: 1,
-      createdBy: "Admin",
-      createdAt: "2024-12-15",
-      updatedBy: "Admin",
-      updatedAt: "2024-12-20",
-    },
-    {
-      id: 2,
-      order_id: 2,
-      helper_id: 1,
-      company_id: 1,
-      booking_type: "Service Group",
-      amount_paid: "200",
-      balance_amount: "0",
-      total_amount: "200",
-      payment_status: 0,
-      createdBy: "Admin",
-      createdAt: "2024-12-15",
-      updatedBy: "Admin",
-      updatedAt: "2024-12-20",
-    },
-  ];
 
   const columns = useMemo(
     () => [
@@ -149,6 +120,22 @@ function Payment() {
     []
   );
 
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get("admin/payment");
+      setData(response.data.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   const theme = createTheme({
     components: {
       MuiTableCell: {
@@ -222,40 +209,38 @@ function Payment() {
             </span>
           </div>
         </div>
-          <>
-            <ThemeProvider theme={theme}>
-              <MaterialReactTable
-                columns={columns}
-                data={data}
-                enableColumnActions={false}
-                enableColumnFilters={false}
-                enableDensityToggle={false}
-                enableFullScreenToggle={false}
-                initialState={{
-                  columnVisibility: {
-                    createdBy: false,
-                    createdAt: false,
-                    updatedBy: false,
-                    updatedAt: false,
-                  },
-                }}
-                muiTableBodyRowProps={({ row }) => ({
-                  onClick: () => navigate(`/payment/view`),
-                  style: { cursor: "pointer" },
-                })}
-              />
-            </ThemeProvider>
-            <Menu
-              id="action-menu"
-              anchorEl={menuAnchor}
-              open={Boolean(menuAnchor)}
-              onClose={handleMenuClose}
-            >
-              <MenuItem onClick={() => navigate(`/payment/edit`)}>
-                Edit
-              </MenuItem>
-            </Menu>
-          </>
+        <>
+          <ThemeProvider theme={theme}>
+            <MaterialReactTable
+              columns={columns}
+              data={data}
+              enableColumnActions={false}
+              enableColumnFilters={false}
+              enableDensityToggle={false}
+              enableFullScreenToggle={false}
+              initialState={{
+                columnVisibility: {
+                  createdBy: false,
+                  createdAt: false,
+                  updatedBy: false,
+                  updatedAt: false,
+                },
+              }}
+              muiTableBodyRowProps={({ row }) => ({
+                onClick: () => navigate(`/payment/view`),
+                style: { cursor: "pointer" },
+              })}
+            />
+          </ThemeProvider>
+          <Menu
+            id="action-menu"
+            anchorEl={menuAnchor}
+            open={Boolean(menuAnchor)}
+            onClose={handleMenuClose}
+          >
+            <MenuItem onClick={() => navigate(`/payment/edit`)}>Edit</MenuItem>
+          </Menu>
+        </>
       </div>
     </div>
   );

@@ -112,11 +112,11 @@ function Admin({ handleLogout }) {
                 {/* Service Assignment */}
                 <Route path="/assignment" element={<ServiceAssignment />} />
                 <Route
-                  path="/assignment/edit"
+                  path="/assignment/edit/:id"
                   element={<ServiceAssignmentEdit />}
                 />
                 <Route
-                  path="/assignment/view"
+                  path="/assignment/view/:id"
                   element={<ServiceAssignmentView />}
                 />
 

@@ -5,16 +5,20 @@ import api from "../../../config/URL";
 function UserView() {
   const { id } = useParams();
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const getData = async () => {
     try {
+      setLoading(true);
       const response = await api.get(`admin/user/${id}`);
       setData(response.data.data);
     } catch (error) {
       toast.error("Error Fetching Data", error);
+    } finally {
+      setLoading(false);
     }
   };
-  
+
   useEffect(() => {
     getData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -61,74 +65,90 @@ function UserView() {
             </Link>
           </div>
         </div>
-        <div className="container-fluid px-4">
-          <div className="row pb-3">
-            <div className="col-md-6 col-12 my-2">
-              <div className="row">
-                <div className="col-6">
-                  <p className="fw-medium">Name</p>
-                </div>
-                <div className="col-6">
-                  <p className="text-muted text-sm">: {data.name}</p>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-6 col-12 my-2">
-              <div className="row">
-                <div className="col-6">
-                  <p className="fw-medium">Email</p>
-                </div>
-                <div className="col-6">
-                  <p className="text-muted text-sm">: {data.email}</p>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-6 col-12 my-2">
-              <div className="row">
-                <div className="col-6">
-                  <p className="fw-medium">Role</p>
-                </div>
-                <div className="col-6">
-                  <p className="text-muted text-sm text-break ">
-                    : {data.role}
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-6 col-12 my-2">
-              <div className="row">
-                <div className="col-6">
-                  <p className="fw-medium">Social Id</p>
-                </div>
-                <div className="col-6">
-                  <p className="text-muted text-sm">: {data.social_id}</p>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-6 col-12 my-2">
-              <div className="row">
-                <div className="col-6">
-                  <p className="fw-medium">Social Provider</p>
-                </div>
-                <div className="col-6">
-                  <p className="text-muted text-sm">: {data.social_provider}</p>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-6 col-12 my-2">
-              <div className="row">
-                <div className="col-6">
-                  <p className="fw-medium">Email Verified At</p>
-                </div>
-                <div className="col-6">
-                  <p className="text-muted text-sm text-break ">
-                    : {data.email_verified_at}
-                  </p>
-                </div>
-              </div>
+        {loading ? (
+          <div className="loader-container">
+            <div className="loader">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
             </div>
           </div>
-        </div>
+        ) : (
+          <>
+            <div className="container-fluid px-4">
+              <div className="row pb-3">
+                <div className="col-md-6 col-12 my-2">
+                  <div className="row">
+                    <div className="col-6">
+                      <p className="fw-medium">Name</p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm">: {data.name}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12 my-2">
+                  <div className="row">
+                    <div className="col-6">
+                      <p className="fw-medium">Email</p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm">: {data.email}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12 my-2">
+                  <div className="row">
+                    <div className="col-6">
+                      <p className="fw-medium">Role</p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm text-break ">
+                        : {data.role}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12 my-2">
+                  <div className="row">
+                    <div className="col-6">
+                      <p className="fw-medium">Social Id</p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm">: {data.social_id}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12 my-2">
+                  <div className="row">
+                    <div className="col-6">
+                      <p className="fw-medium">Social Provider</p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm">
+                        : {data.social_provider}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12 my-2">
+                  <div className="row">
+                    <div className="col-6">
+                      <p className="fw-medium">Email Verified At</p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm text-break ">
+                        : {data.email_verified_at}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

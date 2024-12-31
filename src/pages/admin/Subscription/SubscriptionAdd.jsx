@@ -1,60 +1,91 @@
 import { useFormik } from "formik";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { MultiSelect } from "react-multi-select-component";
+import api from "../../../config/URL";
+import { toast } from "react-toastify";
+import { FiAlertTriangle } from "react-icons/fi";
 
 function SubscriptionAdd() {
   const navigate = useNavigate();
   const [loadIndicator, setLoadIndicator] = useState(false);
-  const [selectedService, setSelectedService] = useState([]);
-  const serviceOption = [
-    { label: "Service A", value: "1" },
-    { label: "Service B", value: "2" },
-    { label: "Service C", value: "3" },
-  ];
+  const [serviceData, setServiceData] = useState([]);
+  const [selectedServices, setSelectedServices] = useState([]);
+  const serviceOption = serviceData?.map((service) => ({
+    label: service.name,
+    value: service.id,
+  }));
+
 
   const validationSchema = Yup.object().shape({
-    serviceId: Yup.array()
+    service_id: Yup.array()
       .min(1, "*At least one service must be selected")
       .required("*Service Id is required"),
     name: Yup.string().required("*Name is required"),
-    startDate: Yup.string().required("*Start Date is required"),
-    endDate: Yup.string().required("*End Date is required"),
+    slug: Yup.string().required("*Slug is required"),
+    start_date: Yup.date().required("*Start Date is required"),
+    end_date: Yup.date()
+      .required("*End Date is required")
+      .min(Yup.ref("start_date"), "*End date must be after start date"),
     recurrence: Yup.string().required("*Recurrence is required"),
-    propertyType: Yup.string().required("*Property Type is required"),
-    propertySize: Yup.string().required("*Property Size is required"),
-    cleaning_hours: Yup.string().required("*Cleaning Hours is required"),
+    additional_specs: Yup.object().shape({
+      property_type: Yup.string().required("*Property Type is required"),
+      property_size: Yup.string().required("*Property Size is required"),
+      cleaning_hours: Yup.string().required("*Cleaning Hours is required"),
+    }),
     range: Yup.string().required("*Range is required"),
     price: Yup.number()
       .typeError("*Price must be a number")
       .required("*Price is required")
       .positive("*Please enter a valid number")
       .integer("*Price must be a whole number"),
-    description: Yup.string()
-      .notRequired()
-      .max(200, "*The maximum length is 200 characters"),
+    description: Yup.string().max(200, "*The maximum length is 200 characters"),
+    offer_id: Yup.mixed().nullable(),
   });
 
   const formik = useFormik({
     initialValues: {
-      serviceId: [],
+      service_id: [],
       name: "",
-      startDate: "",
-      endDate: "",
+      slug: "",
+      description: "",
+      start_date: "",
+      end_date: "",
       recurrence: "",
-      propertyType: "",
-      propertySize: "",
-      cleaning_hours: "",
+      additional_specs: {
+        property_type: "",
+        property_size: "",
+        cleaning_hours: "",
+      },
       range: "",
       price: "",
-      description: "",
+      offer_id: null,
     },
-    validationSchema,
+    // validationSchema: validationSchema,
     onSubmit: async (values) => {
+      const slug = values.name
+        ? values.name.toLowerCase().replace(/\s+/g, "_")
+        : "";
+      const payload = {
+        ...values,
+        slug,
+        service_id: values.service_id.map(Number),
+        additional_specs: {
+          ...values.additional_specs,
+          property_type: values.additional_specs.property_type,
+          property_size: values.additional_specs.property_size,
+          cleaning_hours: values.additional_specs.cleaning_hours,
+        },
+      };
+
       setLoadIndicator(true);
       try {
-        const response = await api.post("admin/subscription", values);
+        const response = await api.post("admin/subscription", payload, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
         if (response.status === 200) {
           toast.success(response.data.message);
           navigate("/subscription");
@@ -74,7 +105,7 @@ function SubscriptionAdd() {
             });
           }
         } else {
-          toast.error("An error occurred while deleting the record.");
+          toast.error("An error occurred while submitting the form.");
         }
       } finally {
         setLoadIndicator(false);
@@ -83,6 +114,19 @@ function SubscriptionAdd() {
     validateOnChange: false,
     validateOnBlur: true,
   });
+
+  const getService = async () => {
+    try {
+      const serviceData = await api.get(`admin/services`);
+      setServiceData(serviceData.data.data);
+    } catch (error) {
+      toast.error(error);
+    }
+  };
+
+  useEffect(() => {
+    getService();
+  }, []);
 
   return (
     <div className="container-fluid px-0">
@@ -152,17 +196,17 @@ function SubscriptionAdd() {
                 </label>
                 <MultiSelect
                   options={serviceOption}
-                  value={selectedService}
+                  value={selectedServices}
                   onChange={(selected) => {
-                    setSelectedService(selected);
+                    setSelectedServices(selected);
                     formik.setFieldValue(
-                      "serviceId",
+                      "service_id",
                       selected.map((option) => option.value)
                     );
                   }}
                   labelledBy="Select Service"
                   className={`form-multi-select ${
-                    formik.touched.serviceId && formik.errors.serviceId
+                    formik.touched.service_id && formik.errors.service_id
                       ? "is-invalid"
                       : ""
                   }`}
@@ -171,9 +215,9 @@ function SubscriptionAdd() {
                     minHeight: "37.6px",
                   }}
                 />
-                {formik.touched.serviceId && formik.errors.serviceId && (
+                {formik.touched.service_id && formik.errors.service_id && (
                   <div className="invalid-feedback">
-                    {formik.errors.serviceId}
+                    {formik.errors.service_id}
                   </div>
                 )}
               </div>
@@ -183,6 +227,8 @@ function SubscriptionAdd() {
                 </label>
                 <input
                   type="text"
+                  name="name"
+                  id="name"
                   className={`form-control ${
                     formik.touched.name && formik.errors.name
                       ? "is-invalid"
@@ -201,15 +247,15 @@ function SubscriptionAdd() {
                 <input
                   type="date"
                   className={`form-control ${
-                    formik.touched.startDate && formik.errors.startDate
+                    formik.touched.start_date && formik.errors.start_date
                       ? "is-invalid"
                       : ""
                   }`}
-                  {...formik.getFieldProps("startDate")}
+                  {...formik.getFieldProps("start_date")}
                 />
-                {formik.touched.startDate && formik.errors.startDate && (
+                {formik.touched.start_date && formik.errors.start_date && (
                   <div className="invalid-feedback">
-                    {formik.errors.startDate}
+                    {formik.errors.start_date}
                   </div>
                 )}
               </div>
@@ -220,15 +266,15 @@ function SubscriptionAdd() {
                 <input
                   type="date"
                   className={`form-control ${
-                    formik.touched.endDate && formik.errors.endDate
+                    formik.touched.end_date && formik.errors.end_date
                       ? "is-invalid"
                       : ""
                   }`}
-                  {...formik.getFieldProps("endDate")}
+                  {...formik.getFieldProps("end_date")}
                 />
-                {formik.touched.endDate && formik.errors.endDate && (
+                {formik.touched.end_date && formik.errors.end_date && (
                   <div className="invalid-feedback">
-                    {formik.errors.endDate}
+                    {formik.errors.end_date}
                   </div>
                 )}
               </div>
@@ -256,81 +302,86 @@ function SubscriptionAdd() {
                 )}
               </div>
               <div className="col-md-6 col-12 mb-3">
-                <label className="form-label">
-                  Property Type<span className="text-danger">*</span>
-                </label>
-                <select
-                  aria-label="Default select example"
-                  className={`form-select ${
-                    formik.touched.propertyType && formik.errors.propertyType
-                      ? "is-invalid"
-                      : ""
-                  }`}
-                  {...formik.getFieldProps("propertyType")}
-                >
-                  <option value=""></option>
-                  <option value="Office">Office</option>
-                  <option value="Apartment">Apartment</option>
-                  <option value="Resenditial">Resenditial</option>
-                </select>
-                {formik.touched.propertyType && formik.errors.propertyType && (
-                  <div className="invalid-feedback">
-                    {formik.errors.propertyType}
-                  </div>
-                )}
-              </div>
-              <div className="col-md-6 col-12 mb-3">
-                <label className="form-label">
-                  Property Size<span className="text-danger">*</span>
-                </label>
-                <select
-                  aria-label="Default select example"
-                  className={`form-select ${
-                    formik.touched.propertySize && formik.errors.propertySize
-                      ? "is-invalid"
-                      : ""
-                  }`}
-                  {...formik.getFieldProps("propertySize")}
-                >
-                  <option value=""></option>
-                  <option value="Below 100 sqm">Below 100 sqm</option>
-                  <option value="100 - 500 sqm">100 - 500 sqm</option>
-                  <option value="Above 500 sqm">Above 500 sqm</option>
-                </select>
-                {formik.touched.propertySize && formik.errors.propertySize && (
-                  <div className="invalid-feedback">
-                    {formik.errors.propertySize}
-                  </div>
-                )}
-              </div>
-              <div className="col-md-6 col-12 mb-3">
-                <label className="form-label">
-                  Cleaning Hours<span className="text-danger">*</span>
-                </label>
-                <select
-                  aria-label="Default select example"
-                  className={`form-select ${
-                    formik.touched.cleaning_hours &&
-                    formik.errors.cleaning_hours
-                      ? "is-invalid"
-                      : ""
-                  }`}
-                  {...formik.getFieldProps("cleaning_hours")}
-                >
-                  <option value=""></option>
-                  {Array.from({ length: 12 }, (_, index) => (
-                    <option key={index + 1} value={index + 1}>
-                      {index + 1}
-                    </option>
-                  ))}
-                </select>
-                {formik.touched.cleaning_hours &&
-                  formik.errors.cleaning_hours && (
-                    <div className="invalid-feedback">
-                      {formik.errors.cleaning_hours}
-                    </div>
-                  )}
-              </div>
+  <label className="form-label">
+    Property Type<span className="text-danger">*</span>
+  </label>
+  <select
+    aria-label="Default select example"
+    className={`form-select ${
+      formik.touched.additional_specs?.property_type &&
+      formik.errors.additional_specs?.property_type
+        ? "is-invalid"
+        : ""
+    }`}
+    {...formik.getFieldProps("additional_specs.property_type")}
+  >
+    <option value=""></option>
+    <option value="Office">Office</option>
+    <option value="Apartment">Apartment</option>
+    <option value="Residential">Residential</option> {/* Corrected spelling */}
+  </select>
+  {formik.touched.additional_specs?.property_type &&
+    formik.errors.additional_specs?.property_type && (
+      <div className="invalid-feedback">
+        {formik.errors.additional_specs?.property_type}
+      </div>
+    )}
+</div>
+<div className="col-md-6 col-12 mb-3">
+  <label className="form-label">
+    Property Size<span className="text-danger">*</span>
+  </label>
+  <select
+    aria-label="Default select example"
+    className={`form-select ${
+      formik.touched.additional_specs?.property_size &&
+      formik.errors.additional_specs?.property_size
+        ? "is-invalid"
+        : ""
+    }`}
+    {...formik.getFieldProps("additional_specs.property_size")}
+  >
+    <option value=""></option>
+    <option value="Below 100 sqm">Below 100 sqm</option>
+    <option value="100 - 500 sqm">100 - 500 sqm</option>
+    <option value="Above 500 sqm">Above 500 sqm</option>
+  </select>
+  {formik.touched.additional_specs?.property_size &&
+    formik.errors.additional_specs?.property_size && (
+      <div className="invalid-feedback">
+        {formik.errors.additional_specs?.property_size}
+      </div>
+    )}
+</div>
+<div className="col-md-6 col-12 mb-3">
+  <label className="form-label">
+    Cleaning Hours<span className="text-danger">*</span>
+  </label>
+  <select
+    aria-label="Default select example"
+    className={`form-select ${
+      formik.touched.additional_specs?.cleaning_hours &&
+      formik.errors.additional_specs?.cleaning_hours
+        ? "is-invalid"
+        : ""
+    }`}
+    {...formik.getFieldProps("additional_specs.cleaning_hours")}
+  >
+    <option value=""></option>
+    {Array.from({ length: 12 }, (_, index) => (
+      <option key={index + 1} value={index + 1}>
+        {index + 1}
+      </option>
+    ))}
+  </select>
+  {formik.touched.additional_specs?.cleaning_hours &&
+    formik.errors.additional_specs?.cleaning_hours && (
+      <div className="invalid-feedback">
+        {formik.errors.additional_specs.cleaning_hours}
+      </div>
+    )}
+</div>
+
               <div className="col-md-6 col-12 mb-3">
                 <label className="form-label">
                   Range<span className="text-danger">*</span>
@@ -345,13 +396,15 @@ function SubscriptionAdd() {
                   {...formik.getFieldProps("range")}
                 >
                   <option value=""></option>
-                  <option value="Per Hour">Per Hour</option>
-                  <option value="Per Day">Per Day</option>
+                  <option value="Short">Short</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Long">Long</option>
                 </select>
                 {formik.touched.range && formik.errors.range && (
                   <div className="invalid-feedback">{formik.errors.range}</div>
                 )}
               </div>
+
               <div className="col-md-6 col-12 mb-3">
                 <label className="form-label">Offer Id</label>
                 <input
@@ -383,9 +436,7 @@ function SubscriptionAdd() {
                   {...formik.getFieldProps("price")}
                 />
                 {formik.touched.price && formik.errors.price && (
-                  <div className="invalid-feedback">
-                    {formik.errors.price}
-                  </div>
+                  <div className="invalid-feedback">{formik.errors.price}</div>
                 )}
               </div>
               <div className="col-md-6 col-12 mb-3">

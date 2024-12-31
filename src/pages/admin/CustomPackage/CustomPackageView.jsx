@@ -4,21 +4,43 @@ import api from "../../../config/URL";
 
 function CustomPackageView() {
   const { id } = useParams();
-  const [data, setData] = useState([]);
+  const [data, setData] = useState(null);
+  const [additionalSpecs, setAdditionalSpecs] = useState({});
 
   const getData = async () => {
     try {
       const response = await api.get(`admin/custom_package/${id}`);
-      setData(response.data.data);
+      const packageData = response.data.data;
+      setData(packageData);
+
+      // Parse the additional_specs JSON string
+      if (packageData.additional_specs) {
+        setAdditionalSpecs(JSON.parse(packageData.additional_specs));
+      }
     } catch (error) {
-      toast.error("Error Fetching Data", error);
+      error("Error Fetching Data", error);
     }
   };
-  
+
   useEffect(() => {
     getData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [id]);
+
+  if (!data) {
+    return (
+      <div>
+        <div className="loader-container">
+          <div className="loader">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container-fluid px-0">
@@ -47,15 +69,15 @@ function CustomPackageView() {
           className="d-flex px-4 justify-content-between align-items-center p-1 mb-4"
           style={{ background: "#f5f7f9" }}
         >
-          <div class="d-flex align-items-center">
-            <div class="d-flex">
-              <div class="dot active"></div>
+          <div className="d-flex align-items-center">
+            <div className="d-flex">
+              <div className="dot active"></div>
             </div>
-            <span class="me-2 text-muted">View Custom Subscription</span>
+            <span className="me-2 text-muted">View Custom Subscription</span>
           </div>
           <div className="my-2 pe-3 d-flex align-items-center">
             <Link to="/custompackage">
-              <button type="button " className="btn btn-sm btn-border">
+              <button type="button" className="btn btn-sm btn-border">
                 Back
               </button>
             </Link>
@@ -69,7 +91,7 @@ function CustomPackageView() {
                   <p className="fw-medium text-sm">Service Id</p>
                 </div>
                 <div className="col-6">
-                  <p className="text-muted text-sm">: {data.serviceId}</p>
+                  <p className="text-muted text-sm">: {data.service_id}</p>
                 </div>
               </div>
             </div>
@@ -113,14 +135,15 @@ function CustomPackageView() {
                 </div>
               </div>
             </div>
+            {/* Additional Specs */}
             <div className="col-md-6 col-12 my-2">
               <div className="row">
                 <div className="col-6">
                   <p className="fw-medium text-sm">Property Type</p>
                 </div>
                 <div className="col-6">
-                  <p className="text-muted text-sm text-break ">
-                    : {data.propertyType}
+                  <p className="text-muted text-sm text-break">
+                    : {additionalSpecs.property_type}
                   </p>
                 </div>
               </div>
@@ -131,8 +154,8 @@ function CustomPackageView() {
                   <p className="fw-medium text-sm">Property Size</p>
                 </div>
                 <div className="col-6">
-                  <p className="text-muted text-sm text-break ">
-                    : {data.propertySize}
+                  <p className="text-muted text-sm text-break">
+                    : {additionalSpecs.property_size}
                   </p>
                 </div>
               </div>
@@ -143,19 +166,20 @@ function CustomPackageView() {
                   <p className="fw-medium text-sm">Cleaning Hours</p>
                 </div>
                 <div className="col-6">
-                  <p className="text-muted text-sm text-break ">
-                    : {data.cleaningHours}
+                  <p className="text-muted text-sm text-break">
+                    : {additionalSpecs.cleaning_hours}
                   </p>
                 </div>
               </div>
             </div>
+            {/* Other Fields */}
             <div className="col-md-6 col-12 my-2">
               <div className="row">
                 <div className="col-6">
                   <p className="fw-medium text-sm">Range</p>
                 </div>
                 <div className="col-6">
-                  <p className="text-muted text-sm text-break ">
+                  <p className="text-muted text-sm text-break">
                     : {data.range}
                   </p>
                 </div>
@@ -167,7 +191,7 @@ function CustomPackageView() {
                   <p className="fw-medium text-sm">Price</p>
                 </div>
                 <div className="col-6">
-                  <p className="text-muted text-sm text-break ">
+                  <p className="text-muted text-sm text-break">
                     : {data.price}
                   </p>
                 </div>
@@ -179,7 +203,7 @@ function CustomPackageView() {
                   <p className="fw-medium text-sm">Description</p>
                 </div>
                 <div className="col-6">
-                  <p className="text-muted text-sm text-break ">
+                  <p className="text-muted text-sm text-break">
                     : {data.description}
                   </p>
                 </div>

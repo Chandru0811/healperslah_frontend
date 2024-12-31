@@ -1,13 +1,24 @@
 import { useFormik } from "formik";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import * as Yup from "yup";
+import { toast } from "react-toastify";
+import { FiAlertTriangle } from "react-icons/fi";
+import api from "../../../config/URL";
+
 
 function ServiceAssignmentEdit() {
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const [loadIndicator, setLoadIndicator] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // Validation Schema
   const validationSchema = Yup.object().shape({
     order_id: Yup.string().required("*Order Id is required"),
     company_id: Yup.string().required("*Company Id is required"),
     helper_id: Yup.string().required("*Helper Id is required"),
-    assigned_at: Yup.string().required("*Assigned At is required"),
+    assigned_at: Yup.date().required("*Assigned At is required"),
   });
 
   const formik = useFormik({
@@ -19,11 +30,58 @@ function ServiceAssignmentEdit() {
     },
     validationSchema,
     onSubmit: async (values) => {
-      console.log("Form submitted with values:", values);
+      setLoadIndicator(true);
+      try {
+        const response = await api.put(
+          `admin/serviceAssignment/update/${id}`,
+          values
+        );
+
+        if (response.status === 200) {
+          toast.success(response.data.message);
+          navigate("/assignment");
+        } else {
+          toast.error(response.data.message);
+        }
+      } catch (error) {
+        if (error.response?.status === 422) {
+          const errors = error.response.data.errors;
+          Object.keys(errors || {}).forEach((key) => {
+            errors[key].forEach((errorMsg) => {
+              toast(errorMsg, {
+                icon: <FiAlertTriangle className="text-warning" />,
+              });
+            });
+          });
+        } else {
+          toast.error("An error occurred while updating the record.");
+        }
+      } finally {
+        setLoadIndicator(false);
+      }
     },
     validateOnChange: false,
     validateOnBlur: true,
   });
+
+  // Fetch existing data for the form
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await api.get(`admin/serviceAssignment/${id}`);
+        if (response.data.data && response.data.data) {
+          formik.setValues(response.data.data);
+        }
+      } catch (error) {
+        toast.error(`Error: ${error.response?.data?.message || error.message}`);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [id]);
+
 
   return (
     <div className="container-fluid px-0">
@@ -75,6 +133,18 @@ function ServiceAssignmentEdit() {
               </button>
             </div>
           </div>
+          {loading ? (
+          <div className="loader-container">
+            <div className="loader">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        ) : (
+          <>
           <div className="container-fluid px-4">
             <div className="row py-4">
               <div className="col-md-6 col-12 mb-3">
@@ -155,6 +225,8 @@ function ServiceAssignmentEdit() {
               </div>
             </div>
           </div>
+          </>
+        )}
         </div>
       </form>
     </div>

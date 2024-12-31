@@ -19,32 +19,6 @@ function ServiceAssignment() {
   const [data, setData] = useState([]);
   const navigate = useNavigate();
 
-  // const data = [
-  //   {
-  //     id: 1,
-  //     order_id: 1,
-  //     company_id: 1,
-  //     helper_id: 1,
-  //     assigned_at: "2024-12-16 13:06:38",
-  //     status: "Assigned",
-  //     createdBy: "Admin",
-  //     createdAt: "2024-12-15",
-  //     updatedBy: "Admin",
-  //     updatedAt: "2024-12-20",
-  //   },
-  //   {
-  //     id: 2,
-  //     order_id: 2,
-  //     company_id: 1,
-  //     helper_id: 1,
-  //     assigned_at: "2024-12-17 13:06:38",
-  //     status: "Notassigned",
-  //     createdBy: "Admin",
-  //     createdAt: "2024-12-15",
-  //     updatedBy: "Admin",
-  //     updatedAt: "2024-12-20",
-  //   },
-  // ];
 
   const columns = useMemo(
     () => [
@@ -139,6 +113,7 @@ function ServiceAssignment() {
       setLoading(true);
       const response = await api.get(`admin/serviceAssignments`);
       setData(response.data.data);
+      console.log("new :", response.data.data);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -224,6 +199,17 @@ function ServiceAssignment() {
             </span>
           </div>
         </div>
+        {loading ? (
+          <div className="loader-container">
+            <div className="loader">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        ) : (
           <>
             <ThemeProvider theme={theme}>
               <MaterialReactTable
@@ -242,7 +228,7 @@ function ServiceAssignment() {
                   },
                 }}
                 muiTableBodyRowProps={({ row }) => ({
-                  onClick: () => navigate(`/assignment/view`),
+                  onClick: () => navigate(`/assignment/view/${row.original.id}`),
                   style: { cursor: "pointer" },
                 })}
               />
@@ -253,17 +239,19 @@ function ServiceAssignment() {
               open={Boolean(menuAnchor)}
               onClose={handleMenuClose}
             >
-              <MenuItem onClick={() => navigate(`/assignment/edit`)}>
+              <MenuItem onClick={() => navigate(`/assignment/edit/${selectedId}`)}>
                 Edit
               </MenuItem>
               <MenuItem>
                 <Delete
-                  path={`/deleteCenter/${selectedId}`}
+                  path={`/admin/serviceAssignment/delete/${selectedId}`}
+                  onDeleteSuccess={fetchData}
                   onOpen={handleMenuClose}
                 />
               </MenuItem>
             </Menu>
           </>
+        )}
       </div>
     </div>
   );

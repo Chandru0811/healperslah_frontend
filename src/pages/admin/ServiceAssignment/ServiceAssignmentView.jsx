@@ -1,14 +1,44 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import {useParams, Link } from "react-router-dom";
 import PaymentModal from "./PaymentModal";
+import api from "../../../config/URL";
 
 function ServiceAssignmentView() {
-  const [data, setData] = useState({
-    order_id: "1",
-    company_id: "1",
-    helper_id: "1",
-    assigned_at: "2024-12-16",
-  });
+  const { id } = useParams();
+  const [data, setData] = useState({});
+  const [loading, setLoading] = useState(true);
+
+
+  const getData = async () => {
+    try {
+      const response = await api.get(`admin/serviceAssignment/${id}`);
+      setData(response.data.data);
+      console.log("object::",response.data.data);
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div>
+        <div className="loader-container">
+          <div className="loader">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container-fluid px-0">
@@ -37,11 +67,11 @@ function ServiceAssignmentView() {
           className="d-flex px-4 justify-content-between align-items-center p-1 mb-4"
           style={{ background: "#f5f7f9" }}
         >
-          <div class="d-flex align-items-center">
-            <div class="d-flex">
-              <div class="dot active"></div>
+          <div className="d-flex align-items-center">
+            <div className="d-flex">
+              <div className="dot active"></div>
             </div>
-            <span class="me-2 text-muted">View Service Assignment</span>
+            <span className="me-2 text-muted">View Service Assignment</span>
           </div>
           <div className="my-2 pe-3 d-flex align-items-center">
             <Link to="/assignment">
@@ -91,7 +121,10 @@ function ServiceAssignmentView() {
                   <p className="fw-medium text-sm">Assigned At</p>
                 </div>
                 <div className="col-6">
-                  <p className="text-muted text-sm">: {data.assigned_at}</p>
+                <p className="text-muted text-sm">
+  : {data.assigned_at.split(" ")[0]}
+</p>
+
                 </div>
               </div>
             </div>
