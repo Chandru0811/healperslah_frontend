@@ -4,8 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { MultiSelect } from "react-multi-select-component";
 import api from "../../../config/URL";
-import { toast } from "react-toastify";
 import { FiAlertTriangle } from "react-icons/fi";
+import toast from "react-hot-toast";
 
 function SubscriptionAdd() {
   const navigate = useNavigate();
@@ -23,7 +23,6 @@ function SubscriptionAdd() {
       .min(1, "*At least one service must be selected")
       .required("*Service Id is required"),
     name: Yup.string().required("*Name is required"),
-    slug: Yup.string().required("*Slug is required"),
     start_date: Yup.date().required("*Start Date is required"),
     end_date: Yup.date()
       .required("*End Date is required")
@@ -62,7 +61,7 @@ function SubscriptionAdd() {
       price: "",
       offer_id: null,
     },
-    // validationSchema: validationSchema,
+    validationSchema: validationSchema,
     onSubmit: async (values) => {
       const slug = values.name
         ? values.name.toLowerCase().replace(/\s+/g, "_")

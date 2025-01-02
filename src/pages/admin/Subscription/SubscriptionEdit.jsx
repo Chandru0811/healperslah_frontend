@@ -99,11 +99,18 @@ function SubscriptionEdit() {
     const getData = async () => {
       try {
         const response = await api.get(`admin/subscription/${id}`);
-        formik.setValues(response.data.data);
+        const data = response.data.data;
+
+        if (data.additional_specs) {
+          data.additional_specs = JSON.parse(data.additional_specs);
+        }
+
+        formik.setValues(data);
       } catch (error) {
         toast.error(`Error: ${error.response?.data?.message || error.message}`);
       }
     };
+
     getData();
   }, [id]);
 
@@ -329,8 +336,7 @@ function SubscriptionEdit() {
                       <option value=""></option>
                       <option value="Office">Office</option>
                       <option value="Apartment">Apartment</option>
-                      <option value="Residential">Residential</option>{" "}
-                      {/* Corrected spelling */}
+                      <option value="Residential">Residential</option>
                     </select>
                     {formik.touched.additional_specs?.property_type &&
                       formik.errors.additional_specs?.property_type && (
@@ -339,6 +345,7 @@ function SubscriptionEdit() {
                         </div>
                       )}
                   </div>
+
                   <div className="col-md-6 col-12 mb-3">
                     <label className="form-label">
                       Property Size<span className="text-danger">*</span>
