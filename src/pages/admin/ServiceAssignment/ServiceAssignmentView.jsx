@@ -11,6 +11,7 @@ function ServiceAssignmentView() {
 
   const getData = async () => {
     try {
+      setLoading(true)
       const response = await api.get(`admin/serviceAssignment/${id}`);
       setData(response.data.data);
       console.log("object::",response.data.data);
@@ -24,21 +25,6 @@ function ServiceAssignmentView() {
     getData();
   }, [id]);
 
-  if (loading) {
-    return (
-      <div>
-        <div className="loader-container">
-          <div className="loader">
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="container-fluid px-0">
@@ -83,6 +69,17 @@ function ServiceAssignmentView() {
             <PaymentModal />
           </div>
         </div>
+        {loading ? (
+          <div className="loader-container">
+            <div className="loader">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        ) : (
         <div className="container-fluid px-4">
           <div className="row pb-3">
             <div className="col-md-6 col-12 my-2">
@@ -130,6 +127,7 @@ function ServiceAssignmentView() {
             </div>
           </div>
         </div>
+        )}
       </div>
     </div>
   );

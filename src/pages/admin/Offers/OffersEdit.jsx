@@ -9,6 +9,7 @@ function OffersAdd() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [loadIndicator, setLoadIndicator] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const validationSchema = Yup.object().shape({
     expiry_date: Yup.string().required("*Expiry Date is required"),
@@ -70,10 +71,13 @@ function OffersAdd() {
 
   const getData = async () => {
     try {
+      setLoading(true);
       const response = await api.get(`admin/offer/${id}`);
       formik.setValues(response.data.data);
     } catch (error) {
       toast.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -142,6 +146,17 @@ function OffersAdd() {
               </button>
             </div>
           </div>
+          {loading ? (
+          <div className="loader-container">
+            <div className="loader">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        ) : (
           <div className="container-fluid px-4">
             <div className="row py-4">
               <div className="col-md-6 col-12 mb-3">
@@ -226,6 +241,7 @@ function OffersAdd() {
               </div>
             </div>
           </div>
+        )}
         </div>
       </form>
     </div>

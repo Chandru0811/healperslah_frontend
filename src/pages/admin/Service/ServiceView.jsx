@@ -8,13 +8,17 @@ import toast from "react-hot-toast";
 function ServiceView() {
   const { id } = useParams();
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const getData = async () => {
     try {
+      setLoading(true);
       const response = await api.get(`admin/service/${id}`);
       setData(response.data.data);
     } catch (error) {
       toast.error("Error Fetching Data", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -98,6 +102,17 @@ function ServiceView() {
             )}
           </div>
         </div>
+        {loading ? (
+          <div className="loader-container">
+            <div className="loader">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        ) : (
         <div className="container-fluid px-4">
           <div className="row pb-3">
             <div className="col-md-6 col-12 my-2">
@@ -173,6 +188,7 @@ function ServiceView() {
             </div>
           </div>
         </div>
+        )}
       </div>
     </div>
   );

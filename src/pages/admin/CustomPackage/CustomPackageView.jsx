@@ -6,19 +6,22 @@ function CustomPackageView() {
   const { id } = useParams();
   const [data, setData] = useState(null);
   const [additionalSpecs, setAdditionalSpecs] = useState({});
+  const [loading, setLoading] = useState(true);
 
   const getData = async () => {
     try {
+      setLoading(true);
       const response = await api.get(`admin/custom_package/${id}`);
       const packageData = response.data.data;
       setData(packageData);
 
-      // Parse the additional_specs JSON string
       if (packageData.additional_specs) {
         setAdditionalSpecs(JSON.parse(packageData.additional_specs));
       }
     } catch (error) {
       error("Error Fetching Data", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -26,21 +29,7 @@ function CustomPackageView() {
     getData();
   }, [id]);
 
-  if (!data) {
-    return (
-      <div>
-        <div className="loader-container">
-          <div className="loader">
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-        </div>
-      </div>
-    );
-  }
+
 
   return (
     <div className="container-fluid px-0">
@@ -83,6 +72,17 @@ function CustomPackageView() {
             </Link>
           </div>
         </div>
+        {loading ? (
+          <div className="loader-container">
+            <div className="loader">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        ) : (
         <div className="container-fluid px-4">
           <div className="row pb-3">
             <div className="col-md-6 col-12 my-2">
@@ -211,6 +211,7 @@ function CustomPackageView() {
             </div>
           </div>
         </div>
+        )}
       </div>
     </div>
   );

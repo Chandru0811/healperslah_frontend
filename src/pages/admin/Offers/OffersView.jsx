@@ -6,13 +6,17 @@ import api from "../../../config/URL";
 function OffersView() {
   const { id } = useParams();
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const getData = async () => {
     try {
+      setLoading(true);
       const response = await api.get(`admin/offer/${id}`);
       setData(response.data.data);
     } catch (error) {
       toast.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -60,6 +64,17 @@ function OffersView() {
             &nbsp;&nbsp;
           </div>
         </div>
+        {loading ? (
+          <div className="loader-container">
+            <div className="loader">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        ) : (
         <div className="container-fluid px-4">
           <div className="row pb-3">
             <div className="col-md-6 col-12 my-2">
@@ -120,6 +135,7 @@ function OffersView() {
             </div>
           </div>
         </div>
+        )}
       </div>
     </div>
   );

@@ -9,6 +9,7 @@ function CustomPackageEdit() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [loadIndicator, setLoadIndicator] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [selectedService, setSelectedService] = useState([]);
   const serviceOption = [
     { label: "Service A", value: "1" },
@@ -52,11 +53,11 @@ function CustomPackageEdit() {
       price: "",
       description: "",
     },
-    validationSchema,
+    // validationSchema,
     onSubmit: async (values) => {
       setLoadIndicator(true);
       try {
-        const response = await api.post(
+        const response = await api.put(
           `admin/custom_package/update/${id}`,
           formData,
           {
@@ -97,10 +98,13 @@ function CustomPackageEdit() {
   useEffect(() => {
     const getData = async () => {
       try {
+        setLoading(true);
         const response = await api.get(`admin/custom_package/${id}`);
         formik.setValues(response.data.data);
       } catch (error) {
         toast.error("Error Fetching Data", error);
+      } finally {
+        setLoading(false);
       }
     };
     getData();
@@ -167,6 +171,17 @@ function CustomPackageEdit() {
               </button>
             </div>
           </div>
+          {loading ? (
+          <div className="loader-container">
+            <div className="loader">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        ) : (
           <div className="container-fluid px-4">
             <div className="row py-4">
               <div className="col-md-6 col-12 mb-4">
@@ -431,6 +446,7 @@ function CustomPackageEdit() {
               </div>
             </div>
           </div>
+        )}
         </div>
       </form>
     </div>

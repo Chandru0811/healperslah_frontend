@@ -9,6 +9,7 @@ import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 import headerlogo from "../../../assets/Helperlah Logo.png";
 import { IoMdArrowBack } from "react-icons/io";
 import "../../../styles/custom.css";
+import api from "../../../config/URL";
 
 function Register() {
   const [showPassword, setShowPassword] = useState(false);
@@ -22,14 +23,17 @@ function Register() {
       .email("Invalid email address")
       .required("Email is required"),
 
-    password: Yup.string()
-      .required("Password is required")
-      .max(8, "Password must not exceed 8 characters")
-      .matches(/^\S*$/, "Password must not contain spaces"),
+    mobile: Yup.string()
+      .required("Mobile Number is required")
+      .min(8, "Mobile number must be 8 characters")
+      .max(10, "Mobile number must not exceed 10 characters"),
 
-    cpassword: Yup.string()
-      .required("Confirm Password is required")
-      .oneOf([Yup.ref("password"), null], "Passwords must match"),
+      password: Yup.string()
+      .required('Password is required')
+      .min(8, 'Password must be at least 8 characters'),
+    password_confirmation: Yup.string()
+      .required('Password confirmation is required')
+      .oneOf([Yup.ref('password'), null], 'Passwords must match'),
     type: Yup.string().required("Type is required"),
   });
 
@@ -37,18 +41,36 @@ function Register() {
     initialValues: {
       name: "",
       email: "",
+      mobile: "",
       password: "",
-      cpassword: "",
+      password_confirmation: "",
       type: "",
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
-      setLoadIndicator(true);
+      console.log(formik.values.password, formik.values.password_confirmation);
       try {
-        if (values.type === "Company") {
-          navigate("/company");
-        } else if (values.type === "Individual") {
-          navigate("/individual");
+        setLoadIndicator(true);
+        const payload = {
+          name: values.name,
+          email: values.email,
+          mobile: values.mobile,
+          password: values.password,
+          password_confirmation:values.password_confirmation,
+          type: values.type,
+        };
+
+        const response = await api.post("vendor/register", payload);
+        console.log("API Response:", response.data);
+
+        if (response.data.success) {
+          if (values.type === "Company") {
+            navigate("/company");
+          } else if (values.type === "Individual") {
+            navigate("/individual");
+          }
+        } else {
+          console.error("Registration failed:", response.data.message);
         }
       } catch (error) {
         console.error("Submission failed", error);
@@ -123,6 +145,20 @@ function Register() {
                 </Form.Control.Feedback>
               ) : null}
             </Form.Group>
+            <Form.Group controlId="mobile" className="mb-3 pt-4">
+              <Form.Label>Mobile Number</Form.Label>
+              <Form.Control
+                type="mobile"
+                placeholder="Enter Mobile"
+                {...formik.getFieldProps("mobile")}
+                isInvalid={formik.touched.mobile && formik.errors.mobile}
+              />
+              {formik.touched.mobile && formik.errors.mobile ? (
+                <Form.Control.Feedback type="invalid">
+                  {formik.errors.mobile}
+                </Form.Control.Feedback>
+              ) : null}
+            </Form.Group>
 
             <div className="mb-3">
               <label className="form-label fw-medium">Password</label>
@@ -172,7 +208,8 @@ function Register() {
                   type={showcPassword ? "text" : "password"}
                   placeholder="Enter password"
                   className={`form-control ${
-                    formik.touched.cpassword && formik.errors.cpassword
+                    formik.touched.password_confirmation &&
+                    formik.errors.password_confirmation
                       ? "is-invalid"
                       : ""
                   }`}
@@ -182,8 +219,8 @@ function Register() {
                     borderTopRightRadius: "0px",
                     borderBottomRightRadius: "0px",
                   }}
-                  name="cpassword"
-                  {...formik.getFieldProps("cpassword")}
+                  name="password_confirmation"
+                  {...formik.getFieldProps("password_confirmation")}
                 />
                 <span
                   className={`input-group-text iconInputBackground`}
@@ -193,11 +230,12 @@ function Register() {
                 >
                   {showcPassword ? <IoEyeOffOutline /> : <IoEyeOutline />}
                 </span>
-                {formik.touched.cpassword && formik.errors.cpassword && (
-                  <div className="invalid-feedback">
-                    {formik.errors.cpassword}
-                  </div>
-                )}
+                {formik.touched.password_confirmation &&
+                  formik.errors.password_confirmation && (
+                    <div className="invalid-feedback">
+                      {formik.errors.password_confirmation}
+                    </div>
+                  )}
               </div>
             </div>
             <Form.Group controlId="formType" className="mb-3 pt-4">

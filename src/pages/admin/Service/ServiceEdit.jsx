@@ -12,6 +12,7 @@ function ServiceEdit() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [loadIndicator, setLoadIndicator] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [serviceGroup, setServiceGroup] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
   const [imageSrc, setImageSrc] = useState(null);
@@ -143,11 +144,14 @@ function ServiceEdit() {
   useEffect(() => {
     const getData = async () => {
       try {
+        setLoading(true);
         const response = await api.get(`admin/service/${id}`);
         formik.setValues(response.data.data);
         setPreviewImage(`${ImageURL}${response.data.data.image}`);
       } catch (error) {
         toast.error("Error Fetching Data", error);
+      } finally {
+        setLoading(false);
       }
     };
     getData();
@@ -320,6 +324,17 @@ function ServiceEdit() {
               </button>
             </div>
           </div>
+          {loading ? (
+          <div className="loader-container">
+            <div className="loader">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        ) : (
           <div className="container-fluid px-4">
             <div className="row py-4">
               <div className="col-md-6 col-12 mb-3">
@@ -501,6 +516,7 @@ function ServiceEdit() {
               </div>
             </div>
           </div>
+        )}
         </div>
       </form>
     </div>
