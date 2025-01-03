@@ -11,13 +11,14 @@ import {
   Slide,
 } from "@mui/material";
 import api from "../../../config/URL";
+import PropTypes from "prop-types";
+import { FiAlertTriangle } from "react-icons/fi";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
 });
 
-function AssignModal({ onOpen, orderId }) {
-  console.log("Order Id", orderId);
+function AssignModal({ orderId }) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [loadIndicator, setLoadIndicator] = useState(false);
 
@@ -25,9 +26,8 @@ function AssignModal({ onOpen, orderId }) {
     setDeleteDialogOpen(true);
     document.body.style.overflow = "hidden";
   };
-  
+
   const handleCloseDialog = () => {
-    if (typeof onOpen === "function") onOpen();
     setDeleteDialogOpen(false);
     document.body.style.overflow = "";
   };
@@ -49,12 +49,10 @@ function AssignModal({ onOpen, orderId }) {
         const payload = {
           ...values,
           order_id: orderId,
-      };
+        };
         const response = await api.post("admin/serviceAssignment", payload);
         if (response.status === 200) {
-          onDeleteSuccess();
           toast.success(response?.data?.message);
-          if (typeof onOpen === "function") onOpen();
         }
       } catch (error) {
         if (error.response && error.response.status === 422) {
@@ -213,4 +211,7 @@ function AssignModal({ onOpen, orderId }) {
   );
 }
 
+AssignModal.propTypes = {
+  orderId: PropTypes.func.isRequired,
+};
 export default AssignModal;

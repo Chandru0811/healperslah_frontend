@@ -1,18 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { MaterialReactTable } from "material-react-table";
-import { MoreVert as MoreVertIcon } from "@mui/icons-material";
 import {
   ThemeProvider,
   createTheme,
-  Menu,
-  MenuItem,
-  IconButton,
 } from "@mui/material";
 import api from "../../../config/URL";
+import PropTypes from "prop-types";
 
 function Order() {
-  const [menuAnchor, setMenuAnchor] = useState(null);
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const navigate = useNavigate();
@@ -203,8 +199,6 @@ function Order() {
     },
   });
 
-  const handleMenuClose = () => setMenuAnchor(null);
-
   return (
     <div className="container-fluid px-0 mb-4 center">
       <ol
@@ -277,5 +271,9 @@ function Order() {
     </div>
   );
 }
+
+Order.propTypes = {
+  row: PropTypes.func.isRequired,
+};
 
 export default Order;

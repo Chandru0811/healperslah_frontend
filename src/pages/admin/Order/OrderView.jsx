@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import AssignModal from "./AssignModal";
 import api from "../../../config/URL";
@@ -19,7 +19,7 @@ function OrderView() {
         toast.error("Error Fetching Data");
       }
     } catch (error) {
-      toast.error("Error Fetching Data");
+      toast.error("Error Fetching Data", error?.response?.data?.message);
     } finally {
       setLoading(false);
     }
@@ -30,21 +30,19 @@ function OrderView() {
   }, []);
 
   function formatDateTime(dateTime) {
-    if (!dateTime) return " --";
-  
+    if (!dateTime) return "--";
+
     const [date, time] = dateTime.split(" ");
     const [hours, minutes] = time.split(".");
-    
+
     const isPM = parseInt(hours, 10) >= 12;
     const formattedHours = isPM
-      ? (parseInt(hours, 10) % 12 || 12) // Convert 24-hour to 12-hour format
+      ? parseInt(hours, 10) % 12 || 12
       : parseInt(hours, 10);
     const period = isPM ? "PM" : "AM";
-  
+
     return `${date}, ${formattedHours}:${minutes} ${period}`;
   }
-
-  const handleMenuClose = () => setMenuAnchor(null);
 
   return (
     <div className="container-fluid px-0">
@@ -86,7 +84,7 @@ function OrderView() {
               </button>
             </Link>
             &nbsp;&nbsp;
-            <AssignModal onOpen={handleMenuClose} orderId={id}/>
+            <AssignModal orderId={id} />
           </div>
         </div>
         {loading ? (
@@ -208,7 +206,7 @@ function OrderView() {
                 </div>
                 <div style={{ overflow: "auto" }}>
                   {data.order_details && data.order_details.length > 0 ? (
-                    <table class="table">
+                    <table className="table table-bordered">
                       <thead>
                         <tr>
                           <th scope="col">S No</th>
@@ -231,7 +229,11 @@ function OrderView() {
                             <td>{order.duration || " --"}</td>
                             <td>{order.start_date || " --"}</td>
                             <td>{order.end_date || " --"}</td>
-                            <td>{order.specifications || " --"}</td>
+                            <td>
+                              {order.specifications
+                                ? JSON.parse(order.specifications).join(", ")
+                                : " --"}
+                            </td>
                           </tr>
                         ))}
                       </tbody>
