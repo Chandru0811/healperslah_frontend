@@ -2,9 +2,9 @@ import { useFormik } from "formik";
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import * as Yup from "yup";
-import { toast } from "react-toastify";
 import { FiAlertTriangle } from "react-icons/fi";
 import api from "../../../config/URL";
+import toast from "react-hot-toast";
 
 
 function ServiceAssignmentEdit() {
@@ -13,7 +13,6 @@ function ServiceAssignmentEdit() {
   const [loadIndicator, setLoadIndicator] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Validation Schema
   const validationSchema = Yup.object().shape({
     order_id: Yup.string().required("*Order Id is required"),
     company_id: Yup.string().required("*Company Id is required"),

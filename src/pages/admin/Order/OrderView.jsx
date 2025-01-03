@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import AssignModal from "./AssignModal";
 import api from "../../../config/URL";
-import { toast } from "react-toastify"; 
+import toast from "react-hot-toast";
 
 function OrderView() {
   const { id } = useParams();
@@ -28,6 +28,23 @@ function OrderView() {
   useEffect(() => {
     getData();
   }, []);
+
+  function formatDateTime(dateTime) {
+    if (!dateTime) return " --";
+  
+    const [date, time] = dateTime.split(" ");
+    const [hours, minutes] = time.split(".");
+    
+    const isPM = parseInt(hours, 10) >= 12;
+    const formattedHours = isPM
+      ? (parseInt(hours, 10) % 12 || 12) // Convert 24-hour to 12-hour format
+      : parseInt(hours, 10);
+    const period = isPM ? "PM" : "AM";
+  
+    return `${date}, ${formattedHours}:${minutes} ${period}`;
+  }
+
+  const handleMenuClose = () => setMenuAnchor(null);
 
   return (
     <div className="container-fluid px-0">
@@ -69,7 +86,7 @@ function OrderView() {
               </button>
             </Link>
             &nbsp;&nbsp;
-            <AssignModal />
+            <AssignModal onOpen={handleMenuClose} orderId={id}/>
           </div>
         </div>
         {loading ? (
@@ -186,101 +203,43 @@ function OrderView() {
                     </div>
                   </div>
                 </div>
-
                 <div className="col-12 my-4">
                   <h4>Booking Details</h4>
                 </div>
-
-                {data.order_details && data.order_details.length > 0 ? (
-                  <>
-                    <div className="col-md-6 col-12 my-2">
-                      <div className="row">
-                        <div className="col-6">
-                          <p className="fw-medium text-sm">Booking Id</p>
-                        </div>
-                        <div className="col-6">
-                          <p className="text-muted text-sm text-break ">
-                            : {data.order_details[0]?.booking_id || " --"}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-md-6 col-12 my-2">
-                      <div className="row">
-                        <div className="col-6">
-                          <p className="fw-medium text-sm">Booking Type</p>
-                        </div>
-                        <div className="col-6">
-                          <p className="text-muted text-sm text-break ">
-                            : {data.order_details[0]?.booking_type || " --"}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-md-6 col-12 my-2">
-                      <div className="row">
-                        <div className="col-6">
-                          <p className="fw-medium text-sm">Date Time</p>
-                        </div>
-                        <div className="col-6">
-                          <p className="text-muted text-sm text-break ">
-                            : {data.order_details[0]?.date_time || " --"}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-md-6 col-12 my-2">
-                      <div className="row">
-                        <div className="col-6">
-                          <p className="fw-medium text-sm">Duration</p>
-                        </div>
-                        <div className="col-6">
-                          <p className="text-muted text-sm text-break ">
-                            : {data.order_details[0]?.duration || " --"}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-md-6 col-12 my-2">
-                      <div className="row">
-                        <div className="col-6">
-                          <p className="fw-medium text-sm">Start Date</p>
-                        </div>
-                        <div className="col-6">
-                          <p className="text-muted text-sm text-break ">
-                            : {data.order_details[0]?.start_date || " --"}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-md-6 col-12 my-2">
-                      <div className="row">
-                        <div className="col-6">
-                          <p className="fw-medium text-sm">End Date</p>
-                        </div>
-                        <div className="col-6">
-                          <p className="text-muted text-sm text-break ">
-                            : {data.order_details[0]?.end_date || " --"}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-md-6 col-12 my-2">
-                      <div className="row">
-                        <div className="col-6">
-                          <p className="fw-medium text-sm">Specifications</p>
-                        </div>
-                        <div className="col-6">
-                          <p className="text-muted text-sm text-break ">
-                            : {data.order_details[0]?.specifications || " --"}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  <div>No booking details available</div>
-                )}
+                <div style={{ overflow: "auto" }}>
+                  {data.order_details && data.order_details.length > 0 ? (
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th scope="col">S No</th>
+                          <th scope="col">Booking Id</th>
+                          <th scope="col">Booking Type</th>
+                          <th scope="col">Date & Time</th>
+                          <th scope="col">Duration</th>
+                          <th scope="col">Start Date</th>
+                          <th scope="col">End Date</th>
+                          <th scope="col">Specifications</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {data.order_details.map((order, index) => (
+                          <tr key={index}>
+                            <th scope="row">1</th>
+                            <td>{order.booking_id || " --"}</td>
+                            <td>{order.booking_type || " --"}</td>
+                            <td>{formatDateTime(order.date_time)}</td>
+                            <td>{order.duration || " --"}</td>
+                            <td>{order.start_date || " --"}</td>
+                            <td>{order.end_date || " --"}</td>
+                            <td>{order.specifications || " --"}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  ) : (
+                    <div>No booking details available</div>
+                  )}
+                </div>
               </div>
             </div>
           </>

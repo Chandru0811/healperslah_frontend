@@ -81,12 +81,15 @@ function Delete({ path, onDeleteSuccess, onOpen }) {
         <DialogActions>
           <Button
             onClick={handleCloseDialog}
-            disabled={loadIndicator}
             className="btn btn-secondary btn-sm"
           >
             Cancel
           </Button>
-          <Button onClick={handleDelete} className="btn btn-button">
+          <Button
+            onClick={handleDelete}
+            disabled={loadIndicator}
+            className="btn btn-button"
+          >
             {loadIndicator && (
               <span
                 className="spinner-border spinner-border-sm me-2"
