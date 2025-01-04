@@ -1,4 +1,5 @@
 import { useFormik } from "formik";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import * as Yup from "yup";
 
@@ -23,7 +24,7 @@ function PaymentEdit() {
       booking_type: "",
       amount_paid: "",
       balance_amount: "",
-      total_amount: "",
+      total_amount: "5000",
       payment_mode: "",
       payment_status: "",
     },
@@ -34,6 +35,15 @@ function PaymentEdit() {
     validateOnChange: false,
     validateOnBlur: true,
   });
+
+  useEffect(() => {
+    if (formik.values.amount_paid && formik.values.total_amount) {
+      const balanceAmount =
+        parseFloat(formik.values.total_amount) -
+        parseFloat(formik.values.amount_paid);
+      formik.setFieldValue("balance_amount", balanceAmount.toFixed(2));
+    }
+  }, [formik.values.amount_paid, formik.values.total_amount]);
 
   return (
     <div className="container-fluid px-0">
@@ -207,6 +217,7 @@ function PaymentEdit() {
                       : ""
                   }`}
                   {...formik.getFieldProps("balance_amount")}
+                  readOnly
                 />
                 {formik.touched.balance_amount &&
                   formik.errors.balance_amount && (
@@ -227,6 +238,7 @@ function PaymentEdit() {
                       : ""
                   }`}
                   {...formik.getFieldProps("total_amount")}
+                  readOnly
                 />
                 {formik.touched.total_amount && formik.errors.total_amount && (
                   <div className="invalid-feedback">

@@ -27,6 +27,8 @@ function PaymentModal() {
   const handleOpenDialog = () => {
     setDeleteDialogOpen(true);
     document.body.style.overflow = "hidden";
+
+    formik.setFieldValue("total_amount", "5000");
   };
 
   const handleCloseDialog = () => {
@@ -40,8 +42,6 @@ function PaymentModal() {
     company_id: yup.string().required("*Company Id required"),
     booking_type: yup.string().required("*Booking Type required"),
     amount_paid: yup.string().required("*Amount Paid required"),
-    balance_amount: yup.string().required("*Balance Amount required"),
-    total_amount: yup.string().required("*Total Amount required"),
     payment_mode: yup.string().required("*Payment Mode required"),
     payment_status: yup.string().required("*Payment Status required"),
   });
@@ -102,6 +102,13 @@ function PaymentModal() {
   useEffect(() => {
     fetchOrders();
   }, []);
+
+  useEffect(() => {
+    if (formik.values.amount_paid && formik.values.total_amount) {
+      const balanceAmount = parseFloat(formik.values.total_amount) - parseFloat(formik.values.amount_paid);
+      formik.setFieldValue("balance_amount", balanceAmount.toFixed(2));
+    }
+  }, [formik.values.amount_paid, formik.values.total_amount]);
 
   return (
     <>
@@ -260,6 +267,7 @@ function PaymentModal() {
                         : ""
                     }`}
                     {...formik.getFieldProps("balance_amount")}
+                    readOnly
                   />
                   {formik.touched.balance_amount &&
                     formik.errors.balance_amount && (
@@ -280,6 +288,7 @@ function PaymentModal() {
                         : ""
                     }`}
                     {...formik.getFieldProps("total_amount")}
+                    readOnly
                   />
                   {formik.touched.total_amount &&
                     formik.errors.total_amount && (
