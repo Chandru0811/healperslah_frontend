@@ -39,7 +39,7 @@ function Login({ loginAsVendor, loginAsAdmin }) {
         ) {
           payload = { ...values, role: "1" };
         } else {
-          payload = { ...values, role: "2" };
+          payload = { ...values, role: "3" };
         }
         const response = await api.post(`login`, payload);
         if (response.status === 200) {
@@ -69,7 +69,7 @@ function Login({ loginAsVendor, loginAsAdmin }) {
 
           if (response.data.data.userDetails.role === "1") {
             loginAsAdmin();
-          } else if (response.data.data.userDetails.role === "2") {
+          } else if (response.data.data.userDetails.role === "3") {
             navigate("/");
             loginAsVendor();
           } else {
@@ -79,9 +79,6 @@ function Login({ loginAsVendor, loginAsAdmin }) {
                 icon: "😊",
               }
             );
-            setTimeout(() => {
-              window.location.href = "https://ecsaio.com";
-            }, 5000);
           }
         } else {
           toast.error(response.data.message);

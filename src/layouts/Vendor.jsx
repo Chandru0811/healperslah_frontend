@@ -22,7 +22,7 @@ function Vendor({ handleLogout }) {
 
                 {/* SideMenu  */}
                 <Route path="/orders" element={<Orders />}/>
-                <Route path="/orders/view" element={<OrdersView />}/>
+                <Route path="/orders/view/:id" element={<OrdersView />}/>
               </Routes>
             </div>
             <VendorFooter />

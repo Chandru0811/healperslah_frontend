@@ -73,6 +73,13 @@
 
 /*===== Sidebar End =====  */
 
+
+/* Dashboard Start */
+
+.dashboard_chart .card-title {
+  margin-bottom: 0;
+}
+
 /*===== Table Start =====  */
 
 .css-11yrv3u-MuiTableRow-root td {

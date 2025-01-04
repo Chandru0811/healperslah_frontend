@@ -1,25 +1,28 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { Link, useParams } from "react-router-dom";
 
 function OrdersView() {
-  const [data, setData] = useState({
-    company_name: "New Company",
-    order_id: 1,
-    helper_id: 1,
-    helper_name: "Helper",
-    assigned_at: "2024-12-16 18:47:25",
-    status: "Completed",
-    availablity: '["Monday","Tuesday","Wednesday"]',
-    specialized_in: '["Electrician","Plumbing"]',
-    customer_name: "Customer",
-    customer_email: "customer@gmail.com",
-    customer_mobile: "9876543212",
-    booking_type: "Service",
-    date: "2024-12-16 18:47:25",
-    start_date: "2024-12-16",
-    end_date: "2024-12-16",
-    service_name: "Home Cleaning",
-  });
+  const { id } = useParams();
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const getData = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get(`vendor/order/${id}`);
+      setData(response.data.data);
+    } catch (error) {
+      toast.error("Error Fetching Data", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="container-fluid">
@@ -62,182 +65,200 @@ function OrdersView() {
             </Link>
           </div>
         </div>
-        <div className="container-fluid px-4">
-          <div className="row pb-3">
-            <div className="col-md-6 col-12 my-2">
-              <div className="row">
-                <div className="col-6">
-                  <p className="fw-medium">Company Name</p>
-                </div>
-                <div className="col-6">
-                  <p className="text-muted text-sm">: {data.company_name}</p>
+        {loading ? (
+          <div className="loader-container">
+            <div className="loader">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        ) : (
+          <div className="container-fluid px-4">
+            <div className="row pb-3">
+              <div className="col-md-6 col-12 my-2">
+                <div className="row">
+                  <div className="col-6">
+                    <p className="fw-medium">Company Name</p>
+                  </div>
+                  <div className="col-6">
+                    <p className="text-muted text-sm">: {data.company_name}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="col-md-6 col-12 my-2">
-              <div className="row">
-                <div className="col-6">
-                  <p className="fw-medium">Order Id</p>
-                </div>
-                <div className="col-6">
-                  <p className="text-muted text-sm">: {data.order_id}</p>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-6 col-12 my-2">
-              <div className="row">
-                <div className="col-6">
-                  <p className="fw-medium">Helper Id</p>
-                </div>
-                <div className="col-6">
-                  <p className="text-muted text-sm">: {data.helper_id}</p>
+              <div className="col-md-6 col-12 my-2">
+                <div className="row">
+                  <div className="col-6">
+                    <p className="fw-medium">Order Id</p>
+                  </div>
+                  <div className="col-6">
+                    <p className="text-muted text-sm">: {data.order_id}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="col-md-6 col-12 my-2">
-              <div className="row">
-                <div className="col-6">
-                  <p className="fw-medium">Helper Name</p>
-                </div>
-                <div className="col-6">
-                  <p className="text-muted text-sm">: {data.helper_name}</p>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-6 col-12 my-2">
-              <div className="row">
-                <div className="col-6">
-                  <p className="fw-medium">Date</p>
-                </div>
-                <div className="col-6">
-                  <p className="text-muted text-sm text-break ">
-                    : {data.date.substring(0, 10)}
-                  </p>
+              <div className="col-md-6 col-12 my-2">
+                <div className="row">
+                  <div className="col-6">
+                    <p className="fw-medium">Helper Id</p>
+                  </div>
+                  <div className="col-6">
+                    <p className="text-muted text-sm">: {data.helper_id}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="col-md-6 col-12 my-2">
-              <div className="row">
-                <div className="col-6">
-                  <p className="fw-medium">Assigned At</p>
-                </div>
-                <div className="col-6">
-                  <p className="text-muted text-sm">
-                    : {data.assigned_at.substring(0, 10)}
-                  </p>
+              <div className="col-md-6 col-12 my-2">
+                <div className="row">
+                  <div className="col-6">
+                    <p className="fw-medium">Helper Name</p>
+                  </div>
+                  <div className="col-6">
+                    <p className="text-muted text-sm">: {data.helper_name}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="col-md-6 col-12 my-2">
-              <div className="row">
-                <div className="col-6">
-                  <p className="fw-medium">Start Date</p>
-                </div>
-                <div className="col-6">
-                  <p className="text-muted text-sm text-break ">
-                    : {data.start_date}
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-6 col-12 my-2">
-              <div className="row">
-                <div className="col-6">
-                  <p className="fw-medium">End Date</p>
-                </div>
-                <div className="col-6">
-                  <p className="text-muted text-sm text-break ">
-                    : {data.end_date}
-                  </p>
+              <div className="col-md-6 col-12 my-2">
+                <div className="row">
+                  <div className="col-6">
+                    <p className="fw-medium">Date</p>
+                  </div>
+                  <div className="col-6">
+                    <p className="text-muted text-sm text-break ">
+                      : {data.date}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="col-md-6 col-12 my-2">
-              <div className="row">
-                <div className="col-6  ">
-                  <p className="fw-medium">Status</p>
-                </div>
-                <div className="col-6">
-                  <p className="text-muted text-sm">: {data.status}</p>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-12 col-12 my-2">
-              <div className="row">
-                <div className="col-3">
-                  <p className="fw-medium">Availablity</p>
-                </div>
-                <div className="col-9">
-                  <p className="text-muted text-sm">: {data.availablity}</p>
+              <div className="col-md-6 col-12 my-2">
+                <div className="row">
+                  <div className="col-6">
+                    <p className="fw-medium">Assigned At</p>
+                  </div>
+                  <div className="col-6">
+                    <p className="text-muted text-sm">
+                      : {data.assigned_at}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="col-md-12 col-12 my-2">
-              <div className="row">
-                <div className="col-3">
-                  <p className="fw-medium">Specialized In</p>
-                </div>
-                <div className="col-9">
-                  <p className="text-muted text-sm">: {data.specialized_in}</p>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-6 col-12 my-2">
-              <div className="row">
-                <div className="col-6">
-                  <p className="fw-medium">Customer Name</p>
-                </div>
-                <div className="col-6">
-                  <p className="text-muted text-sm">: {data.customer_name}</p>
+              <div className="col-md-6 col-12 my-2">
+                <div className="row">
+                  <div className="col-6">
+                    <p className="fw-medium">Start Date</p>
+                  </div>
+                  <div className="col-6">
+                    <p className="text-muted text-sm text-break ">
+                      : {data.start_date}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="col-md-6 col-12 my-2">
-              <div className="row">
-                <div className="col-6">
-                  <p className="fw-medium">Customer Email</p>
-                </div>
-                <div className="col-6">
-                  <p className="text-muted text-sm">: {data.customer_email}</p>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-6 col-12 my-2">
-              <div className="row">
-                <div className="col-6">
-                  <p className="fw-medium">Customer Mobile</p>
-                </div>
-                <div className="col-6">
-                  <p className="text-muted text-sm">: {data.customer_mobile}</p>
+              <div className="col-md-6 col-12 my-2">
+                <div className="row">
+                  <div className="col-6">
+                    <p className="fw-medium">End Date</p>
+                  </div>
+                  <div className="col-6">
+                    <p className="text-muted text-sm text-break ">
+                      : {data.end_date}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="col-md-6 col-12 my-2">
-              <div className="row">
-                <div className="col-6">
-                  <p className="fw-medium">Booking Type</p>
-                </div>
-                <div className="col-6">
-                  <p className="text-muted text-sm text-break ">
-                    : {data.booking_type}
-                  </p>
+              <div className="col-md-6 col-12 my-2">
+                <div className="row">
+                  <div className="col-6  ">
+                    <p className="fw-medium">Status</p>
+                  </div>
+                  <div className="col-6">
+                    <p className="text-muted text-sm">: {data.status}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="col-md-6 col-12 my-2">
-              <div className="row">
-                <div className="col-6">
-                  <p className="fw-medium">Service Name</p>
+              <div className="col-md-12 col-12 my-2">
+                <div className="row">
+                  <div className="col-3">
+                    <p className="fw-medium">Availablity</p>
+                  </div>
+                  <div className="col-9">
+                    <p className="text-muted text-sm">: {data.availablity}</p>
+                  </div>
                 </div>
-                <div className="col-6">
-                  <p className="text-muted text-sm text-break ">
-                    : {data.service_name}
-                  </p>
+              </div>
+              <div className="col-md-12 col-12 my-2">
+                <div className="row">
+                  <div className="col-3">
+                    <p className="fw-medium">Specialized In</p>
+                  </div>
+                  <div className="col-9">
+                    <p className="text-muted text-sm">
+                      : {data.specialized_in}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="col-md-6 col-12 my-2">
+                <div className="row">
+                  <div className="col-6">
+                    <p className="fw-medium">Customer Name</p>
+                  </div>
+                  <div className="col-6">
+                    <p className="text-muted text-sm">: {data.customer_name}</p>
+                  </div>
+                </div>
+              </div>
+              <div className="col-md-6 col-12 my-2">
+                <div className="row">
+                  <div className="col-6">
+                    <p className="fw-medium">Customer Email</p>
+                  </div>
+                  <div className="col-6">
+                    <p className="text-muted text-sm">
+                      : {data.customer_email}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="col-md-6 col-12 my-2">
+                <div className="row">
+                  <div className="col-6">
+                    <p className="fw-medium">Customer Mobile</p>
+                  </div>
+                  <div className="col-6">
+                    <p className="text-muted text-sm">
+                      : {data.customer_mobile}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="col-md-6 col-12 my-2">
+                <div className="row">
+                  <div className="col-6">
+                    <p className="fw-medium">Booking Type</p>
+                  </div>
+                  <div className="col-6">
+                    <p className="text-muted text-sm text-break ">
+                      : {data.booking_type}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="col-md-6 col-12 my-2">
+                <div className="row">
+                  <div className="col-6">
+                    <p className="fw-medium">Service Name</p>
+                  </div>
+                  <div className="col-6">
+                    <p className="text-muted text-sm text-break ">
+                      : {data.service_name}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

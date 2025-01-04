@@ -23,6 +23,7 @@ import { useNavigate } from "react-router-dom";
 function Company() {
   const navigate = useNavigate();
   const [loadIndicator, setLoadIndicator] = useState(false);
+  const vendor_id = localStorage.getItem("vendor_id");
   const [fields, setFields] = useState([{ experience: "", service: "" }]);
 
   const validationSchema = Yup.object().shape({
@@ -36,11 +37,11 @@ function Company() {
     ),
     no_of_employees: Yup.string().required("*No Of Employees is required"),
     services_offering: Yup.string().required("*Services Offering is required"),
-    availablity: Yup.string().required("*Availablity is required"),
+    // availablity: Yup.string().required("*Availablity is required"),
     working_hrs: Yup.string().required("*Working Hrs is required"),
-    providing_services: Yup.string().required(
-      "*Providing Services is required"
-    ),
+    // providing_services: Yup.string().required(
+    //   "*Providing Services is required"
+    // ),
     payment_mode: Yup.string().required("*Payment Mode is required"),
     email: Yup.string()
       .required("*Email is required")
@@ -50,13 +51,11 @@ function Company() {
       .required("**Phone Number is required")
       .positive("*Please enter a valid number")
       .integer("**Phone Number must be a whole number"),
-    description: Yup.string()
-      .required("*Description is a required field")
-      .max(200, "*The maximum length is 200 characters"),
   });
 
   const formik = useFormik({
     initialValues: {
+      vendor_id: vendor_id,
       company_name: "",
       owner_name: "",
       address: "",
@@ -67,18 +66,32 @@ function Company() {
       company_registration_no: "",
       no_of_employees: "",
       services_offering: "",
-      availablity: "",
+      // availablity: [],
       working_hrs: "",
-      providing_services: {"Deep Cleaning":"3years", "Laundary":"2.5years"},
+      providing_services: {},
       payment_mode: "",
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       setLoadIndicator(true);
+      const availability = ["Monday", "Wednesday", "Friday"];
+
+      const providing_services = fields.reduce((acc, field) => {
+        if (field.service && field.experience) {
+            acc[field.service] = field.experience;
+        }
+        return acc;
+    }, {});
+
+      const payload = {
+        ...values,
+        availablity: availability,
+        providing_services,
+      };
       try {
         const response = await api.post(
-          `vendor/register/company/26`,
-          values
+          `vendor/register/company/${vendor_id}`,
+          payload
         );
         if (response.status === 200) {
           toast.success(response.data.message);
@@ -475,10 +488,10 @@ function Company() {
                       <input
                         type="text"
                         className="form-control my-3 form-control-lg w-100"
-                        placeholder="Experience"
-                        aria-label="Experience"
-                        name="experience"
-                        value={field.experience}
+                        placeholder="Service"
+                        aria-label="Service"
+                        name="service"
+                        value={field.service}
                         onChange={(e) => handleChange(index, e)}
                       />
                     </div>
@@ -489,10 +502,10 @@ function Company() {
                       <input
                         type="text"
                         className="form-control my-3 form-control-lg w-100"
-                        placeholder="Service"
-                        aria-label="Service"
-                        name="service"
-                        value={field.service}
+                        placeholder="Experience"
+                        aria-label="Experience"
+                        name="experience"
+                        value={field.experience}
                         onChange={(e) => handleChange(index, e)}
                       />
                     </div>
@@ -532,9 +545,9 @@ function Company() {
                     {...formik.getFieldProps("payment_mode")}
                   >
                     <option value="">Select a Payment Mode</option>
-                    <option value="Cash">Cash</option>
-                    <option value="UPI">UPI</option>
-                    <option value="Bank Tranfer">Bank Tranfer</option>
+                    <option value="1">Cash</option>
+                    <option value="2">UPI</option>
+                    <option value="3">Bank Tranfer</option>
                   </select>
                   {formik.touched.payment_mode &&
                     formik.errors.payment_mode && (
@@ -570,7 +583,14 @@ function Company() {
                     className="fw-medium submit_btn"
                     style={{ whiteSpace: "nowrap" }}
                     onClick={formik.handleSubmit}
+                    disabled={loadIndicator}
                   >
+                    {loadIndicator && (
+                      <span
+                        className="spinner-border spinner-border-sm me-2"
+                        aria-hidden="true"
+                      ></span>
+                    )}
                     Submit
                   </button>
                 </div>

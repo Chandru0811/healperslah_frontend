@@ -1,46 +1,13 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { MaterialReactTable } from "material-react-table";
 import { ThemeProvider, createTheme } from "@mui/material";
+import api from "../../../config/URL";
 
 function Orders() {
-  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
-  const data = [
-    {
-      id: 1,
-      order_id: "ORD123",
-      helper_id: "HLP456",
-      assigned_at: "2024-12-25",
-      start_date: "2025-01-01",
-      end_date: "2025-01-15",
-      status: "Pending",
-      total_amount: "100.00",
-      paid_amount: "50.00",
-      balance_amount: "50.00",
-      createdBy: "Admin",
-      createdAt: "2024-12-15",
-      updatedBy: "Admin",
-      updatedAt: "2024-12-20",
-    },
-    {
-      id: 2,
-      order_id: "ORD124",
-      helper_id: "HLP789",
-      assigned_at: "2024-12-26",
-      start_date: "2025-01-16",
-      end_date: "2025-01-25",
-      status: "Completed",
-      total_amount: "150.00",
-      paid_amount: "100.00",
-      balance_amount: "50.00",
-      createdBy: "Admin",
-      createdAt: "2024-12-16",
-      updatedBy: "Admin",
-      updatedAt: "2024-12-21",
-    },
-  ];
 
   const columns = useMemo(
     () => [
@@ -100,6 +67,22 @@ function Orders() {
     ],
     []
   );
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get(`vendor/orders/28`);
+      setData(response.data.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const theme = createTheme({
     components: {
@@ -203,7 +186,7 @@ function Orders() {
                   },
                 }}
                 muiTableBodyRowProps={({ row }) => ({
-                  onClick: () => navigate(`/orders/view`),
+                  onClick: () => navigate(`/orders/view/${row.original.id}`),
                   style: { cursor: "pointer" },
                 })}
               />

@@ -58,16 +58,13 @@ function Individual() {
       services_offering: "",
       availablity: "",
       working_hrs: "",
-      providing_services: {"Deep Cleaning":"3years", "Laundary":"2.5years"},
+      providing_services: { "Deep Cleaning": "3years", Laundary: "2.5years" },
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       setLoadIndicator(true);
       try {
-        const response = await api.post(
-          `vendor/register/helper/2/1`,
-          values
-        );
+        const response = await api.post(`vendor/register/helper/2/1`, values);
         if (response.status === 200) {
           toast.success(response.data.message);
           navigate("/individual");
@@ -111,7 +108,6 @@ function Individual() {
     values[index][event.target.name] = event.target.value;
     setFields(values);
   };
-
 
   return (
     <>
@@ -228,7 +224,7 @@ function Individual() {
             </h3>
             <div className="container custum-width">
               <div className="row d-flex justify-content-between">
-              <div className="col-md-5 col-12 mb-3">
+                <div className="col-md-5 col-12 mb-3">
                   <input
                     type="text"
                     className={`form-control form-control-lg w-100 my-3 ${
@@ -239,12 +235,9 @@ function Individual() {
                     placeholder="Name"
                     {...formik.getFieldProps("name")}
                   />
-                  {formik.touched.name &&
-                    formik.errors.name && (
-                      <div className="invalid-feedback">
-                        {formik.errors.name}
-                      </div>
-                    )}
+                  {formik.touched.name && formik.errors.name && (
+                    <div className="invalid-feedback">{formik.errors.name}</div>
+                  )}
                 </div>
                 <div className="col-md-5 col-12"></div>
                 <div className="col-md-5 col-12 mb-3">
@@ -410,10 +403,10 @@ function Individual() {
                       <input
                         type="text"
                         className="form-control my-3 form-control-lg w-100"
-                        placeholder="Experience"
-                        aria-label="Experience"
-                        name="experience"
-                        value={field.experience}
+                        placeholder="Service"
+                        aria-label="Service"
+                        name="service"
+                        value={field.service}
                         onChange={(e) => handleChange(index, e)}
                       />
                     </div>
@@ -424,10 +417,10 @@ function Individual() {
                       <input
                         type="text"
                         className="form-control my-3 form-control-lg w-100"
-                        placeholder="Service"
-                        aria-label="Service"
-                        name="service"
-                        value={field.service}
+                        placeholder="Experience"
+                        aria-label="Experience"
+                        name="experience"
+                        value={field.experience}
                         onChange={(e) => handleChange(index, e)}
                       />
                     </div>

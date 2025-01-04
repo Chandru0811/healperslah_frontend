@@ -1,15 +1,14 @@
 import React, { useState } from "react";
 import { Form, Button } from "react-bootstrap";
-import { FaEye, FaEyeSlash } from "react-icons/fa"; // Import eye icons
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useNavigate, Link } from "react-router-dom";
-import { FiAlertTriangle } from "react-icons/fi";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 import headerlogo from "../../../assets/Helperlah Logo.png";
 import { IoMdArrowBack } from "react-icons/io";
 import "../../../styles/custom.css";
 import api from "../../../config/URL";
+import toast from "react-hot-toast";
 
 function Register() {
   const [showPassword, setShowPassword] = useState(false);
@@ -61,7 +60,7 @@ function Register() {
         };
 
         const response = await api.post("vendor/register", payload);
-        console.log("API Response:", response.data);
+        toast.success(response.data.message);
 
         if (response.data.success) {
           if (values.type === "Company") {
@@ -72,6 +71,9 @@ function Register() {
         } else {
           console.error("Registration failed:", response.data.message);
         }
+
+        localStorage.setItem("vendor_id", response.data.data.userDetails.id);
+        localStorage.setItem("helperlah_token", response.data.data.token);
       } catch (error) {
         console.error("Submission failed", error);
       } finally {
