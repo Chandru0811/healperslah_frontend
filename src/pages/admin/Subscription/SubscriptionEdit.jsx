@@ -4,6 +4,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import * as Yup from "yup";
 import { MultiSelect } from "react-multi-select-component";
 import api from "../../../config/URL";
+import toast from "react-hot-toast";
 
 function SubscriptionEdit() {
   const navigate = useNavigate();
@@ -11,7 +12,6 @@ function SubscriptionEdit() {
   const [loading, setLoading] = useState(true);
   const [loadIndicator, setLoadIndicator] = useState(false);
   const [serviceData, setServiceData] = useState([]);
-  console.log("Center Data", serviceData);
   const [selectedServices, setSelectedServices] = useState([]);
   const serviceOption = serviceData?.map((service) => ({
     label: service.name,
@@ -19,18 +19,20 @@ function SubscriptionEdit() {
   }));
 
   const validationSchema = Yup.object().shape({
-    serviceId: Yup.array()
+    service_id: Yup.array()
       .min(1, "*At least one service must be selected")
       .required("*Service Id is required"),
     name: Yup.string().required("*Name is required"),
-    startDate: Yup.string().required("*Start Date is required"),
-    endDate: Yup.string().required("*End Date is required"),
+    start_date: Yup.string().required("*Start Date is required"),
+    end_date: Yup.string().required("*End Date is required"),
     recurrence: Yup.string().required("*Recurrence is required"),
-    propertyType: Yup.string().required("*Property Type is required"),
-    propertySize: Yup.string().required("*Property Size is required"),
-    cleaning_hours: Yup.string().required("*Cleaning Hours is required"),
+    additional_specs: Yup.object().shape({
+      property_type: Yup.string().required("*Property Type is required"),
+      property_size: Yup.string().required("*Property Size is required"),
+      cleaning_hours: Yup.string().required("*Cleaning Hours is required"),
+    }),
     range: Yup.string().required("*Range is required"),
-    basicPrice: Yup.number()
+    price: Yup.number()
       .typeError("*Price must be a number")
       .required("*Price is required")
       .positive("*Please enter a valid number")
@@ -56,15 +58,21 @@ function SubscriptionEdit() {
       },
       range: "",
       price: "",
-      offer_id: null,
+      offer_id: "",
     },
-    // validationSchema: validationSchema,
+    validationSchema: validationSchema,
     onSubmit: async (values) => {
       setLoadIndicator(true);
+
+      const payload = {
+        ...values,
+        service_id: values.service_id.map(Number),
+      };
+
       try {
         const response = await api.put(
           `admin/subscription/update/${id}`,
-          values
+          payload
         );
         if (response.status === 200) {
           toast.success(response.data.message);
@@ -105,14 +113,22 @@ function SubscriptionEdit() {
           data.additional_specs = JSON.parse(data.additional_specs);
         }
 
-        formik.setValues(data);
+        const parsedServiceId = JSON.parse(data.service_id).map((id) => ({
+          label: serviceData.find((service) => service.id === id)?.name || "",
+          value: id,
+        }));
+        setSelectedServices(parsedServiceId);
+        formik.setValues({
+          ...data,
+          service_id: JSON.parse(data.service_id),
+        });
       } catch (error) {
         toast.error(`Error: ${error.response?.data?.message || error.message}`);
       }
     };
 
     getData();
-  }, [id]);
+  }, [id, serviceData]);
 
   const getService = async () => {
     try {

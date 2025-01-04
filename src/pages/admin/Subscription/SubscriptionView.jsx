@@ -98,7 +98,12 @@ function SubscriptionView() {
                       <p className="fw-medium text-sm">Service Id</p>
                     </div>
                     <div className="col-6">
-                      <p className="text-muted text-sm">: {data.service_id}</p>
+                      <p className="text-muted text-sm">
+                        :{" "}
+                        {data.service_id
+                          ? JSON.parse(data.service_id).join(", ")
+                          : " --"}
+                      </p>
                     </div>
                   </div>
                 </div>

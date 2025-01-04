@@ -15,9 +15,87 @@ import {
   FaYoutube,
   FaTiktok,
 } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import * as Yup from "yup";
+import toast from "react-hot-toast";
+import api from "../../../config/URL";
+import { useFormik } from "formik";
 
 function Individual() {
+  const navigate = useNavigate();
+  const [loadIndicator, setLoadIndicator] = useState(false);
   const [fields, setFields] = useState([{ experience: "", service: "" }]);
+
+  const validationSchema = Yup.object().shape({
+    name: Yup.string().required("*Company Name is required"),
+    address: Yup.string().required("*Address is required"),
+    nationality: Yup.string().required("*Nationality is required"),
+    citizenship: Yup.string().required("*Citizenship is required"),
+    services_offering: Yup.string().required("*Services Offering is required"),
+    availablity: Yup.string().required("*Availablity is required"),
+    working_hrs: Yup.string().required("*Working Hrs is required"),
+    providing_services: Yup.string().required(
+      "*Providing Services is required"
+    ),
+    email: Yup.string()
+      .required("*Email is required")
+      .email("*Invalid email format"),
+    mobile: Yup.number()
+      .typeError("*Phone Number must be a number")
+      .required("**Phone Number is required")
+      .positive("*Please enter a valid number")
+      .integer("**Phone Number must be a whole number"),
+  });
+
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      address: "",
+      mobile: "",
+      email: "",
+      nationality: "",
+      citizenship: "",
+      services_offering: "",
+      availablity: "",
+      working_hrs: "",
+      providing_services: {"Deep Cleaning":"3years", "Laundary":"2.5years"},
+    },
+    validationSchema: validationSchema,
+    onSubmit: async (values) => {
+      setLoadIndicator(true);
+      try {
+        const response = await api.post(
+          `vendor/register/helper/2/1`,
+          values
+        );
+        if (response.status === 200) {
+          toast.success(response.data.message);
+          navigate("/individual");
+        } else {
+          toast.error(response.data.message);
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 422) {
+          const errors = error.response.data.errors;
+          if (errors) {
+            Object.keys(errors).forEach((key) => {
+              errors[key].forEach((errorMsg) => {
+                toast(errorMsg, {
+                  icon: <FiAlertTriangle className="text-warning" />,
+                });
+              });
+            });
+          }
+        } else {
+          toast.error("An error occurred while deleting the record.");
+        }
+      } finally {
+        setLoadIndicator(false);
+      }
+    },
+    validateOnChange: false,
+    validateOnBlur: true,
+  });
 
   const handleAddField = () => {
     setFields([...fields, { experience: "", service: "" }]);
@@ -33,6 +111,7 @@ function Individual() {
     values[index][event.target.name] = event.target.value;
     setFields(values);
   };
+
 
   return (
     <>
@@ -149,90 +228,175 @@ function Individual() {
             </h3>
             <div className="container custum-width">
               <div className="row d-flex justify-content-between">
-                <div className="col-md-5 col-12 mb-3">
+              <div className="col-md-5 col-12 mb-3">
                   <input
                     type="text"
-                    className="form-control my-3 form-control-lg w-100"
+                    className={`form-control form-control-lg w-100 my-3 ${
+                      formik.touched.name && formik.errors.name
+                        ? "is-invalid"
+                        : ""
+                    }`}
                     placeholder="Name"
-                    aria-label="Name"
+                    {...formik.getFieldProps("name")}
                   />
+                  {formik.touched.name &&
+                    formik.errors.name && (
+                      <div className="invalid-feedback">
+                        {formik.errors.name}
+                      </div>
+                    )}
                 </div>
                 <div className="col-md-5 col-12"></div>
                 <div className="col-md-5 col-12 mb-3">
                   <input
                     type="text"
-                    className="form-control my-3 form-control-lg w-100"
+                    className={`form-control form-control-lg w-100 my-3 ${
+                      formik.touched.mobile && formik.errors.mobile
+                        ? "is-invalid"
+                        : ""
+                    }`}
                     placeholder="Phone Number"
-                    aria-label="Phone Number"
+                    {...formik.getFieldProps("mobile")}
                   />
+                  {formik.touched.mobile && formik.errors.mobile && (
+                    <div className="invalid-feedback">
+                      {formik.errors.mobile}
+                    </div>
+                  )}
                 </div>
                 <div className="col-md-5 col-12 mb-3">
                   <input
-                    type="text"
-                    className="form-control my-3 form-control-lg w-100"
+                    type="email"
+                    className={`form-control form-control-lg w-100 my-3 ${
+                      formik.touched.email && formik.errors.email
+                        ? "is-invalid"
+                        : ""
+                    }`}
                     placeholder="Email"
-                    aria-label="Email"
+                    {...formik.getFieldProps("email")}
                   />
+                  {formik.touched.email && formik.errors.email && (
+                    <div className="invalid-feedback">
+                      {formik.errors.email}
+                    </div>
+                  )}
                 </div>
                 <div className="col-md-12 col-12 mb-3">
                   <textarea
-                    className="form-control my-3 form-control-lg w-100"
+                    type="text"
+                    className={`form-control form-control-lg w-100 my-3 ${
+                      formik.touched.address && formik.errors.address
+                        ? "is-invalid"
+                        : ""
+                    }`}
                     placeholder="Address"
-                    aria-label="Address"
+                    {...formik.getFieldProps("address")}
                     rows="8"
                   ></textarea>
+                  {formik.touched.address && formik.errors.address && (
+                    <div className="invalid-feedback">
+                      {formik.errors.address}
+                    </div>
+                  )}
                 </div>
                 <div className="col-md-5 col-12 mb-3">
                   <select
                     type="text"
-                    className="form-select my-3 form-select-lg w-100 custom-select"
-                    aria-label="Nationality of the owner"
+                    className={`form-select form-select-lg w-100 my-3 custom-select ${
+                      formik.touched.citizenship && formik.errors.citizenship
+                        ? "is-invalid"
+                        : ""
+                    }`}
                     style={{ fontSize: "90%" }}
+                    {...formik.getFieldProps("citizenship")}
                   >
                     <option value="">Select a Nation</option>
                     <option value="Singapore">Singapore</option>
                     <option value="Malaysia">Malaysia</option>
                   </select>
+                  {formik.touched.citizenship && formik.errors.citizenship && (
+                    <div className="invalid-feedback">
+                      {formik.errors.citizenship}
+                    </div>
+                  )}
                 </div>
                 <div className="col-md-5 col-12 mb-3">
                   <select
                     type="text"
-                    className="form-select my-3 form-select-lg w-100 custom-select"
-                    aria-label="Nationality of the owner"
+                    className={`form-select form-select-lg w-100 my-3 custom-select ${
+                      formik.touched.nationality && formik.errors.nationality
+                        ? "is-invalid"
+                        : ""
+                    }`}
                     style={{ fontSize: "90%" }}
+                    {...formik.getFieldProps("nationality")}
                   >
                     <option value="">Select a Nationality</option>
                     <option value="Singaporen">Singaporen</option>
                     <option value="Singaporen PR">Singaporen PR</option>
                   </select>
+                  {formik.touched.nationality && formik.errors.nationality && (
+                    <div className="invalid-feedback">
+                      {formik.errors.nationality}
+                    </div>
+                  )}
                 </div>
                 <div className="col-md-5 col-12 mb-3"></div>
                 <div className="col-md-12 col-12 mb-3">
                   <textarea
                     type="text"
-                    className="form-control my-3 form-control-lg w-100"
+                    className={`form-control form-control-lg w-100 my-3 ${
+                      formik.touched.services_offering &&
+                      formik.errors.services_offering
+                        ? "is-invalid"
+                        : ""
+                    }`}
                     placeholder="Services offering"
-                    aria-label="Services offering"
+                    {...formik.getFieldProps("services_offering")}
                     rows="8"
                   ></textarea>
+                  {formik.touched.services_offering &&
+                    formik.errors.services_offering && (
+                      <div className="invalid-feedback">
+                        {formik.errors.services_offering}
+                      </div>
+                    )}
                 </div>
                 <div className="col-md-12 col-12 mb-3">
                   <textarea
                     type="text"
-                    className="form-control my-3 form-control-lg w-100"
+                    className={`form-control form-control-lg w-100 my-3 ${
+                      formik.touched.availablity && formik.errors.availablity
+                        ? "is-invalid"
+                        : ""
+                    }`}
                     placeholder="Availability"
-                    aria-label="Availability"
+                    {...formik.getFieldProps("availablity")}
                     rows="8"
                   ></textarea>
+                  {formik.touched.availablity && formik.errors.availablity && (
+                    <div className="invalid-feedback">
+                      {formik.errors.availablity}
+                    </div>
+                  )}
                 </div>
                 <div className="col-md-12 col-12 mb-3">
                   <textarea
                     type="text"
-                    className="form-control my-3 form-control-lg w-100"
+                    className={`form-control form-control-lg w-100 my-3 ${
+                      formik.touched.working_hrs && formik.errors.working_hrs
+                        ? "is-invalid"
+                        : ""
+                    }`}
                     placeholder="Working Hours"
-                    aria-label="Working Hours"
+                    {...formik.getFieldProps("working_hrs")}
                     rows="8"
                   ></textarea>
+                  {formik.touched.working_hrs && formik.errors.working_hrs && (
+                    <div className="invalid-feedback">
+                      {formik.errors.working_hrs}
+                    </div>
+                  )}
                 </div>
               </div>
               {/* <!--==== Service Offered Start ====--> */}
@@ -291,34 +455,56 @@ function Individual() {
                     )}
                   </div>
                 ))}
-               <div className="col-md-5 col-12">
+                <div className="col-md-5 col-12 mb-3">
                   <select
                     type="text"
-                    className="form-select my-3 form-select-lg w-100 custom-select"
-                    aria-label="Details of preferred payment mode"
+                    className={`form-select form-select-lg w-100 my-3 custom-select ${
+                      formik.touched.payment_mode && formik.errors.payment_mode
+                        ? "is-invalid"
+                        : ""
+                    }`}
                     style={{ fontSize: "90%" }}
+                    {...formik.getFieldProps("payment_mode")}
                   >
                     <option value="">Select a Payment Mode</option>
                     <option value="Cash">Cash</option>
                     <option value="UPI">UPI</option>
                     <option value="Bank Tranfer">Bank Tranfer</option>
                   </select>
+                  {formik.touched.payment_mode &&
+                    formik.errors.payment_mode && (
+                      <div className="invalid-feedback">
+                        {formik.errors.payment_mode}
+                      </div>
+                    )}
                 </div>
                 <div className="col-md-5 col-12"></div>
-                <div className="col-12">
+                <div className="col-md-12 col-12 mb-3">
                   <textarea
                     type="text"
-                    className="form-control my-3 form-control-lg w-100"
+                    className={`form-control form-control-lg w-100 my-3 ${
+                      formik.touched.other_details &&
+                      formik.errors.other_details
+                        ? "is-invalid"
+                        : ""
+                    }`}
                     placeholder="Other Details"
-                    aria-label="Other Details"
+                    {...formik.getFieldProps("other_details")}
                     rows="8"
                   ></textarea>
+                  {formik.touched.other_details &&
+                    formik.errors.other_details && (
+                      <div className="invalid-feedback">
+                        {formik.errors.other_details}
+                      </div>
+                    )}
                 </div>
                 <div className="col-12 d-flex justify-content-center">
                   <button
                     type="submit"
                     className="fw-medium submit_btn"
                     style={{ whiteSpace: "nowrap" }}
+                    onClick={formik.handleSubmit}
                   >
                     Submit
                   </button>

@@ -4,30 +4,33 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import * as Yup from "yup";
 import { MultiSelect } from "react-multi-select-component";
 import api from "../../../config/URL";
+import toast from "react-hot-toast";
 
 function CustomPackageEdit() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [loadIndicator, setLoadIndicator] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [selectedService, setSelectedService] = useState([]);
-  const serviceOption = [
-    { label: "Service A", value: "1" },
-    { label: "Service B", value: "2" },
-    { label: "Service C", value: "3" },
-  ];
+  const [serviceData, setServiceData] = useState([]);
+  const [selectedServices, setSelectedServices] = useState([]);
+  const serviceOption = serviceData?.map((service) => ({
+    label: service.name,
+    value: service.id,
+  }));
 
   const validationSchema = Yup.object().shape({
-    serviceId: Yup.array()
+    service_id: Yup.array()
       .min(1, "*At least one service must be selected")
       .required("*Service Id is required"),
     name: Yup.string().required("*Name is required"),
     start_date: Yup.string().required("*Start Date is required"),
     end_date: Yup.string().required("*End Date is required"),
     recurrence: Yup.string().required("*Recurrence is required"),
-    propertyType: Yup.string().required("*Property Type is required"),
-    propertySize: Yup.string().required("*Property Size is required"),
-    cleaning_hours: Yup.string().required("*Cleaning Hours is required"),
+    additional_specs: Yup.object().shape({
+      property_type: Yup.string().required("*Property Type is required"),
+      property_size: Yup.string().required("*Property Size is required"),
+      cleaning_hours: Yup.string().required("*Cleaning Hours is required"),
+    }),
     range: Yup.string().required("*Range is required"),
     price: Yup.number()
       .typeError("*Price must be a number")
@@ -41,31 +44,35 @@ function CustomPackageEdit() {
 
   const formik = useFormik({
     initialValues: {
-      serviceId: [],
+      service_id: [],
       name: "",
+      slug: "",
+      description: "",
       start_date: "",
       end_date: "",
       recurrence: "",
-      propertyType: "",
-      propertySize: "",
-      cleaning_hours: "",
+      additional_specs: {
+        property_type: "",
+        property_size: "",
+        cleaning_hours: "",
+      },
       range: "",
       price: "",
-      description: "",
+      offer_id: "",
     },
     // validationSchema,
     onSubmit: async (values) => {
       setLoadIndicator(true);
+
+      const payload = {
+        ...values,
+        service_id: values.service_id.map(Number),
+      };
+
       try {
         const response = await api.put(
           `admin/custom_package/update/${id}`,
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
+          payload);
         if (response.status === 200) {
           toast.success(response.data.message);
           navigate("/custompackage");
@@ -98,7 +105,6 @@ function CustomPackageEdit() {
   useEffect(() => {
     const getData = async () => {
       try {
-        setLoading(true);
         const response = await api.get(`admin/custom_package/${id}`);
         const data = response.data.data;
 
@@ -106,15 +112,37 @@ function CustomPackageEdit() {
           data.additional_specs = JSON.parse(data.additional_specs);
         }
 
-        formik.setValues(data);
+        const parsedServiceId = JSON.parse(data.service_id).map((id) => ({
+          label: serviceData.find((service) => service.id === id)?.name || "",
+          value: id,
+        }));
+        setSelectedServices(parsedServiceId);
+        formik.setValues({
+          ...data,
+          service_id: JSON.parse(data.service_id),
+        });
       } catch (error) {
-        toast.error("Error Fetching Data", error);
-      } finally {
-        setLoading(false);
+        toast.error(`Error: ${error.response?.data?.message || error.message}`);
       }
     };
+
     getData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, serviceData]);
+
+  const getService = async () => {
+    try {
+      setLoading(true);
+      const serviceData = await api.get(`admin/services`);
+      setServiceData(serviceData.data.data);
+    } catch (error) {
+      toast.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getService();
   }, []);
 
   return (
@@ -196,17 +224,17 @@ function CustomPackageEdit() {
                   </label>
                   <MultiSelect
                     options={serviceOption}
-                    value={selectedService}
+                    value={selectedServices}
                     onChange={(selected) => {
-                      setSelectedService(selected);
+                      setSelectedServices(selected);
                       formik.setFieldValue(
-                        "serviceId",
+                        "service_id",
                         selected.map((option) => option.value)
                       );
                     }}
                     labelledBy="Select Service"
                     className={`form-multi-select ${
-                      formik.touched.serviceId && formik.errors.serviceId
+                      formik.touched.service_id && formik.errors.service_id
                         ? "is-invalid"
                         : ""
                     }`}
@@ -215,9 +243,9 @@ function CustomPackageEdit() {
                       minHeight: "37.6px",
                     }}
                   />
-                  {formik.touched.serviceId && formik.errors.serviceId && (
+                  {formik.touched.service_id && formik.errors.service_id && (
                     <div className="invalid-feedback">
-                      {formik.errors.serviceId}
+                      {formik.errors.service_id}
                     </div>
                   )}
                 </div>

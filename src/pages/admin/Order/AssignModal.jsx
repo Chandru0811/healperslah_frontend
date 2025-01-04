@@ -88,57 +88,6 @@ function AssignModal({ orderId }) {
         Assign
       </button>
 
-      {/* <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Assign</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <form onSubmit={formik.handleSubmit}>
-            <div className="col-md-6 col-12 mb-3">
-              <label className="form-label">
-                Helper Id<span className="text-danger">*</span>
-              </label>
-              <select
-                aria-label="Default select example"
-                className={`form-select ${
-                  formik.touched.helper_id && formik.errors.helper_id
-                    ? "is-invalid"
-                    : ""
-                }`}
-                {...formik.getFieldProps("helper_id")}
-              >
-                <option value=""></option>
-                <option value="1">Ramesh</option>
-                <option value="2">Saran</option>
-              </select>
-              {formik.touched.helper_id && formik.errors.helper_id && (
-                <div className="invalid-feedback">
-                  {formik.errors.helper_id}
-                </div>
-              )}
-            </div>
-          </form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button className="btn btn-secondary btn-sm" onClick={handleCloseDialog}>
-            Close
-          </Button>
-          <Button
-            className="btn btn-button"
-            type="submit"
-            onClick={formik.handleSubmit}
-          >
-            {" "}
-            {loadIndicator && (
-              <span
-                className="spinner-border spinner-border-sm me-2"
-                aria-hidden="true"
-              ></span>
-            )}
-            Submit
-          </Button>
-        </Modal.Footer>
-      </Modal> */}
       <Dialog
         open={deleteDialogOpen}
         onClose={handleCloseDialog}
@@ -214,4 +163,5 @@ function AssignModal({ orderId }) {
 AssignModal.propTypes = {
   orderId: PropTypes.func.isRequired,
 };
+
 export default AssignModal;
