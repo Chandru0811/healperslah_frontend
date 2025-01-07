@@ -9,6 +9,7 @@ import { IoMdArrowBack } from "react-icons/io";
 import "../../../styles/custom.css";
 import api from "../../../config/URL";
 import toast from "react-hot-toast";
+import { FiAlertTriangle } from "react-icons/fi";
 
 function Register() {
   const [showPassword, setShowPassword] = useState(false);
@@ -27,12 +28,12 @@ function Register() {
       .min(8, "Mobile number must be 8 characters")
       .max(10, "Mobile number must not exceed 10 characters"),
 
-      password: Yup.string()
-      .required('Password is required')
-      .min(8, 'Password must be at least 8 characters'),
+    password: Yup.string()
+      .required("Password is required")
+      .min(8, "Password must be at least 8 characters"),
     password_confirmation: Yup.string()
-      .required('Password confirmation is required')
-      .oneOf([Yup.ref('password'), null], 'Passwords must match'),
+      .required("Password confirmation is required")
+      .oneOf([Yup.ref("password"), null], "Passwords must match"),
     type: Yup.string().required("Type is required"),
   });
 
@@ -47,7 +48,6 @@ function Register() {
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
-      console.log(formik.values.password, formik.values.password_confirmation);
       try {
         setLoadIndicator(true);
         const payload = {
@@ -55,10 +55,9 @@ function Register() {
           email: values.email,
           mobile: values.mobile,
           password: values.password,
-          password_confirmation:values.password_confirmation,
+          password_confirmation: values.password_confirmation,
           type: values.type,
         };
-
         const response = await api.post("vendor/register", payload);
         toast.success(response.data.message);
 
@@ -75,7 +74,20 @@ function Register() {
         localStorage.setItem("vendor_id", response.data.data.userDetails.id);
         localStorage.setItem("helperlah_token", response.data.data.token);
       } catch (error) {
-        console.error("Submission failed", error);
+        if (error.response && error.response.status === 422) {
+          const errors = error.response.data.error;
+          if (errors) {
+            Object.keys(errors).forEach((key) => {
+              errors[key].forEach((errorMsg) => {
+                toast(errorMsg, {
+                  icon: <FiAlertTriangle className="text-warning" />,
+                });
+              });
+            });
+          }
+        } else {
+          toast.error("An unexpected error occurred.");
+        }
       } finally {
         setLoadIndicator(false);
       }

@@ -27,6 +27,8 @@
   width: 100%;
 }
 
+/* Common style End */
+
 /*===== Sidebar Start =====  */
 
 .navbar-vertical.navbar-light .navbar-nav > .nav-item > .nav-link:hover {
@@ -70,6 +72,16 @@
 .sticky-top {
   z-index: 1030;
 }
+
+/* .sidebar {
+  position: fixed;
+  overflow: auto;
+  height: 100%;
+  width: 280px;
+  background: #fff;
+  transition: all 0.5s ease;
+  padding: 0px 7px;
+} */
 
 /*===== Sidebar End =====  */
 

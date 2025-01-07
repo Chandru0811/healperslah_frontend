@@ -9,6 +9,7 @@ function ServiceView() {
   const { id } = useParams();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadIndicator, setLoadIndicator] = useState(false);
 
   const getData = async () => {
     try {
@@ -28,6 +29,7 @@ function ServiceView() {
 
   const handelStatusChange = async () => {
     try {
+      setLoadIndicator(true);
       const response = await api.post(`admin/service/status/${id}`);
       toast.success(response?.data?.message);
       getData();
@@ -46,6 +48,8 @@ function ServiceView() {
       } else {
         toast.error("An error occurred while deleting the record.");
       }
+    } finally {
+      setLoadIndicator(false);
     }
   };
 
@@ -90,8 +94,15 @@ function ServiceView() {
               <button
                 type="button"
                 onClick={handelStatusChange}
+                disabled={loadIndicator}
                 className="btn btn-success btn-sm"
               >
+                {loadIndicator && (
+                  <span
+                    className="spinner-border spinner-border-sm me-2"
+                    aria-hidden="true"
+                  ></span>
+                )}
                 Activate
               </button>
             ) : (
@@ -113,81 +124,81 @@ function ServiceView() {
             </div>
           </div>
         ) : (
-        <div className="container-fluid px-4">
-          <div className="row pb-3">
-            <div className="col-md-6 col-12 my-2">
-              <div className="row">
-                <div className="col-6">
-                  <p className="fw-medium text-sm">Service Group Id</p>
-                </div>
-                <div className="col-6">
-                  <p className="text-muted text-sm">
-                    : {data.service_group_id}
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-6 col-12 my-2">
-              <div className="row">
-                <div className="col-6">
-                  <p className="fw-medium text-sm">Name</p>
-                </div>
-                <div className="col-6">
-                  <p className="text-muted text-sm">: {data.name}</p>
+          <div className="container-fluid px-4">
+            <div className="row pb-3">
+              <div className="col-md-6 col-12 my-2">
+                <div className="row">
+                  <div className="col-6">
+                    <p className="fw-medium text-sm">Service Group Id</p>
+                  </div>
+                  <div className="col-6">
+                    <p className="text-muted text-sm">
+                      : {data.service_group_id}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="col-md-6 col-12 my-2">
-              <div className="row">
-                <div className="col-6">
-                  <p className="fw-medium text-sm">Order</p>
-                </div>
-                <div className="col-6">
-                  <p className="text-muted text-sm">: {data.order}</p>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-6 col-12 my-2">
-              <div className="row">
-                <div className="col-6">
-                  <p className="fw-medium text-sm">Price</p>
-                </div>
-                <div className="col-6">
-                  <p className="text-muted text-sm">: {data.price}</p>
+              <div className="col-md-6 col-12 my-2">
+                <div className="row">
+                  <div className="col-6">
+                    <p className="fw-medium text-sm">Name</p>
+                  </div>
+                  <div className="col-6">
+                    <p className="text-muted text-sm">: {data.name}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="col-md-6 col-12 my-2">
-              <div className="row">
-                <div className="col-6">
-                  <p className="fw-medium text-sm">Image</p>
-                </div>
-                <div className="col-6">
-                  <p className="text-muted text-sm">
-                    :{" "}
-                    <img
-                      src={`${ImageURL}${data.image}`}
-                      alt="Shop Logo"
-                      style={{ maxWidth: "100px", maxHeight: "100px" }}
-                    />
-                  </p>
+              <div className="col-md-6 col-12 my-2">
+                <div className="row">
+                  <div className="col-6">
+                    <p className="fw-medium text-sm">Order</p>
+                  </div>
+                  <div className="col-6">
+                    <p className="text-muted text-sm">: {data.order}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="col-md-6 col-12 my-2">
-              <div className="row">
-                <div className="col-6">
-                  <p className="fw-medium text-sm">Description</p>
+              <div className="col-md-6 col-12 my-2">
+                <div className="row">
+                  <div className="col-6">
+                    <p className="fw-medium text-sm">Price</p>
+                  </div>
+                  <div className="col-6">
+                    <p className="text-muted text-sm">: {data.price}</p>
+                  </div>
                 </div>
-                <div className="col-6">
-                  <p className="text-muted text-sm text-break ">
-                    : {data.description}
-                  </p>
+              </div>
+              <div className="col-md-6 col-12 my-2">
+                <div className="row">
+                  <div className="col-6">
+                    <p className="fw-medium text-sm">Image</p>
+                  </div>
+                  <div className="col-6">
+                    <p className="text-muted text-sm">
+                      :{" "}
+                      <img
+                        src={`${ImageURL}${data.image}`}
+                        alt="Shop Logo"
+                        style={{ maxWidth: "100px", maxHeight: "100px" }}
+                      />
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="col-md-6 col-12 my-2">
+                <div className="row">
+                  <div className="col-6">
+                    <p className="fw-medium text-sm">Description</p>
+                  </div>
+                  <div className="col-6">
+                    <p className="text-muted text-sm text-break ">
+                      : {data.description}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
         )}
       </div>
     </div>

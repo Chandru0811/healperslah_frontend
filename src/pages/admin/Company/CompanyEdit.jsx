@@ -58,7 +58,6 @@ function CompanyEdit() {
       service: "",
       experience: "",
       payment_mode: "",
-      providing_services: {},
       other_details: "",
     },
     validationSchema: validationSchema,

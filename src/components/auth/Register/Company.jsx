@@ -35,7 +35,7 @@ function Company() {
     company_registration_no: Yup.string().required(
       "*Company Registration No is required"
     ),
-    no_of_employees: Yup.string().required("*No Of Employees is required"),
+    no_of_employees: Yup.string().required("*No of Employees is required"),
     services_offering: Yup.string().required("*Services Offering is required"),
     // availablity: Yup.string().required("*Availablity is required"),
     working_hrs: Yup.string().required("*Working Hrs is required"),
@@ -78,10 +78,10 @@ function Company() {
 
       const providing_services = fields.reduce((acc, field) => {
         if (field.service && field.experience) {
-            acc[field.service] = field.experience;
+          acc[field.service] = field.experience;
         }
         return acc;
-    }, {});
+      }, {});
 
       const payload = {
         ...values,

@@ -126,6 +126,16 @@ function AdminSideBar({ handleLogout }) {
               <NavLink
                 className="nav-link"
                 style={{ borderRadius: "5px" }}
+                to="/company"
+              >
+                <MdOutlineHomeRepairService className="sidebar_icon" />
+                Companies
+              </NavLink>
+            </li>
+            <li className="nav-item px-3">
+              <NavLink
+                className="nav-link"
+                style={{ borderRadius: "5px" }}
                 to="/user"
               >
                 <FaRegUserCircle className="sidebar_icon" />

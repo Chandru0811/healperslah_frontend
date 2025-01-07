@@ -38,6 +38,9 @@ import Offers from "../pages/admin/Offers/Offers";
 import OffersAdd from "../pages/admin/Offers/OffersAdd";
 import OffersEdit from "../pages/admin/Offers/OffersEdit";
 import OffersView from "../pages/admin/Offers/OffersView";
+import Company from "../pages/admin/Company/Company";
+import CompanyEdit from "../pages/admin/Company/CompanyEdit";
+import CompanyView from "../pages/admin/Company/CompanyView";
 
 function Admin({ handleLogout }) {
   return (
@@ -53,6 +56,11 @@ function Admin({ handleLogout }) {
                 <Route path="*" element={<AdminDashboard />} />
 
                 {/* Side Menu  */}
+
+                {/* Company */}
+                <Route path="/company" element={<Company />} />
+                <Route path="/company/edit" element={<CompanyEdit />} />
+                <Route path="/company/view" element={<CompanyView />} />
 
                 {/* Service Group */}
                 <Route path="/servicegroup" element={<ServiceGroup />} />
