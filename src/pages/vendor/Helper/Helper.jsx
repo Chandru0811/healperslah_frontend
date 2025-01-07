@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { MaterialReactTable } from "material-react-table";
 import { MoreVert as MoreVertIcon } from "@mui/icons-material";
@@ -10,15 +10,41 @@ import {
   IconButton,
 } from "@mui/material";
 import Delete from "../../../components/common/Delete";
-import api from "../../../config/URL";
 import PropTypes from "prop-types";
 
-function ServiceGroup() {
+function Helper() {
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
+  const data = [
+    {
+      id: 1,
+      name: "Saran",
+      phone_no: "9876543212",
+      email: "company@gmail.com",
+      nation: "India",
+      nationality: "Indian",
+      working_hrs: "11 am - 5 pm",
+      created_by: "Admin",
+      created_at: "2024-01-06",
+      updated_by: "Admin",
+      updated_at: "2024-01-06",
+    },
+    {
+      id: 2,
+      name: "Ramesh",
+      phone_no: "9876543213",
+      email: "company2@gmail.com",
+      nation: "Singapore",
+      nationality: "Singaporian",
+      working_hrs: "10 am - 6 pm",
+      created_by: "Admin",
+      created_at: "2024-01-06",
+      updated_by: "Admin",
+      updated_at: "2024-01-06",
+    },
+  ];
 
   const columns = useMemo(
     () => [
@@ -51,33 +77,38 @@ function ServiceGroup() {
         ),
       },
       {
-        accessorKey: "status",
+        accessorKey: "name",
         enableHiding: false,
-        header: "Status",
-        Cell: ({ row }) => {
-          const status = row.original.active;
-          return status === 1 ? (
-            <div className="d-flex align-items-center">
-              <div className="active_dot"></div>
-              <span>Active</span>
-            </div>
-          ) : status === 0 ? (
-            <div className="d-flex align-items-center">
-              <div className="inactive_dot"></div>
-              <span>Inactive</span>
-            </div>
-          ) : null;
-        },
-      },
-      { accessorKey: "name", enableHiding: false, header: "Name" },
-      {
-        accessorKey: "order",
-        enableHiding: false,
-        header: "Order",
+        header: "Name",
+        size: 40,
       },
       {
-        accessorKey: "base_price",
-        header: "Best Price",
+        accessorKey: "phone_no",
+        header: "Phone Number",
+        enableHiding: false,
+        size: 40,
+      },
+      {
+        accessorKey: "email",
+        header: "Email",
+        enableHiding: false,
+        size: 40,
+      },
+      {
+        accessorKey: "working_hrs",
+        header: "Working Hours",
+        enableHiding: false,
+        size: 40,
+      },
+      {
+        accessorKey: "nation",
+        header: "Nation",
+        enableHiding: false,
+        size: 40,
+      },
+      {
+        accessorKey: "nationality",
+        header: "Nationality",
         enableHiding: false,
         size: 40,
       },
@@ -100,22 +131,6 @@ function ServiceGroup() {
     ],
     []
   );
-
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const response = await api.get(`admin/serviceGroups`);
-      setData(response.data.data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   const theme = createTheme({
     components: {
@@ -175,7 +190,7 @@ function ServiceGroup() {
           <span className="breadcrumb-separator"> &gt; </span>
         </li>
         <li className="breadcrumb-item active" aria-current="page">
-          &nbsp;Service Group
+          &nbsp;Helper
         </li>
       </ol>
       <div className="card">
@@ -186,12 +201,12 @@ function ServiceGroup() {
             </div>
             <span className="me-2 text-muted">
               This database shows the list of&nbsp;
-              <span className="database_name">Service Group</span>
+              <span className="database_name">Helper</span>
             </span>
           </div>
         </div>
         <div className="mb-3 d-flex justify-content-end">
-          <Link to="/servicegroup/add">
+          <Link to="/helper/add">
             <button
               type="button"
               className="btn btn-button btn-sm me-2"
@@ -201,67 +216,52 @@ function ServiceGroup() {
             </button>
           </Link>
         </div>
-        {loading ? (
-          <div className="loader-container">
-            <div className="loader">
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-          </div>
-        ) : (
-          <>
-            <ThemeProvider theme={theme}>
-              <MaterialReactTable
-                columns={columns}
-                data={data}
-                enableColumnActions={false}
-                enableColumnFilters={false}
-                enableDensityToggle={false}
-                enableFullScreenToggle={false}
-                initialState={{
-                  columnVisibility: {
-                    created_by: false,
-                    created_at: false,
-                    updated_by: false,
-                    updated_at: false,
-                  },
-                }}
-                muiTableBodyRowProps={({ row }) => ({
-                  onClick: () => navigate(`/servicegroup/view/${row.original.id}`),
-                  style: { cursor: "pointer" },
-                })}
+        <>
+          <ThemeProvider theme={theme}>
+            <MaterialReactTable
+              columns={columns}
+              data={data}
+              enableColumnActions={false}
+              enableColumnFilters={false}
+              enableDensityToggle={false}
+              enableFullScreenToggle={false}
+              initialState={{
+                columnVisibility: {
+                  created_by: false,
+                  created_at: false,
+                  updated_by: false,
+                  updated_at: false,
+                },
+              }}
+              muiTableBodyRowProps={() => ({
+                onClick: () => navigate(`/helper/view`),
+                style: { cursor: "pointer" },
+              })}
+            />
+          </ThemeProvider>
+          <Menu
+            id="action-menu"
+            anchorEl={menuAnchor}
+            open={Boolean(menuAnchor)}
+            onClose={handleMenuClose}
+          >
+            <MenuItem onClick={() => navigate(`/helper/edit`)}>Edit</MenuItem>
+            <MenuItem>
+              <Delete
+                path={`vendor/helper/delete/${selectedId}`}
+                onOpen={handleMenuClose}
               />
-            </ThemeProvider>
-            <Menu
-              id="action-menu"
-              anchorEl={menuAnchor}
-              open={Boolean(menuAnchor)}
-              onClose={handleMenuClose}
-            >
-              <MenuItem onClick={() => navigate(`/servicegroup/edit/${selectedId}`)}>
-                Edit
-              </MenuItem>
-              <MenuItem>
-                <Delete
-                  path={`admin/serviceGroup/delete/${selectedId}`}
-                  onDeleteSuccess={fetchData}
-                  onOpen={handleMenuClose}
-                />
-              </MenuItem>
-            </Menu>
-          </>
-        )}
+            </MenuItem>
+          </Menu>
+        </>
       </div>
     </div>
   );
 }
 
-ServiceGroup.propTypes = {
+Helper.propTypes = {
   row: PropTypes.func.isRequired,
   cell: PropTypes.func.isRequired,
 };
 
-export default ServiceGroup;
+export default Helper;

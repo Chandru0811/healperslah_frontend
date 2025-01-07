@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { MaterialReactTable } from "material-react-table";
 import { MoreVert as MoreVertIcon } from "@mui/icons-material";
@@ -10,6 +10,7 @@ import {
   IconButton,
 } from "@mui/material";
 import Delete from "../../../components/common/Delete";
+import PropTypes from "prop-types";
 
 function Company() {
   const [menuAnchor, setMenuAnchor] = useState(null);
@@ -235,7 +236,7 @@ function Company() {
                   updated_at: false,
                 },
               }}
-              muiTableBodyRowProps={({ row }) => ({
+              muiTableBodyRowProps={() => ({
                 onClick: () => navigate(`/company/view`),
                 style: { cursor: "pointer" },
               })}
@@ -260,5 +261,10 @@ function Company() {
     </div>
   );
 }
+
+Company.propTypes = {
+  row: PropTypes.func.isRequired,
+  cell: PropTypes.func.isRequired,
+};
 
 export default Company;

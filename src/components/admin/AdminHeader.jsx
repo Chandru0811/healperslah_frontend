@@ -4,13 +4,15 @@ import { Link, useNavigate } from "react-router-dom";
 import { IoIosArrowDown } from "react-icons/io";
 import PropTypes from "prop-types";
 import { IoHomeOutline, IoSettingsOutline } from "react-icons/io5";
-import { GoBellFill, GoPencil } from "react-icons/go";
+import { GoPencil } from "react-icons/go";
 import { TbLogout2 } from "react-icons/tb";
 import { FaBell } from "react-icons/fa";
 
 function AdminHeader({ handleLogout }) {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const navigate = useNavigate();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const user_name = localStorage.getItem("helperlah_name");
+
   const handelLogOutClick = () => {
     handleLogout();
     navigate("/");
@@ -32,7 +34,7 @@ function AdminHeader({ handleLogout }) {
             <div className="col-sm-6 col-12 text-sm-end">
               <div className="mx-n1 position-relative">
                 <span style={{ cursor: "pointer" }} onClick={toggleDropdown}>
-                  <FaBell className="me-3" style={{color: "#8b99b5"}}/>
+                  {/* <FaBell className="me-3" style={{ color: "#8b99b5" }} /> */}
                   <img
                     src={user}
                     className="img-fluid header-user"
@@ -49,7 +51,7 @@ function AdminHeader({ handleLogout }) {
                       fontWeight: "500",
                     }}
                   >
-                    Admin
+                    {user_name}
                   </span>
                   <IoIosArrowDown
                     style={{ fontSize: "16px" }}
@@ -70,7 +72,7 @@ function AdminHeader({ handleLogout }) {
                         Signed in as
                         <br />
                       </span>
-                      <span>Admin</span>
+                      <span>{user_name}</span>
                     </div>
                     <Link
                       to="/settings"
@@ -87,13 +89,13 @@ function AdminHeader({ handleLogout }) {
                       <GoPencil className="me-2" />
                       <span>Profile</span>
                     </Link>
-                    <Link
+                    {/* <Link
                       to="/settings"
                       className="dropdown-item d-flex align-items-center"
                     >
                       <IoSettingsOutline className="me-2" />
                       <span>Settings</span>
-                    </Link>
+                    </Link> */}
                     <Link
                       className="dropdown-item d-flex align-items-center"
                       onClick={handelLogOutClick}

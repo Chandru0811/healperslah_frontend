@@ -73,15 +73,17 @@
   z-index: 1030;
 }
 
-/* .sidebar {
-  position: fixed;
-  overflow: auto;
-  height: 100%;
-  width: 280px;
-  background: #fff;
-  transition: all 0.5s ease;
-  padding: 0px 7px;
-} */
+.sidebar {
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.sidebar::-webkit-scrollbar {
+  display: none;
+}
 
 /*===== Sidebar End =====  */
 
@@ -630,4 +632,29 @@
   height: 400px;
   background: #333;
   margin-top: 1rem;
+}
+
+/* Profile  */
+
+.dropdown-menu {
+  display: flex;
+  flex-direction: column;
+  background: #ef4444 !important;
+}
+
+.dropdown-item {
+  border: none;
+  color: #fff;
+  padding: 10px;
+  text-align: left;
+  cursor: pointer;
+  outline: none;
+}
+
+.dropdown-item:hover {
+  color: #f8b4b4;
+}
+
+.dropdown-item.active {
+  color: #f8b4b4;
 }

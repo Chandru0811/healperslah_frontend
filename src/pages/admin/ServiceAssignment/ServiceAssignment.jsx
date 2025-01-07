@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import Delete from "../../../components/common/Delete";
 import api from "../../../config/URL";
+import PropTypes from "prop-types";
 
 function ServiceAssignment() {
   const [menuAnchor, setMenuAnchor] = useState(null);
@@ -18,7 +19,6 @@ function ServiceAssignment() {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const navigate = useNavigate();
-
 
   const columns = useMemo(
     () => [
@@ -256,5 +256,10 @@ function ServiceAssignment() {
     </div>
   );
 }
+
+ServiceAssignment.propTypes = {
+  row: PropTypes.func.isRequired,
+  cell: PropTypes.func.isRequired,
+};
 
 export default ServiceAssignment;

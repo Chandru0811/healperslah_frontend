@@ -30,6 +30,7 @@ function AssignModal({ orderId }) {
   const handleCloseDialog = () => {
     setDeleteDialogOpen(false);
     document.body.style.overflow = "";
+    formik.resetForm();
   };
 
   const validationSchema = yup.object().shape({

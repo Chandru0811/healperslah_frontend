@@ -1,16 +1,17 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import user from "../../assets/user_profile.svg";
 import { Link, useNavigate } from "react-router-dom";
 import { IoIosArrowDown } from "react-icons/io";
 import PropTypes from "prop-types";
-import { IoHomeOutline, IoSettingsOutline } from "react-icons/io5";
-import { GoBellFill, GoPencil } from "react-icons/go";
+import { IoHomeOutline } from "react-icons/io5";
+import { GoPencil } from "react-icons/go";
 import { TbLogout2 } from "react-icons/tb";
-import { FaBell } from "react-icons/fa";
 
 function VendorHeader({ handleLogout }) {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const navigate = useNavigate();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const user_name = localStorage.getItem("helperlah_name");
+
   const handelLogOutClick = () => {
     handleLogout();
     navigate("/");
@@ -32,7 +33,7 @@ function VendorHeader({ handleLogout }) {
             <div className="col-sm-6 col-12 text-sm-end">
               <div className="mx-n1 position-relative">
                 <span style={{ cursor: "pointer" }} onClick={toggleDropdown}>
-                  <FaBell className="me-3" style={{color: "#8b99b5"}}/>
+                  {/* <FaBell className="me-3" style={{ color: "#8b99b5" }} /> */}
                   <img
                     src={user}
                     className="img-fluid header-user"
@@ -49,7 +50,7 @@ function VendorHeader({ handleLogout }) {
                       fontWeight: "500",
                     }}
                   >
-                    Tahlia
+                    {user_name.split(" ")[0]}
                   </span>
                   <IoIosArrowDown
                     style={{ fontSize: "16px" }}
@@ -70,7 +71,7 @@ function VendorHeader({ handleLogout }) {
                         Signed in as
                         <br />
                       </span>
-                      <span>Tahlia Mooney</span>
+                      <span>{user_name}</span>
                     </div>
                     <Link
                       to="/settings"
@@ -81,19 +82,19 @@ function VendorHeader({ handleLogout }) {
                     </Link>
 
                     <Link
-                      to="/settings"
+                      to="/profile"
                       className="dropdown-item d-flex align-items-center"
                     >
                       <GoPencil className="me-2" />
                       <span>Profile</span>
                     </Link>
-                    <Link
+                    {/* <Link
                       to="/settings"
                       className="dropdown-item d-flex align-items-center"
                     >
                       <IoSettingsOutline className="me-2" />
                       <span>Settings</span>
-                    </Link>
+                    </Link> */}
                     <Link
                       className="dropdown-item d-flex align-items-center"
                       onClick={handelLogOutClick}

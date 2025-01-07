@@ -1,16 +1,15 @@
 import { useFormik } from "formik";
-import { useState } from "react";
+import React, { useState } from "react";
 import { FiPlus } from "react-icons/fi";
 import { IoCloseSharp } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import * as Yup from "yup";
 
-function CompanyEdit() {
+function HelperAdd() {
   const [fields, setFields] = useState([{ experience: "", service: "" }]);
 
   const validationSchema = Yup.object().shape({
-    company_name: Yup.string().required("*Company Name is required"),
-    owner_name: Yup.string().required("*Owner Name is required"),
+    name: Yup.string().required("*Name is required"),
     phone_no: Yup.number()
       .typeError("*Phone Number must be a number")
       .required("*Phone Number is required")
@@ -19,14 +18,6 @@ function CompanyEdit() {
     email: Yup.string()
       .email("*Entry a valid Email")
       .required("*Email is required"),
-    company_reg_no: Yup.string().required(
-      "*Company Registration Number is required"
-    ),
-    no_of_employee: Yup.number()
-      .typeError("*No of Employee must be a number")
-      .required("*No of Employee is required")
-      .positive("*Please enter a valid number")
-      .integer("*No of Employee must be a whole number"),
     nation: Yup.string().required("*Nation is required"),
     nationality: Yup.string().required("*Nationality is required"),
     address: Yup.string().required("*Address is required"),
@@ -43,12 +34,9 @@ function CompanyEdit() {
 
   const formik = useFormik({
     initialValues: {
-      company_name: "",
-      owner_name: "",
+      name: "",
       phone_no: "",
       email: "",
-      company_reg_no: "",
-      no_of_employee: "",
       nation: "",
       nationality: "",
       address: "",
@@ -61,7 +49,16 @@ function CompanyEdit() {
       other_details: "",
     },
     validationSchema: validationSchema,
-    onSubmit: async () => {},
+    onSubmit: async (values) => {
+      const availability = ["Monday", "Wednesday", "Friday"];
+
+      const providing_services = fields.reduce((acc, field) => {
+        if (field.service && field.experience) {
+          acc[field.service] = field.experience;
+        }
+        return acc;
+      }, {});
+    },
     validateOnChange: false,
     validateOnBlur: true,
   });
@@ -94,13 +91,13 @@ function CompanyEdit() {
           <span className="breadcrumb-separator"> &gt; </span>
         </li>
         <li>
-          <Link to="/company" className="custom-breadcrumb">
-            &nbsp;Company
+          <Link to="/helper" className="custom-breadcrumb">
+            &nbsp;Helper
           </Link>
           <span className="breadcrumb-separator"> &gt; </span>
         </li>
         <li className="breadcrumb-item active" aria-current="page">
-          &nbsp;Company Edit
+          &nbsp;Helper Add
         </li>
       </ol>
       <form
@@ -113,21 +110,21 @@ function CompanyEdit() {
       >
         <div className="card">
           <div className="d-flex justify-content-between align-items-center card_header p-1 mb-4 px-4">
-            <div className="d-flex align-items-center">
-              <div className="d-flex">
-                <div className="dot active"></div>
+            <div class="d-flex align-items-center">
+              <div class="d-flex">
+                <div class="dot active"></div>
               </div>
-              <span className="me-2 text-muted">Edit Company</span>
+              <span class="me-2 text-muted">Add Helper</span>
             </div>
             <div className="my-2 pe-3 d-flex align-items-center">
-              <Link to="/company">
+              <Link to="/helper">
                 <button type="button " className="btn btn-sm btn-border">
                   Back
                 </button>
               </Link>
               &nbsp;&nbsp;
               <button type="submit" className="btn btn-button">
-                Update
+                Save
               </button>
             </div>
           </div>
@@ -135,61 +132,20 @@ function CompanyEdit() {
             <div className="row py-4">
               <div className="col-md-6 col-12 mb-3">
                 <label className="form-label">
-                  Company Registration Number
-                  <span className="text-danger">*</span>
-                </label>
-                <input
-                  type="text"
-                  className={`form-control ${
-                    formik.touched.company_reg_no &&
-                    formik.errors.company_reg_no
-                      ? "is-invalid"
-                      : ""
-                  }`}
-                  {...formik.getFieldProps("company_reg_no")}
-                />
-                {formik.touched.company_reg_no &&
-                  formik.errors.company_reg_no && (
-                    <div className="invalid-feedback">
-                      {formik.errors.company_reg_no}
-                    </div>
-                  )}
-              </div>
-              <div className="col-md-6 col-12 mb-3">
-                <label className="form-label">
-                  Owner Name<span className="text-danger">*</span>
+                  Name<span className="text-danger">*</span>
                 </label>
                 <input
                   aria-label="Default input example"
                   className={`form-control ${
-                    formik.touched.owner_name && formik.errors.owner_name
+                    formik.touched.name && formik.errors.name
                       ? "is-invalid"
                       : ""
                   }`}
-                  {...formik.getFieldProps("owner_name")}
+                  {...formik.getFieldProps("name")}
                 />
-                {formik.touched.owner_name && formik.errors.owner_name && (
+                {formik.touched.name && formik.errors.name && (
                   <div className="invalid-feedback">
-                    {formik.errors.owner_name}
-                  </div>
-                )}
-              </div>
-              <div className="col-md-6 col-12 mb-3">
-                <label className="form-label">
-                  Company Name<span className="text-danger">*</span>
-                </label>
-                <input
-                  aria-label="Default input example"
-                  className={`form-control ${
-                    formik.touched.company_name && formik.errors.company_name
-                      ? "is-invalid"
-                      : ""
-                  }`}
-                  {...formik.getFieldProps("company_name")}
-                />
-                {formik.touched.company_name && formik.errors.company_name && (
-                  <div className="invalid-feedback">
-                    {formik.errors.company_name}
+                    {formik.errors.name}
                   </div>
                 )}
               </div>
@@ -247,27 +203,6 @@ function CompanyEdit() {
                 {formik.touched.email && formik.errors.email && (
                   <div className="invalid-feedback">{formik.errors.email}</div>
                 )}
-              </div>
-              <div className="col-md-6 col-12 mb-3">
-                <label className="form-label">
-                  No of Employee<span className="text-danger">*</span>
-                </label>
-                <input
-                  type="text"
-                  className={`form-control ${
-                    formik.touched.no_of_employee &&
-                    formik.errors.no_of_employee
-                      ? "is-invalid"
-                      : ""
-                  }`}
-                  {...formik.getFieldProps("no_of_employee")}
-                />
-                {formik.touched.no_of_employee &&
-                  formik.errors.no_of_employee && (
-                    <div className="invalid-feedback">
-                      {formik.errors.no_of_employee}
-                    </div>
-                  )}
               </div>
               <div className="col-md-6 col-12 mb-3">
                 <label className="form-label">
@@ -475,4 +410,4 @@ function CompanyEdit() {
   );
 }
 
-export default CompanyEdit;
+export default HelperAdd;

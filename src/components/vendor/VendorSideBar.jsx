@@ -1,17 +1,18 @@
 import { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import helperlogo from "../../assets/helperlah_logo_side.png";
-import { BsBagCheckFill, BsBarChart, BsBarChartFill } from "react-icons/bs";
-import { BiLogOut } from "react-icons/bi";
+import { BsBarChart } from "react-icons/bs";
 import PropTypes from "prop-types";
 import { IoBagCheckOutline } from "react-icons/io5";
+import { MdOutlineCleaningServices } from "react-icons/md";
 
-function VendorSideBar({ handleLogout }) {
-  const navigate = useNavigate();
-  const handelLogOutClick = () => {
-    handleLogout();
-    navigate("/");
-  };
+function VendorSideBar() {
+  // const navigate = useNavigate();
+
+  // const handelLogOutClick = () => {
+  //   handleLogout();
+  //   navigate("/");
+  // };
 
   const [leadMenuOpen] = useState(false);
 
@@ -60,6 +61,16 @@ function VendorSideBar({ handleLogout }) {
               >
                 <BsBarChart className="sidebar_icon" />
                 Dashboard
+              </NavLink>
+            </li>
+            <li className="nav-item px-3">
+              <NavLink
+                className="nav-link"
+                style={{ borderRadius: "5px" }}
+                to="/helper"
+              >
+                <MdOutlineCleaningServices className="sidebar_icon" />
+                Helper
               </NavLink>
             </li>
             <li className="nav-item px-3">
