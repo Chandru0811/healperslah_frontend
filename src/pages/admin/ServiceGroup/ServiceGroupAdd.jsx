@@ -1,10 +1,11 @@
 import { useFormik } from "formik";
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import Cropper from "react-easy-crop";
 import toast from "react-hot-toast";
 import api from "../../../config/URL";
+import { FiAlertTriangle } from "react-icons/fi";
 
 function ServiceGroupAdd() {
   const navigate = useNavigate();
@@ -107,7 +108,7 @@ function ServiceGroupAdd() {
       .toLowerCase()
       .trim()
       .replace(/\s+/g, "_")
-      .replace(/[^\w\-]+/g, "");
+      .replace(/[^\w-]+/g, "");
     formik.setFieldValue("slug", slug);
   }, [formik.values.name]);
 
@@ -227,11 +228,11 @@ function ServiceGroupAdd() {
       >
         <div className="card">
           <div className="d-flex justify-content-between align-items-center card_header p-1 mb-4 px-4">
-            <div class="d-flex align-items-center">
-              <div class="d-flex">
-                <div class="dot active"></div>
+            <div className="d-flex align-items-center">
+              <div className="d-flex">
+                <div className="dot active"></div>
               </div>
-              <span class="me-2 text-muted">Add Service Group</span>
+              <span className="me-2 text-muted">Add Service Group</span>
             </div>
             <div className="my-2 pe-3 d-flex align-items-center">
               <Link to="/servicegroup">

@@ -1,5 +1,5 @@
 import { useFormik } from "formik";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import * as Yup from "yup";
 import Cropper from "react-easy-crop";
@@ -7,6 +7,7 @@ import api from "../../../config/URL";
 import ImageURL from "../../../config/ImageURL";
 import toast from "react-hot-toast";
 import fetchAllServiceGroupWithIds from "../../List/ServiceGroupList";
+import { FiAlertTriangle } from "react-icons/fi";
 
 function ServiceEdit() {
   const navigate = useNavigate();
@@ -32,13 +33,17 @@ function ServiceEdit() {
   ];
 
   const imageValidation = Yup.mixed()
-    .required("*Image is required")
-    .test("fileFormat", "Unsupported format", (value) => {
-      return !value || (value && SUPPORTED_FORMATS.includes(value.type));
-    })
+    .nullable()
     .test("fileSize", "File size is too large. Max 2MB.", (value) => {
       return !value || (value && value.size <= MAX_FILE_SIZE);
-    });
+    })
+    .test(
+      "fileFormat",
+      "Unsupported file format. Allowed formats are PNG, JPEG, JPG, and WEBP.",
+      (value) => {
+        return !value || (value && SUPPORTED_FORMATS.includes(value.type));
+      }
+    );
 
   const validationSchema = Yup.object().shape({
     service_group_id: Yup.string().required("*Service Group Id is required"),
@@ -49,7 +54,7 @@ function ServiceEdit() {
       .required("*Basic Price is required")
       .positive("*Please enter a valid number")
       .integer("*Basic Price must be a whole number"),
-    image: imageValidation,
+    // image: imageValidation,
     description: Yup.string()
       .required("*Description is a required field")
       .max(200, "*The maximum length is 200 characters"),
@@ -75,7 +80,11 @@ function ServiceEdit() {
       formData.append("name", values.name);
       formData.append("slug", values.slug);
       formData.append("description", values.description);
-      formData.append("image", values.image);
+      if (values.image) {
+        if (values.image instanceof File || values.image instanceof Blob) {
+          formData.append("image", values.image);
+        }
+      }
       formData.append("order", values.order);
       formData.append("price", values.price);
       try {
@@ -122,7 +131,7 @@ function ServiceEdit() {
       .toLowerCase()
       .trim()
       .replace(/\s+/g, "_")
-      .replace(/[^\w\-]+/g, "");
+      .replace(/[^\w-]+/g, "");
     formik.setFieldValue("slug", slug);
   }, [formik.values.name]);
 
@@ -296,11 +305,11 @@ function ServiceEdit() {
       >
         <div className="card">
           <div className="d-flex justify-content-between align-items-center card_header p-1 mb-4 px-4">
-            <div class="d-flex align-items-center">
-              <div class="d-flex">
-                <div class="dot active"></div>
+            <div className="d-flex align-items-center">
+              <div className="d-flex">
+                <div className="dot active"></div>
               </div>
-              <span class="me-2 text-muted">Edit Service</span>
+              <span className="me-2 text-muted">Edit Service</span>
             </div>
             <div className="my-2 pe-3 d-flex align-items-center">
               <Link to="/service">
@@ -325,198 +334,204 @@ function ServiceEdit() {
             </div>
           </div>
           {loading ? (
-          <div className="loader-container">
-            <div className="loader">
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
+            <div className="loader-container">
+              <div className="loader">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
             </div>
-          </div>
-        ) : (
-          <div className="container-fluid px-4">
-            <div className="row py-4">
-              <div className="col-md-6 col-12 mb-3">
-                <label className="form-label">
-                  Service Group Id<span className="text-danger">*</span>
-                </label>
-                <select
-                  aria-label="Default select example"
-                  className={`form-select ${
-                    formik.touched.service_group_id &&
-                    formik.errors.service_group_id
-                      ? "is-invalid"
-                      : ""
-                  }`}
-                  {...formik.getFieldProps("service_group_id")}
-                >
-                  <option selected></option>
-                  {serviceGroup &&
-                    serviceGroup.map((data) => (
-                      <option key={data.id} value={data.id}>
-                        {data.name}
+          ) : (
+            <div className="container-fluid px-4">
+              <div className="row py-4">
+                <div className="col-md-6 col-12 mb-3">
+                  <label className="form-label">
+                    Service Group Id<span className="text-danger">*</span>
+                  </label>
+                  <select
+                    aria-label="Default select example"
+                    className={`form-select ${
+                      formik.touched.service_group_id &&
+                      formik.errors.service_group_id
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("service_group_id")}
+                  >
+                    <option selected></option>
+                    {serviceGroup &&
+                      serviceGroup.map((data) => (
+                        <option key={data.id} value={data.id}>
+                          {data.name}
+                        </option>
+                      ))}
+                  </select>
+                  {formik.touched.service_group_id &&
+                    formik.errors.service_group_id && (
+                      <div className="invalid-feedback">
+                        {formik.errors.service_group_id}
+                      </div>
+                    )}
+                </div>
+                <div className="col-md-6 col-12 mb-3">
+                  <label className="form-label">
+                    Name<span className="text-danger">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className={`form-control ${
+                      formik.touched.name && formik.errors.name
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("name")}
+                  />
+                  {formik.touched.name && formik.errors.name && (
+                    <div className="invalid-feedback">{formik.errors.name}</div>
+                  )}
+                </div>
+                <div className="col-md-6 col-12 mb-3">
+                  <label className="form-label">
+                    Order<span className="text-danger">*</span>
+                  </label>
+                  <select
+                    aria-label="Default select example"
+                    className={`form-select ${
+                      formik.touched.order && formik.errors.order
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("order")}
+                  >
+                    <option value=""></option>
+                    {Array.from({ length: 50 }, (_, index) => (
+                      <option key={index + 1} value={index + 1}>
+                        {index + 1}
                       </option>
                     ))}
-                </select>
-                {formik.touched.service_group_id &&
-                  formik.errors.service_group_id && (
+                  </select>
+                  {formik.touched.order && formik.errors.order && (
                     <div className="invalid-feedback">
-                      {formik.errors.service_group_id}
+                      {formik.errors.order}
                     </div>
                   )}
-              </div>
-              <div className="col-md-6 col-12 mb-3">
-                <label className="form-label">
-                  Name<span className="text-danger">*</span>
-                </label>
-                <input
-                  type="text"
-                  className={`form-control ${
-                    formik.touched.name && formik.errors.name
-                      ? "is-invalid"
-                      : ""
-                  }`}
-                  {...formik.getFieldProps("name")}
-                />
-                {formik.touched.name && formik.errors.name && (
-                  <div className="invalid-feedback">{formik.errors.name}</div>
-                )}
-              </div>
-              <div className="col-md-6 col-12 mb-3">
-                <label className="form-label">
-                  Order<span className="text-danger">*</span>
-                </label>
-                <select
-                  aria-label="Default select example"
-                  className={`form-select ${
-                    formik.touched.order && formik.errors.order
-                      ? "is-invalid"
-                      : ""
-                  }`}
-                  {...formik.getFieldProps("order")}
-                >
-                  <option value=""></option>
-                  {Array.from({ length: 50 }, (_, index) => (
-                    <option key={index + 1} value={index + 1}>
-                      {index + 1}
-                    </option>
-                  ))}
-                </select>
-                {formik.touched.order && formik.errors.order && (
-                  <div className="invalid-feedback">{formik.errors.order}</div>
-                )}
-              </div>
-              <div className="col-md-6 col-12 mb-3">
-                <label className="form-label">
-                  Price<span className="text-danger">*</span>
-                </label>
-                <input
-                  type="text"
-                  className={`form-control ${
-                    formik.touched.price && formik.errors.price
-                      ? "is-invalid"
-                      : ""
-                  }`}
-                  {...formik.getFieldProps("price")}
-                />
-                {formik.touched.price && formik.errors.price && (
-                  <div className="invalid-feedback">{formik.errors.price}</div>
-                )}
-              </div>
-              <div className="col-md-6 col-12 mb-3">
-                <label className="form-label">
-                  Image
-                  <span className="text-danger">*</span>
-                </label>
-                <input
-                  type="file"
-                  accept=".png,.jpeg,.jpg,.svg,.webp"
-                  className={`form-control ${
-                    formik.touched.image && formik.errors.image
-                      ? "is-invalid"
-                      : ""
-                  }`}
-                  name="image"
-                  onChange={handleFileChange}
-                  onBlur={formik.handleBlur}
-                />
-                <p style={{ fontSize: "13px" }}>
-                  Note: Maximum file size is 2MB. Allowed: .png, .jpg, .jpeg,
-                  .svg, .webp.
-                </p>
-                {formik.touched.image && formik.errors.image && (
-                  <div className="invalid-feedback">{formik.errors.image}</div>
-                )}
+                </div>
+                <div className="col-md-6 col-12 mb-3">
+                  <label className="form-label">
+                    Price<span className="text-danger">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className={`form-control ${
+                      formik.touched.price && formik.errors.price
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("price")}
+                  />
+                  {formik.touched.price && formik.errors.price && (
+                    <div className="invalid-feedback">
+                      {formik.errors.price}
+                    </div>
+                  )}
+                </div>
+                <div className="col-md-6 col-12 mb-3">
+                  <label className="form-label">
+                    Image
+                    <span className="text-danger">*</span>
+                  </label>
+                  <input
+                    type="file"
+                    accept=".png,.jpeg,.jpg,.svg,.webp"
+                    className={`form-control ${
+                      formik.touched.image && formik.errors.image
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    name="image"
+                    onChange={handleFileChange}
+                    onBlur={formik.handleBlur}
+                  />
+                  <p style={{ fontSize: "13px" }}>
+                    Note: Maximum file size is 2MB. Allowed: .png, .jpg, .jpeg,
+                    .svg, .webp.
+                  </p>
+                  {formik.touched.image && formik.errors.image && (
+                    <div className="invalid-feedback">
+                      {formik.errors.image}
+                    </div>
+                  )}
 
-                {previewImage && (
-                  <div className="my-3">
-                    <img
-                      src={previewImage}
-                      alt="Selected"
-                      style={{ maxWidth: "100px", maxHeight: "100px" }}
-                    />
-                  </div>
-                )}
+                  {previewImage && (
+                    <div className="my-3">
+                      <img
+                        src={previewImage}
+                        alt="Selected"
+                        style={{ maxWidth: "100px", maxHeight: "100px" }}
+                      />
+                    </div>
+                  )}
 
-                {showCropper && imageSrc && (
-                  <div className="crop-container">
-                    <Cropper
-                      image={imageSrc}
-                      crop={crop}
-                      zoom={zoom}
-                      aspect={300 / 300}
-                      onCropChange={setCrop}
-                      onZoomChange={setZoom}
-                      onCropComplete={onCropComplete}
-                      cropShape="rect"
-                      showGrid={false}
-                    />
-                  </div>
-                )}
+                  {showCropper && imageSrc && (
+                    <div className="crop-container">
+                      <Cropper
+                        image={imageSrc}
+                        crop={crop}
+                        zoom={zoom}
+                        aspect={300 / 300}
+                        onCropChange={setCrop}
+                        onZoomChange={setZoom}
+                        onCropComplete={onCropComplete}
+                        cropShape="rect"
+                        showGrid={false}
+                      />
+                    </div>
+                  )}
 
-                {showCropper && (
-                  <div className="d-flex justify-content-start mt-3 gap-2">
-                    <button
-                      type="button"
-                      className="btn btn-button mt-3"
-                      onClick={handleCropSave}
-                    >
-                      Save Cropped Image
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-secondary mt-3"
-                      onClick={handleCropCancel}
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                )}
-              </div>
-              <div className="col-md-6 col-12 mb-3">
-                <label className="form-label">
-                  Description<span className="text-danger">*</span>
-                </label>
-                <textarea
-                  rows={5}
-                  className={`form-control ${
-                    formik.touched.description && formik.errors.description
-                      ? "is-invalid"
-                      : ""
-                  }`}
-                  {...formik.getFieldProps("description")}
-                  maxLength={825}
-                />
-                {formik.touched.description && formik.errors.description && (
-                  <div className="invalid-feedback">
-                    {formik.errors.description}
-                  </div>
-                )}
+                  {showCropper && (
+                    <div className="d-flex justify-content-start mt-3 gap-2">
+                      <button
+                        type="button"
+                        className="btn btn-button mt-3"
+                        onClick={handleCropSave}
+                      >
+                        Save Cropped Image
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-secondary mt-3"
+                        onClick={handleCropCancel}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  )}
+                </div>
+                <div className="col-md-6 col-12 mb-3">
+                  <label className="form-label">
+                    Description<span className="text-danger">*</span>
+                  </label>
+                  <textarea
+                    rows={5}
+                    className={`form-control ${
+                      formik.touched.description && formik.errors.description
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("description")}
+                    maxLength={825}
+                  />
+                  {formik.touched.description && formik.errors.description && (
+                    <div className="invalid-feedback">
+                      {formik.errors.description}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
         </div>
       </form>
     </div>

@@ -6,6 +6,7 @@ import Cropper from "react-easy-crop";
 import api from "../../../config/URL";
 import ImageURL from "../../../config/ImageURL";
 import toast from "react-hot-toast";
+import { FiAlertTriangle } from "react-icons/fi";
 
 function ServiceGroupEdit() {
   const navigate = useNavigate();
@@ -61,7 +62,9 @@ function ServiceGroupEdit() {
       formData.append("slug", values.slug);
       formData.append("description", values.description);
       if (values.image) {
-        formData.append("image", values.image);
+        if (values.image instanceof File || values.image instanceof Blob) {
+          formData.append("image", values.image);
+        }
       }
       formData.append("order", values.order);
       formData.append("base_price", values.base_price);
@@ -306,171 +309,175 @@ function ServiceGroupEdit() {
             </div>
           </div>
           {loading ? (
-          <div className="loader-container">
-            <div className="loader">
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-          </div>
-        ) : (
-          <div className="container-fluid px-4">
-            <div className="row py-4">
-              <div className="col-md-6 col-12 mb-3">
-                <label className="form-label">
-                  Name<span className="text-danger">*</span>
-                </label>
-                <input
-                  type="text"
-                  className={`form-control ${
-                    formik.touched.name && formik.errors.name
-                      ? "is-invalid"
-                      : ""
-                  }`}
-                  {...formik.getFieldProps("name")}
-                />
-                {formik.touched.name && formik.errors.name && (
-                  <div className="invalid-feedback">{formik.errors.name}</div>
-                )}
-              </div>
-              <div className="col-md-6 col-12 mb-3">
-                <label className="form-label">
-                  Order<span className="text-danger">*</span>
-                </label>
-                <select
-                  aria-label="Default select example"
-                  className={`form-select ${
-                    formik.touched.order && formik.errors.order
-                      ? "is-invalid"
-                      : ""
-                  }`}
-                  {...formik.getFieldProps("order")}
-                >
-                  <option value=""></option>
-                  {Array.from({ length: 50 }, (_, index) => (
-                    <option key={index + 1} value={index + 1}>
-                      {index + 1}
-                    </option>
-                  ))}
-                </select>
-                {formik.touched.order && formik.errors.order && (
-                  <div className="invalid-feedback">{formik.errors.order}</div>
-                )}
-              </div>
-              <div className="col-md-6 col-12 mb-3">
-                <label className="form-label">
-                  Basic Price<span className="text-danger">*</span>
-                </label>
-                <input
-                  type="text"
-                  className={`form-control ${
-                    formik.touched.base_price && formik.errors.base_price
-                      ? "is-invalid"
-                      : ""
-                  }`}
-                  {...formik.getFieldProps("base_price")}
-                />
-                {formik.touched.base_price && formik.errors.base_price && (
-                  <div className="invalid-feedback">
-                    {formik.errors.base_price}
-                  </div>
-                )}
-              </div>
-              <div className="col-md-6 col-12 mb-3">
-                <label className="form-label">
-                  Image
-                  <span className="text-danger">*</span>
-                </label>
-                <input
-                  type="file"
-                  accept=".png,.jpeg,.jpg,.svg,.webp"
-                  className={`form-control ${
-                    formik.touched.image && formik.errors.image
-                      ? "is-invalid"
-                      : ""
-                  }`}
-                  name="image"
-                  onChange={handleFileChange}
-                  onBlur={formik.handleBlur}
-                />
-                <p style={{ fontSize: "13px" }}>
-                  Note: Maximum file size is 2MB. Allowed: .png, .jpg, .jpeg,
-                  .svg, .webp.
-                </p>
-                {formik.touched.image && formik.errors.image && (
-                  <div className="invalid-feedback">{formik.errors.image}</div>
-                )}
-
-                {previewImage && (
-                  <div className="my-3">
-                    <img
-                      src={previewImage}
-                      alt="Selected"
-                      style={{ maxWidth: "100px", maxHeight: "100px" }}
-                    />
-                  </div>
-                )}
-
-                {showCropper && imageSrc && (
-                  <div className="crop-container">
-                    <Cropper
-                      image={imageSrc}
-                      crop={crop}
-                      zoom={zoom}
-                      aspect={300 / 300}
-                      onCropChange={setCrop}
-                      onZoomChange={setZoom}
-                      onCropComplete={onCropComplete}
-                      cropShape="rect"
-                      showGrid={false}
-                    />
-                  </div>
-                )}
-
-                {showCropper && (
-                  <div className="d-flex justify-content-start mt-3 gap-2">
-                    <button
-                      type="button"
-                      className="btn btn-button mt-3"
-                      onClick={handleCropSave}
-                    >
-                      Save Cropped Image
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-secondary mt-3"
-                      onClick={handleCropCancel}
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                )}
-              </div>
-              <div className="col-md-6 col-12 mb-3">
-                <label className="form-label">
-                  Description<span className="text-danger">*</span>
-                </label>
-                <textarea
-                  rows={5}
-                  className={`form-control ${
-                    formik.touched.description && formik.errors.description
-                      ? "is-invalid"
-                      : ""
-                  }`}
-                  {...formik.getFieldProps("description")}
-                  maxLength={825}
-                />
-                {formik.touched.description && formik.errors.description && (
-                  <div className="invalid-feedback">
-                    {formik.errors.description}
-                  </div>
-                )}
+            <div className="loader-container">
+              <div className="loader">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
               </div>
             </div>
-          </div>
-        )}
+          ) : (
+            <div className="container-fluid px-4">
+              <div className="row py-4">
+                <div className="col-md-6 col-12 mb-3">
+                  <label className="form-label">
+                    Name<span className="text-danger">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className={`form-control ${
+                      formik.touched.name && formik.errors.name
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("name")}
+                  />
+                  {formik.touched.name && formik.errors.name && (
+                    <div className="invalid-feedback">{formik.errors.name}</div>
+                  )}
+                </div>
+                <div className="col-md-6 col-12 mb-3">
+                  <label className="form-label">
+                    Order<span className="text-danger">*</span>
+                  </label>
+                  <select
+                    aria-label="Default select example"
+                    className={`form-select ${
+                      formik.touched.order && formik.errors.order
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("order")}
+                  >
+                    <option value=""></option>
+                    {Array.from({ length: 50 }, (_, index) => (
+                      <option key={index + 1} value={index + 1}>
+                        {index + 1}
+                      </option>
+                    ))}
+                  </select>
+                  {formik.touched.order && formik.errors.order && (
+                    <div className="invalid-feedback">
+                      {formik.errors.order}
+                    </div>
+                  )}
+                </div>
+                <div className="col-md-6 col-12 mb-3">
+                  <label className="form-label">
+                    Basic Price<span className="text-danger">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className={`form-control ${
+                      formik.touched.base_price && formik.errors.base_price
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("base_price")}
+                  />
+                  {formik.touched.base_price && formik.errors.base_price && (
+                    <div className="invalid-feedback">
+                      {formik.errors.base_price}
+                    </div>
+                  )}
+                </div>
+                <div className="col-md-6 col-12 mb-3">
+                  <label className="form-label">
+                    Image
+                    <span className="text-danger">*</span>
+                  </label>
+                  <input
+                    type="file"
+                    accept=".png,.jpeg,.jpg,.svg,.webp"
+                    className={`form-control ${
+                      formik.touched.image && formik.errors.image
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    name="image"
+                    onChange={handleFileChange}
+                    onBlur={formik.handleBlur}
+                  />
+                  <p style={{ fontSize: "13px" }}>
+                    Note: Maximum file size is 2MB. Allowed: .png, .jpg, .jpeg,
+                    .svg, .webp.
+                  </p>
+                  {formik.touched.image && formik.errors.image && (
+                    <div className="invalid-feedback">
+                      {formik.errors.image}
+                    </div>
+                  )}
+
+                  {previewImage && (
+                    <div className="my-3">
+                      <img
+                        src={previewImage}
+                        alt="Selected"
+                        style={{ maxWidth: "100px", maxHeight: "100px" }}
+                      />
+                    </div>
+                  )}
+
+                  {showCropper && imageSrc && (
+                    <div className="crop-container">
+                      <Cropper
+                        image={imageSrc}
+                        crop={crop}
+                        zoom={zoom}
+                        aspect={300 / 300}
+                        onCropChange={setCrop}
+                        onZoomChange={setZoom}
+                        onCropComplete={onCropComplete}
+                        cropShape="rect"
+                        showGrid={false}
+                      />
+                    </div>
+                  )}
+
+                  {showCropper && (
+                    <div className="d-flex justify-content-start mt-3 gap-2">
+                      <button
+                        type="button"
+                        className="btn btn-button mt-3"
+                        onClick={handleCropSave}
+                      >
+                        Save Cropped Image
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-secondary mt-3"
+                        onClick={handleCropCancel}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  )}
+                </div>
+                <div className="col-md-6 col-12 mb-3">
+                  <label className="form-label">
+                    Description<span className="text-danger">*</span>
+                  </label>
+                  <textarea
+                    rows={5}
+                    className={`form-control ${
+                      formik.touched.description && formik.errors.description
+                        ? "is-invalid"
+                        : ""
+                    }`}
+                    {...formik.getFieldProps("description")}
+                    maxLength={825}
+                  />
+                  {formik.touched.description && formik.errors.description && (
+                    <div className="invalid-feedback">
+                      {formik.errors.description}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </form>
     </div>

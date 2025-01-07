@@ -1,11 +1,12 @@
 import { useFormik } from "formik";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import Cropper from "react-easy-crop";
 import toast from "react-hot-toast";
 import api from "../../../config/URL";
 import fetchAllServiceGroupWithIds from "../../List/ServiceGroupList";
+import { FiAlertTriangle } from "react-icons/fi";
 
 function ServiceAdd() {
   const navigate = useNavigate();
@@ -69,7 +70,11 @@ function ServiceAdd() {
       formData.append("name", values.name);
       formData.append("slug", values.slug);
       formData.append("description", values.description);
-      formData.append("image", values.image);
+      if (values.image) {
+        if (values.image instanceof File || values.image instanceof Blob) {
+          formData.append("image", values.image);
+        }
+      }
       formData.append("order", values.order);
       formData.append("price", values.price);
       try {
@@ -112,7 +117,7 @@ function ServiceAdd() {
       .toLowerCase()
       .trim()
       .replace(/\s+/g, "_")
-      .replace(/[^\w\-]+/g, "");
+      .replace(/[^\w-]+/g, "");
     formik.setFieldValue("slug", slug);
   }, [formik.values.name]);
 
@@ -245,11 +250,11 @@ function ServiceAdd() {
       >
         <div className="card">
           <div className="d-flex justify-content-between align-items-center card_header p-1 mb-4 px-4">
-            <div class="d-flex align-items-center">
-              <div class="d-flex">
-                <div class="dot active"></div>
+            <div className="d-flex align-items-center">
+              <div className="d-flex">
+                <div className="dot active"></div>
               </div>
-              <span class="me-2 text-muted">Add Service</span>
+              <span className="me-2 text-muted">Add Service</span>
             </div>
             <div className="my-2 pe-3 d-flex align-items-center">
               <Link to="/service">
