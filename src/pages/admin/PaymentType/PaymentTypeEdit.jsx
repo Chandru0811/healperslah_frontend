@@ -10,6 +10,7 @@ import {
 import * as yup from "yup";
 import api from "../../../config/URL";
 import toast from "react-hot-toast";
+import PropTypes from "prop-types";
 
 function PaymentTypeEdit({ id, onSuccess, handleMenuClose }) {
   const [loadIndicator, setLoadIndicator] = useState(false);
@@ -183,6 +184,12 @@ function PaymentTypeEdit({ id, onSuccess, handleMenuClose }) {
     </>
   );
 }
+
+PaymentTypeEdit.propTypes = {
+  onSuccess: PropTypes.func.isRequired,
+  handleMenuClose: PropTypes.func.isRequired,
+  id: PropTypes.func.isRequired,
+};
 
 
 export default PaymentTypeEdit;

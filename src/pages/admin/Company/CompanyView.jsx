@@ -1,11 +1,9 @@
-import { createTheme, Menu, MenuItem, ThemeProvider } from "@mui/material";
+import { createTheme, ThemeProvider } from "@mui/material";
 import { MaterialReactTable } from "material-react-table";
-import React, { useState, useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 function CompanyView() {
-  const [menuAnchor, setMenuAnchor] = useState(null);
-  const [selectedId, setSelectedId] = useState(null);
   const navigate = useNavigate();
   // const [data] = useState({
   //   company_name: "",
@@ -30,11 +28,9 @@ function CompanyView() {
   const data = [
     {
       id: 1,
-      company_reg_no: "CO-100",
-      company_name: "Company 1",
+      name: "Saran",
       phone_no: "9876543212",
       email: "company@gmail.com",
-      no_of_employee: "50",
       nation: "India",
       nationality: "Indian",
       working_hrs: "11 am - 5 pm",
@@ -45,11 +41,9 @@ function CompanyView() {
     },
     {
       id: 2,
-      company_reg_no: "CO-101",
-      company_name: "Company 2",
+      name: "Ramesh",
       phone_no: "9876543213",
       email: "company2@gmail.com",
-      no_of_employee: "70",
       nation: "Singapore",
       nationality: "Singaporian",
       working_hrs: "10 am - 6 pm",
@@ -73,20 +67,9 @@ function CompanyView() {
         ),
       },
       {
-        accessorKey: "company_reg_no",
+        accessorKey: "name",
         enableHiding: false,
-        header: "Company Reg Number",
-      },
-      {
-        accessorKey: "company_name",
-        enableHiding: false,
-        header: "Company Name",
-      },
-      {
-        accessorKey: "no_of_employee",
-        header: "No of Employee",
-        enableHiding: false,
-        size: 40,
+        header: "Name",
       },
       {
         accessorKey: "phone_no",
@@ -103,16 +86,19 @@ function CompanyView() {
       {
         accessorKey: "working_hrs",
         header: "Working Hours",
+        enableHiding: false,
         size: 40,
       },
       {
         accessorKey: "nation",
         header: "Nation",
+        enableHiding: false,
         size: 40,
       },
       {
         accessorKey: "nationality",
         header: "Nationality",
+        enableHiding: false,
         size: 40,
       },
       { accessorKey: "created_by", header: "Created By" },
@@ -178,8 +164,6 @@ function CompanyView() {
     },
   });
 
-  const handleMenuClose = () => setMenuAnchor(null);
-
   return (
     <section>
       <div className="container-fluid px-0">
@@ -203,7 +187,7 @@ function CompanyView() {
             &nbsp;Company View
           </li>
         </ol>
-        <div className="card vh-100" style={{ border: "1px solid #dbd9d0" }}>
+        <div className="card" style={{ border: "1px solid #dbd9d0" }}>
           <div
             className="d-flex px-4 justify-content-between align-items-center p-1 mb-4"
             style={{ background: "#f5f7f9" }}
@@ -417,31 +401,30 @@ function CompanyView() {
                   </div>
                 </div>
                 <>
-                  <ThemeProvider theme={theme}>
-                    <MaterialReactTable
-                      columns={columns}
-                      data={data}
-                      enableColumnActions={false}
-                      enableColumnFilters={false}
-                      enableDensityToggle={false}
-                      enableFullScreenToggle={false}
-                      initialState={{
-                        columnVisibility: {
-                          working_hrs: false,
-                          nation: false,
-                          nationality: false,
-                          created_by: false,
-                          created_at: false,
-                          updated_by: false,
-                          updated_at: false,
-                        },
-                      }}
-                      muiTableBodyRowProps={({ row }) => ({
-                        onClick: () => navigate(`/company/view`),
-                        style: { cursor: "pointer" },
-                      })}
-                    />
-                  </ThemeProvider>
+                  <div className="my-5 py-5">
+                    <ThemeProvider theme={theme}>
+                      <MaterialReactTable
+                        columns={columns}
+                        data={data}
+                        enableColumnActions={false}
+                        enableColumnFilters={false}
+                        enableDensityToggle={false}
+                        enableFullScreenToggle={false}
+                        initialState={{
+                          columnVisibility: {
+                            created_by: false,
+                            created_at: false,
+                            updated_by: false,
+                            updated_at: false,
+                          },
+                        }}
+                        muiTableBodyRowProps={() => ({
+                          onClick: () => navigate(`/company/view`),
+                          style: { cursor: "pointer" },
+                        })}
+                      />
+                    </ThemeProvider>
+                  </div>
                 </>
               </div>
             </div>

@@ -1,22 +1,23 @@
 import { useFormik } from "formik";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { MultiSelect } from "react-multi-select-component";
 import api from "../../../config/URL";
 import { FiAlertTriangle } from "react-icons/fi";
 import toast from "react-hot-toast";
+import fetchAllOfferWithIds from "../../List/OfferList";
 
 function SubscriptionAdd() {
   const navigate = useNavigate();
   const [loadIndicator, setLoadIndicator] = useState(false);
   const [serviceData, setServiceData] = useState([]);
+  const [offers, setOffers] = useState(null);
   const [selectedServices, setSelectedServices] = useState([]);
   const serviceOption = serviceData?.map((service) => ({
     label: service.name,
     value: service.id,
   }));
-
 
   const validationSchema = Yup.object().shape({
     service_id: Yup.array()
@@ -37,8 +38,7 @@ function SubscriptionAdd() {
     price: Yup.number()
       .typeError("*Price must be a number")
       .required("*Price is required")
-      .positive("*Please enter a valid number")
-      .integer("*Price must be a whole number"),
+      .positive("*Please enter a valid number"),
     description: Yup.string().max(200, "*The maximum length is 200 characters"),
     offer_id: Yup.mixed().nullable(),
   });
@@ -127,6 +127,19 @@ function SubscriptionAdd() {
     getService();
   }, []);
 
+  const fetchOffers = async () => {
+    try {
+      const data = await fetchAllOfferWithIds();
+      setOffers(data);
+    } catch (error) {
+      toast.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchOffers();
+  }, []);
+
   return (
     <div className="container-fluid px-0">
       <ol
@@ -159,11 +172,11 @@ function SubscriptionAdd() {
       >
         <div className="card">
           <div className="d-flex justify-content-between align-items-center card_header p-1 mb-4 px-4">
-            <div class="d-flex align-items-center">
-              <div class="d-flex">
-                <div class="dot active"></div>
+            <div className="d-flex align-items-center">
+              <div className="d-flex">
+                <div className="dot active"></div>
               </div>
-              <span class="me-2 text-muted">Add Subscription</span>
+              <span className="me-2 text-muted">Add Subscription</span>
             </div>
             <div className="my-2 pe-3 d-flex align-items-center">
               <Link to="/subscription">
@@ -301,85 +314,86 @@ function SubscriptionAdd() {
                 )}
               </div>
               <div className="col-md-6 col-12 mb-3">
-  <label className="form-label">
-    Property Type<span className="text-danger">*</span>
-  </label>
-  <select
-    aria-label="Default select example"
-    className={`form-select ${
-      formik.touched.additional_specs?.property_type &&
-      formik.errors.additional_specs?.property_type
-        ? "is-invalid"
-        : ""
-    }`}
-    {...formik.getFieldProps("additional_specs.property_type")}
-  >
-    <option value=""></option>
-    <option value="Office">Office</option>
-    <option value="Apartment">Apartment</option>
-    <option value="Residential">Residential</option> {/* Corrected spelling */}
-  </select>
-  {formik.touched.additional_specs?.property_type &&
-    formik.errors.additional_specs?.property_type && (
-      <div className="invalid-feedback">
-        {formik.errors.additional_specs?.property_type}
-      </div>
-    )}
-</div>
-<div className="col-md-6 col-12 mb-3">
-  <label className="form-label">
-    Property Size<span className="text-danger">*</span>
-  </label>
-  <select
-    aria-label="Default select example"
-    className={`form-select ${
-      formik.touched.additional_specs?.property_size &&
-      formik.errors.additional_specs?.property_size
-        ? "is-invalid"
-        : ""
-    }`}
-    {...formik.getFieldProps("additional_specs.property_size")}
-  >
-    <option value=""></option>
-    <option value="Below 100 sqm">Below 100 sqm</option>
-    <option value="100 - 500 sqm">100 - 500 sqm</option>
-    <option value="Above 500 sqm">Above 500 sqm</option>
-  </select>
-  {formik.touched.additional_specs?.property_size &&
-    formik.errors.additional_specs?.property_size && (
-      <div className="invalid-feedback">
-        {formik.errors.additional_specs?.property_size}
-      </div>
-    )}
-</div>
-<div className="col-md-6 col-12 mb-3">
-  <label className="form-label">
-    Cleaning Hours<span className="text-danger">*</span>
-  </label>
-  <select
-    aria-label="Default select example"
-    className={`form-select ${
-      formik.touched.additional_specs?.cleaning_hours &&
-      formik.errors.additional_specs?.cleaning_hours
-        ? "is-invalid"
-        : ""
-    }`}
-    {...formik.getFieldProps("additional_specs.cleaning_hours")}
-  >
-    <option value=""></option>
-    {Array.from({ length: 12 }, (_, index) => (
-      <option key={index + 1} value={index + 1}>
-        {index + 1}
-      </option>
-    ))}
-  </select>
-  {formik.touched.additional_specs?.cleaning_hours &&
-    formik.errors.additional_specs?.cleaning_hours && (
-      <div className="invalid-feedback">
-        {formik.errors.additional_specs.cleaning_hours}
-      </div>
-    )}
-</div>
+                <label className="form-label">
+                  Property Type<span className="text-danger">*</span>
+                </label>
+                <select
+                  aria-label="Default select example"
+                  className={`form-select ${
+                    formik.touched.additional_specs?.property_type &&
+                    formik.errors.additional_specs?.property_type
+                      ? "is-invalid"
+                      : ""
+                  }`}
+                  {...formik.getFieldProps("additional_specs.property_type")}
+                >
+                  <option value=""></option>
+                  <option value="Office">Office</option>
+                  <option value="Apartment">Apartment</option>
+                  <option value="Residential">Residential</option>{" "}
+                  {/* Corrected spelling */}
+                </select>
+                {formik.touched.additional_specs?.property_type &&
+                  formik.errors.additional_specs?.property_type && (
+                    <div className="invalid-feedback">
+                      {formik.errors.additional_specs?.property_type}
+                    </div>
+                  )}
+              </div>
+              <div className="col-md-6 col-12 mb-3">
+                <label className="form-label">
+                  Property Size<span className="text-danger">*</span>
+                </label>
+                <select
+                  aria-label="Default select example"
+                  className={`form-select ${
+                    formik.touched.additional_specs?.property_size &&
+                    formik.errors.additional_specs?.property_size
+                      ? "is-invalid"
+                      : ""
+                  }`}
+                  {...formik.getFieldProps("additional_specs.property_size")}
+                >
+                  <option value=""></option>
+                  <option value="Below 100 sqm">Below 100 sqm</option>
+                  <option value="100 - 500 sqm">100 - 500 sqm</option>
+                  <option value="Above 500 sqm">Above 500 sqm</option>
+                </select>
+                {formik.touched.additional_specs?.property_size &&
+                  formik.errors.additional_specs?.property_size && (
+                    <div className="invalid-feedback">
+                      {formik.errors.additional_specs?.property_size}
+                    </div>
+                  )}
+              </div>
+              <div className="col-md-6 col-12 mb-3">
+                <label className="form-label">
+                  Cleaning Hours<span className="text-danger">*</span>
+                </label>
+                <select
+                  aria-label="Default select example"
+                  className={`form-select ${
+                    formik.touched.additional_specs?.cleaning_hours &&
+                    formik.errors.additional_specs?.cleaning_hours
+                      ? "is-invalid"
+                      : ""
+                  }`}
+                  {...formik.getFieldProps("additional_specs.cleaning_hours")}
+                >
+                  <option value=""></option>
+                  {Array.from({ length: 12 }, (_, index) => (
+                    <option key={index + 1} value={index + 1}>
+                      {index + 1}
+                    </option>
+                  ))}
+                </select>
+                {formik.touched.additional_specs?.cleaning_hours &&
+                  formik.errors.additional_specs?.cleaning_hours && (
+                    <div className="invalid-feedback">
+                      {formik.errors.additional_specs.cleaning_hours}
+                    </div>
+                  )}
+              </div>
 
               <div className="col-md-6 col-12 mb-3">
                 <label className="form-label">
@@ -405,16 +419,24 @@ function SubscriptionAdd() {
               </div>
 
               <div className="col-md-6 col-12 mb-3">
-                <label className="form-label">Offer Id</label>
-                <input
+                <label className="form-label">Offers</label>
+                <select
                   type="text"
-                  className={`form-control ${
+                  className={`form-select ${
                     formik.touched.offer_id && formik.errors.offer_id
                       ? "is-invalid"
                       : ""
                   }`}
                   {...formik.getFieldProps("offer_id")}
-                />
+                >
+                  <option selected></option>
+                  {offers &&
+                    offers.map((data) => (
+                      <option key={data.id} value={data.id}>
+                        {data.coupon_code}
+                      </option>
+                    ))}
+                </select>
                 {formik.touched.offer_id && formik.errors.offer_id && (
                   <div className="invalid-feedback">
                     {formik.errors.offer_id}

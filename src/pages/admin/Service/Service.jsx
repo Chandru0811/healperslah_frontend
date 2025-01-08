@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import Delete from "../../../components/common/Delete";
 import api from "../../../config/URL";
+import PropTypes from "prop-types";
 
 function Service() {
   const [selectedId, setSelectedId] = useState(null);
@@ -201,7 +202,7 @@ function Service() {
               className="btn btn-button btn-sm me-2"
               style={{ fontWeight: "600px !important" }}
             >
-              &nbsp; Add &nbsp;&nbsp; <i class="bi bi-plus-lg"></i>
+              &nbsp; Add &nbsp;&nbsp; <i className="bi bi-plus-lg"></i>
             </button>
           </Link>
         </div>
@@ -262,5 +263,10 @@ function Service() {
     </div>
   );
 }
+
+Service.propTypes = {
+  row: PropTypes.func.isRequired,
+  cell: PropTypes.func.isRequired,
+};
 
 export default Service;

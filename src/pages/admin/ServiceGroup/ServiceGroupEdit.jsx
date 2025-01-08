@@ -23,12 +23,21 @@ function ServiceGroupEdit() {
   const [originalFileType, setOriginalFileType] = useState("");
   const MAX_FILE_SIZE = 2 * 1024 * 1024;
 
-  // const SUPPORTED_FORMATS = [
-  //   "image/png",
-  //   "image/jpeg",
-  //   "image/jpg",
-  //   "image/webp",
-  // ];
+  const SUPPORTED_FORMATS = [
+    "image/png",
+    "image/jpeg",
+    "image/jpg",
+    "image/webp",
+  ];
+
+  const imageValidation = Yup.mixed()
+    .nullable()
+    .test("fileFormat", "Unsupported format", (value) => {
+      return !value || (value && SUPPORTED_FORMATS.includes(value.type));
+    })
+    .test("fileSize", "File size is too large. Max 2MB.", (value) => {
+      return !value || (value && value.size <= MAX_FILE_SIZE);
+    });
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required("*Name is required"),
@@ -38,6 +47,7 @@ function ServiceGroupEdit() {
       .required("*Basic Price is required")
       .positive("*Please enter a valid number")
       .integer("*Basic Price is must be number"),
+    image: imageValidation,
     description: Yup.string()
       .required("*Description is a required field")
       .max(200, "*The maximum length is 200 characters"),
@@ -136,7 +146,7 @@ function ServiceGroupEdit() {
     const getData = async () => {
       try {
         setLoading(true);
-        const response = await api.get(`admin/serviceGroup/${id}`);
+        const response = await api.get(`admin/serviceGroup/${id}`);        
         formik.setValues(response.data.data);
         setPreviewImage(`${ImageURL}${response.data.data.image}`);
       } catch (error) {
@@ -153,7 +163,9 @@ function ServiceGroupEdit() {
     const file = event?.target?.files[0];
     if (file) {
       if (file.size > MAX_FILE_SIZE) {
-        formik.setFieldError(`image`, "File size is too large. Max 2MB.");
+        toast.error("File size is too large. Max 2MB.");
+        event.target.value = null;
+        formik.setFieldValue("image", null);
         return;
       }
 

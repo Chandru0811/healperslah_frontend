@@ -239,9 +239,9 @@ function ServiceAssignment() {
               open={Boolean(menuAnchor)}
               onClose={handleMenuClose}
             >
-              <MenuItem onClick={() => navigate(`/assignment/edit/${selectedId}`)}>
+              {/* <MenuItem onClick={() => navigate(`/assignment/edit/${selectedId}`)}>
                 Edit
-              </MenuItem>
+              </MenuItem> */}
               <MenuItem>
                 <Delete
                   path={`/admin/serviceAssignment/delete/${selectedId}`}

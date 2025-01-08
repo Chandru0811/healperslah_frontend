@@ -50,19 +50,19 @@ function AdminDashboard() {
     },
     revenueGrowthByMonth: [
       {
-        title: "House Clean Count",
+        title: "Company",
         current: 6,
         percentageChange: -79.31,
         comparison: "Compared to last month",
       },
       {
-        title: "laundry Count",
+        title: "Helper",
         current: 20,
         percentageChange: -71.43,
         comparison: "Compared to last month",
       },
       {
-        title: "Home Service Count",
+        title: "Order",
         current: 5,
         percentageChange: -91.94,
         comparison: "Compared to last month",
@@ -151,95 +151,95 @@ function AdminDashboard() {
 
   const lineChartSeries = datas?.revenueOverTimeReport?.lineChartData?.series;
 
-  const gaugeChartOptions = {
-    chart: {
-      height: 280,
-      type: "radialBar",
-    },
-    series: [datas?.registeredUsersReport?.gaugeChartData?.value],
-    colors: ["#287F71"],
-    plotOptions: {
-      radialBar: {
-        startAngle: -135,
-        endAngle: 135,
-        track: {
-          background: "#ABBDD3",
-          startAngle: -135,
-          endAngle: 135,
-        },
-        dataLabels: {
-          name: {
-            show: false,
-          },
-          value: {
-            fontSize: "30px",
-            fontFamily: fontFamily,
-            show: true,
-          },
-        },
-      },
-    },
-    stroke: {
-      lineCap: "butt",
-    },
-    labels: ["Progress"],
-  };
+  // const gaugeChartOptions = {
+  //   chart: {
+  //     height: 280,
+  //     type: "radialBar",
+  //   },
+  //   series: [datas?.registeredUsersReport?.gaugeChartData?.value],
+  //   colors: ["#287F71"],
+  //   plotOptions: {
+  //     radialBar: {
+  //       startAngle: -135,
+  //       endAngle: 135,
+  //       track: {
+  //         background: "#ABBDD3",
+  //         startAngle: -135,
+  //         endAngle: 135,
+  //       },
+  //       dataLabels: {
+  //         name: {
+  //           show: false,
+  //         },
+  //         value: {
+  //           fontSize: "30px",
+  //           fontFamily: fontFamily,
+  //           show: true,
+  //         },
+  //       },
+  //     },
+  //   },
+  //   stroke: {
+  //     lineCap: "butt",
+  //   },
+  //   labels: ["Progress"],
+  // };
 
-  const gaugeChartSeries = [
-    datas?.registeredUsersReport?.gaugeChartData?.value,
-  ];
+  // const gaugeChartSeries = [
+  //   datas?.registeredUsersReport?.gaugeChartData?.value,
+  // ];
 
-  const lineChartOptions1 = {
-    chart: {
-      height: 350,
-      type: "line",
-      zoom: {
-        enabled: false,
-      },
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    stroke: {
-      width: 5,
-      curve: "straight",
-      dashArray: [0],
-    },
-    legend: {
-      show: true,
-    },
-    markers: {
-      size: 0,
-    },
-    xaxis: {
-      categories: datas?.revenueGrowthByDay?.categories,
-    },
-    tooltip: {
-      y: [
-        {
-          title: {
-            formatter: (val) => `${val}`,
-          },
-        },
-        {
-          title: {
-            formatter: (val) => `${val}`,
-          },
-        },
-        {
-          title: {
-            formatter: (val) => val,
-          },
-        },
-      ],
-    },
-    grid: {
-      borderColor: "#f1f1f1",
-    },
-    colors: ["#ABBDD3", "#287F71", "#EB862A"],
-  };
+  // const lineChartOptions1 = {
+  //   chart: {
+  //     height: 350,
+  //     type: "line",
+  //     zoom: {
+  //       enabled: false,
+  //     },
+  //   },
+  //   dataLabels: {
+  //     enabled: false,
+  //   },
+  //   stroke: {
+  //     width: 5,
+  //     curve: "straight",
+  //     dashArray: [0],
+  //   },
+  //   legend: {
+  //     show: true,
+  //   },
+  //   markers: {
+  //     size: 0,
+  //   },
+  //   xaxis: {
+  //     categories: datas?.revenueGrowthByDay?.categories,
+  //   },
+  //   tooltip: {
+  //     y: [
+  //       {
+  //         title: {
+  //           formatter: (val) => `${val}`,
+  //         },
+  //       },
+  //       {
+  //         title: {
+  //           formatter: (val) => `${val}`,
+  //         },
+  //       },
+  //       {
+  //         title: {
+  //           formatter: (val) => val,
+  //         },
+  //       },
+  //     ],
+  //   },
+  //   grid: {
+  //     borderColor: "#f1f1f1",
+  //   },
+  //   colors: ["#ABBDD3", "#287F71", "#EB862A"],
+  // };
 
-  const lineChartSeries1 = datas?.revenueGrowthByDay?.series;
+  // const lineChartSeries1 = datas?.revenueGrowthByDay?.series;
 
   return (
     <section className="dashboard_chart">

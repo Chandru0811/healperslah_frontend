@@ -12,17 +12,17 @@ import {
 } from "@mui/material";
 import api from "../../../config/URL";
 import { FiAlertTriangle } from "react-icons/fi";
-import fetchAllOrderWithIds from "../../List/OrderList";
+import PropTypes from "prop-types";
+import fetchAllPaymentTypeWithIds from "../../List/PaymentTypeList";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
 });
 
-function PaymentModal() {
+function PaymentModal({ order_id, company_id, helper_id }) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [loadIndicator, setLoadIndicator] = useState(false);
-  const [orders, setOrders] = useState([]);
-  console.log("Orders", orders);
+  const [payment, setPaymnet] = useState(null);
 
   const handleOpenDialog = () => {
     setDeleteDialogOpen(true);
@@ -38,10 +38,6 @@ function PaymentModal() {
   };
 
   const validationSchema = yup.object().shape({
-    order_id: yup.string().required("*Order Id required"),
-    helper_id: yup.string().required("*Helper Id required"),
-    company_id: yup.string().required("*Company Id required"),
-    booking_type: yup.string().required("*Booking Type required"),
     amount_paid: yup.string().required("*Amount Paid required"),
     payment_mode: yup.string().required("*Payment Mode required"),
     payment_status: yup.string().required("*Payment Status required"),
@@ -49,10 +45,6 @@ function PaymentModal() {
 
   const formik = useFormik({
     initialValues: {
-      order_id: "",
-      helper_id: "",
-      company_id: "",
-      booking_type: "",
       amount_paid: "",
       balance_amount: "",
       total_amount: "",
@@ -63,7 +55,16 @@ function PaymentModal() {
     onSubmit: async (values) => {
       try {
         setLoadIndicator(true);
-        const response = await api.post("admin/payment", values);
+
+        const payload = {
+          ...values,
+          order_id: order_id,
+          helper_id: helper_id,
+          company_id: company_id,
+          booking_type: "Online",
+        };
+
+        const response = await api.post("admin/payment", payload);
         if (response.status === 200) {
           toast.success(response?.data?.message);
         }
@@ -91,25 +92,26 @@ function PaymentModal() {
     validateOnBlur: true,
   });
 
-  const fetchOrders = async () => {
+  useEffect(() => {
+    if (formik.values.amount_paid && formik.values.total_amount) {
+      const balanceAmount = parseFloat(formik.values.total_amount) - parseFloat(formik.values.amount_paid);
+      formik.setFieldValue("balance_amount", balanceAmount.toFixed(2));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formik.values.amount_paid, formik.values.total_amount]);
+
+  const fetchPaymentType = async () => {
     try {
-      const order = await fetchAllOrderWithIds();
-      setOrders(order);
+      const data = await fetchAllPaymentTypeWithIds();
+      setPaymnet(data);
     } catch (error) {
       toast.error(error);
     }
   };
 
   useEffect(() => {
-    fetchOrders();
+    fetchPaymentType();
   }, []);
-
-  useEffect(() => {
-    if (formik.values.amount_paid && formik.values.total_amount) {
-      const balanceAmount = parseFloat(formik.values.total_amount) - parseFloat(formik.values.amount_paid);
-      formik.setFieldValue("balance_amount", balanceAmount.toFixed(2));
-    }
-  }, [formik.values.amount_paid, formik.values.total_amount]);
 
   return (
     <>
@@ -143,99 +145,6 @@ function PaymentModal() {
           <form onSubmit={formik.handleSubmit}>
             <div className="container">
               <div className="row">
-                <div className="col-md-6 col-12 mb-3">
-                  <label className="form-label">
-                    Order Id<span className="text-danger">*</span>
-                  </label>
-                  <select
-                    aria-label="Default select example"
-                    className={`form-select ${
-                      formik.touched.order_id && formik.errors.order_id
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("order_id")}
-                  >
-                    <option value=""></option>
-                    {orders &&
-                      orders.map((data) => (
-                        <option key={data.id} value={data.id}>
-                          {data.order_number}
-                        </option>
-                      ))}
-                  </select>
-                  {formik.touched.order_id && formik.errors.order_id && (
-                    <div className="invalid-feedback">
-                      {formik.errors.order_id}
-                    </div>
-                  )}
-                </div>
-                <div className="col-md-6 col-12 mb-3">
-                  <label className="form-label">
-                    Helper Id<span className="text-danger">*</span>
-                  </label>
-                  <select
-                    aria-label="Default select example"
-                    className={`form-select ${
-                      formik.touched.helper_id && formik.errors.helper_id
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("helper_id")}
-                  >
-                    <option value=""></option>
-                    <option value="1">Ramesh</option>
-                    <option value="2">Saran</option>
-                  </select>
-                  {formik.touched.helper_id && formik.errors.helper_id && (
-                    <div className="invalid-feedback">
-                      {formik.errors.helper_id}
-                    </div>
-                  )}
-                </div>
-                <div className="col-md-6 col-12 mb-3">
-                  <label className="form-label">
-                    Company Id<span className="text-danger">*</span>
-                  </label>
-                  <select
-                    aria-label="Default select example"
-                    className={`form-select ${
-                      formik.touched.company_id && formik.errors.company_id
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("company_id")}
-                  >
-                    <option value=""></option>
-                    <option value="1">ECS</option>
-                    <option value="2">CloudECS</option>
-                  </select>
-                  {formik.touched.company_id && formik.errors.company_id && (
-                    <div className="invalid-feedback">
-                      {formik.errors.company_id}
-                    </div>
-                  )}
-                </div>
-                <div className="col-md-6 col-12 mb-3">
-                  <label className="form-label">
-                    Booking Type<span className="text-danger">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    className={`form-control ${
-                      formik.touched.booking_type && formik.errors.booking_type
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    {...formik.getFieldProps("booking_type")}
-                  />
-                  {formik.touched.booking_type &&
-                    formik.errors.booking_type && (
-                      <div className="invalid-feedback">
-                        {formik.errors.booking_type}
-                      </div>
-                    )}
-                </div>
                 <div className="col-md-6 col-12 mb-3">
                   <label className="form-label">
                     Amount Paid<span className="text-danger">*</span>
@@ -311,9 +220,13 @@ function PaymentModal() {
                     }`}
                     {...formik.getFieldProps("payment_mode")}
                   >
-                    <option value=""></option>
-                    <option value="1">Online</option>
-                    <option value="2">Cash</option>
+                     <option selected></option>
+                  {payment &&
+                    payment.map((data) => (
+                      <option key={data.id} value={data.id}>
+                        {data.name}
+                      </option>
+                    ))}
                   </select>
                   {formik.touched.payment_mode && formik.errors.payment_mode && (
                     <div className="invalid-feedback">
@@ -375,5 +288,11 @@ function PaymentModal() {
     </>
   );
 }
+
+PaymentModal.propTypes = {
+  order_id: PropTypes.func.isRequired,
+  company_id: PropTypes.func.isRequired,
+  helper_id: PropTypes.func.isRequired,
+};
 
 export default PaymentModal;

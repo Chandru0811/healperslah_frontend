@@ -1,5 +1,4 @@
 import PropTypes from "prop-types";
-import VendorDashboard from "../pages/vendor/VendorDashboard";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import AdminSideBar from "../components/admin/AdminSideBar";
 import AdminHeader from "../components/admin/AdminHeader";
@@ -41,6 +40,9 @@ import OffersView from "../pages/admin/Offers/OffersView";
 import Company from "../pages/admin/Company/Company";
 import CompanyEdit from "../pages/admin/Company/CompanyEdit";
 import CompanyView from "../pages/admin/Company/CompanyView";
+import Helper from "../pages/admin/Helper/Helper";
+import HelperView from "../pages/admin/Helper/HelperView";
+import Profile from "../pages/admin/Profile/Profile";
 
 function Admin({ handleLogout }) {
   return (
@@ -56,6 +58,9 @@ function Admin({ handleLogout }) {
                 <Route path="*" element={<AdminDashboard />} />
 
                 {/* Side Menu  */}
+
+                {/* Profile */}
+                <Route path="/profile" element={<Profile />} />
 
                 {/* Company */}
                 <Route path="/company" element={<Company />} />
@@ -108,6 +113,10 @@ function Admin({ handleLogout }) {
                   path="/custompackage/view/:id"
                   element={<CustomPackageView />}
                 />
+
+                {/* Helper */}
+                <Route path="/helper" element={<Helper />} />
+                <Route path="/helper/view" element={<HelperView />} />
 
                 {/* User */}
                 <Route path="/user" element={<User />} />

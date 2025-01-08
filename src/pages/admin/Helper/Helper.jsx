@@ -1,24 +1,47 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { MaterialReactTable } from "material-react-table";
-import { MoreVert as MoreVertIcon } from "@mui/icons-material";
 import {
   ThemeProvider,
   createTheme,
   Menu,
   MenuItem,
-  IconButton,
 } from "@mui/material";
 import Delete from "../../../components/common/Delete";
-import api from "../../../config/URL";
 import PropTypes from "prop-types";
 
-function Offers() {
+function Helper() {
   const [menuAnchor, setMenuAnchor] = useState(null);
-  const [selectedId, setSelectedId] = useState(null);
   const navigate = useNavigate();
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
+
+  const data = [
+    {
+      id: 1,
+      name: "Saran",
+      phone_no: "9876543212",
+      email: "company@gmail.com",
+      nation: "India",
+      nationality: "Indian",
+      working_hrs: "11 am - 5 pm",
+      created_by: "Admin",
+      created_at: "2024-01-06",
+      updated_by: "Admin",
+      updated_at: "2024-01-06",
+    },
+    {
+      id: 2,
+      name: "Ramesh",
+      phone_no: "9876543213",
+      email: "company2@gmail.com",
+      nation: "Singapore",
+      nationality: "Singaporian",
+      working_hrs: "10 am - 6 pm",
+      created_by: "Admin",
+      created_at: "2024-01-06",
+      updated_by: "Admin",
+      updated_at: "2024-01-06",
+    },
+  ];
 
   const columns = useMemo(
     () => [
@@ -33,41 +56,38 @@ function Offers() {
         ),
       },
       {
-        accessorKey: "id",
-        header: "",
+        accessorKey: "name",
         enableHiding: false,
-        enableSorting: false,
-        size: 20,
-        Cell: ({ cell }) => (
-          <IconButton
-            onClick={(e) => {
-              e.stopPropagation();
-              setMenuAnchor(e.currentTarget);
-              setSelectedId(cell.getValue());
-            }}
-          >
-            <MoreVertIcon />
-          </IconButton>
-        ),
+        header: "Name",
+        size: 40,
       },
       {
-        accessorKey: "expiry_date",
+        accessorKey: "phone_no",
+        header: "Phone Number",
         enableHiding: false,
-        header: "Expiry Date",
+        size: 40,
       },
       {
-        accessorKey: "coupon_code",
+        accessorKey: "email",
+        header: "Email",
         enableHiding: false,
-        header: "Coupon Code",
+        size: 40,
       },
       {
-        accessorKey: "discount_percent",
+        accessorKey: "working_hrs",
+        header: "Working Hours",
         enableHiding: false,
-        header: "Discount Percent",
+        size: 40,
       },
       {
-        accessorKey: "discount_amount",
-        header: "Discount Amount",
+        accessorKey: "nation",
+        header: "Nation",
+        enableHiding: false,
+        size: 40,
+      },
+      {
+        accessorKey: "nationality",
+        header: "Nationality",
         enableHiding: false,
         size: 40,
       },
@@ -90,22 +110,6 @@ function Offers() {
     ],
     []
   );
-
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const response = await api.get(`admin/offers`);
-      setData(response.data.data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   const theme = createTheme({
     components: {
@@ -165,7 +169,7 @@ function Offers() {
           <span className="breadcrumb-separator"> &gt; </span>
         </li>
         <li className="breadcrumb-item active" aria-current="page">
-          &nbsp;Offers
+          &nbsp;Helper
         </li>
       </ol>
       <div className="card">
@@ -176,12 +180,12 @@ function Offers() {
             </div>
             <span className="me-2 text-muted">
               This database shows the list of&nbsp;
-              <span className="database_name">Offers</span>
+              <span className="database_name">Helper</span>
             </span>
           </div>
         </div>
-        <div className="mb-3 d-flex justify-content-end">
-          <Link to="/offers/add">
+        {/* <div className="mb-3 d-flex justify-content-end">
+          <Link to="/helper/add">
             <button
               type="button"
               className="btn btn-button btn-sm me-2"
@@ -190,67 +194,53 @@ function Offers() {
               &nbsp; Add &nbsp;&nbsp; <i className="bi bi-plus-lg"></i>
             </button>
           </Link>
-        </div>
-        {loading ? (
-          <div className="loader-container">
-            <div className="loader">
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-          </div>
-        ) : (
-          <>
-            <ThemeProvider theme={theme}>
-              <MaterialReactTable
-                columns={columns}
-                data={data}
-                enableColumnActions={false}
-                enableColumnFilters={false}
-                enableDensityToggle={false}
-                enableFullScreenToggle={false}
-                initialState={{
-                  columnVisibility: {
-                    created_by: false,
-                    created_at: false,
-                    updated_by: false,
-                    updated_at: false,
-                  },
-                }}
-                muiTableBodyRowProps={({ row }) => ({
-                  onClick: () => navigate(`/offers/view/${row.original.id}`),
-                  style: { cursor: "pointer" },
-                })}
+        </div> */}
+        <>
+          <ThemeProvider theme={theme}>
+            <MaterialReactTable
+              columns={columns}
+              data={data}
+              enableColumnActions={false}
+              enableColumnFilters={false}
+              enableDensityToggle={false}
+              enableFullScreenToggle={false}
+              initialState={{
+                columnVisibility: {
+                  created_by: false,
+                  created_at: false,
+                  updated_by: false,
+                  updated_at: false,
+                },
+              }}
+              muiTableBodyRowProps={() => ({
+                onClick: () => navigate(`/helper/view`),
+                style: { cursor: "pointer" },
+              })}
+            />
+          </ThemeProvider>
+          <Menu
+            id="action-menu"
+            anchorEl={menuAnchor}
+            open={Boolean(menuAnchor)}
+            onClose={handleMenuClose}
+          >
+            <MenuItem onClick={() => navigate(`/helper/edit`)}>Edit</MenuItem>
+            <MenuItem>
+              <Delete
+                path={`vendor/helper/delete`}
+                onOpen={handleMenuClose}
               />
-            </ThemeProvider>
-            <Menu
-              id="action-menu"
-              anchorEl={menuAnchor}
-              open={Boolean(menuAnchor)}
-              onClose={handleMenuClose}
-            >
-              <MenuItem onClick={() => navigate(`/offers/edit/${selectedId}`)}>
-                Edit
-              </MenuItem>
-              <MenuItem>
-                <Delete
-                  path={`admin/offer/delete/${selectedId}`}
-                  onDeleteSuccess={fetchData}
-                  onOpen={handleMenuClose}
-                />
-              </MenuItem>
-            </Menu>
-          </>
-        )}
+            </MenuItem>
+          </Menu>
+        </>
       </div>
     </div>
   );
 }
 
-Offers.propTypes = {
+Helper.propTypes = {
+  row: PropTypes.func.isRequired,
   cell: PropTypes.func.isRequired,
 };
 
-export default Offers;
+export default Helper;

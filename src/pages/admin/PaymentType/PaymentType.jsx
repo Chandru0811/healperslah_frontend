@@ -13,6 +13,7 @@ import PaymentTypeAdd from "./PaymentTypeAdd";
 import PaymentTypeEdit from "./PaymentTypeEdit";
 import Delete from "../../../components/common/Delete";
 import api from "../../../config/URL";
+import PropTypes from "prop-types";
 
 function PaymentType() {
   const [menuAnchor, setMenuAnchor] = useState(null);
@@ -192,7 +193,7 @@ function PaymentType() {
                     updatedAt: false,
                   },
                 }}
-                muiTableBodyRowProps={({ row }) => ({
+                muiTableBodyRowProps={() => ({
                   onClick: () => navigate(`/paymenttype`),
                   style: { cursor: "pointer" },
                 })}
@@ -225,5 +226,9 @@ function PaymentType() {
     </div>
   );
 }
+
+PaymentType.propTypes = {
+  cell: PropTypes.func.isRequired,
+};
 
 export default PaymentType;

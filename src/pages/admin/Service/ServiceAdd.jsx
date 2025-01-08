@@ -119,13 +119,16 @@ function ServiceAdd() {
       .replace(/\s+/g, "_")
       .replace(/[^\w-]+/g, "");
     formik.setFieldValue("slug", slug);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formik.values.name]);
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
       if (file.size > MAX_FILE_SIZE) {
-        formik.setFieldError("image", "File size is too large. Max 2MB.");
+        toast.error("File size is too large. Max 2MB.");
+        event.target.value = null;
+        formik.setFieldValue("image", null);
         return;
       }
       if (!SUPPORTED_FORMATS.includes(file.type)) {

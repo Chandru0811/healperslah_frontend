@@ -134,7 +134,7 @@ function ProfileView() {
             </div>
             <div className="col-md-6 col-12 mb-3">
               <label className="form-label">
-                Company Name<span className="text-danger">*</span>
+                Company Nam<span className="text-danger">*</span>
               </label>
               <input
                 aria-label="Default input example"

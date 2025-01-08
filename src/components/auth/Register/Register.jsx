@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -206,7 +206,7 @@ function Register() {
                   {showPassword ? <IoEyeOffOutline /> : <IoEyeOutline />}
                 </span>
                 {formik.touched.password && formik.errors.password && (
-                  <div className="invalid-feedback" typeof="in">
+                  <div className="invalid-feedback">
                     {formik.errors.password}
                   </div>
                 )}

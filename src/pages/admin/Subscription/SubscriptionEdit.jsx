@@ -1,16 +1,19 @@
 import { useFormik } from "formik";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import * as Yup from "yup";
 import { MultiSelect } from "react-multi-select-component";
 import api from "../../../config/URL";
 import toast from "react-hot-toast";
+import { FiAlertTriangle } from "react-icons/fi";
+import fetchAllOfferWithIds from "../../List/OfferList";
 
 function SubscriptionEdit() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
   const [loadIndicator, setLoadIndicator] = useState(false);
+  const [offers, setOffers] = useState(null);
   const [serviceData, setServiceData] = useState([]);
   const [selectedServices, setSelectedServices] = useState([]);
   const serviceOption = serviceData?.map((service) => ({
@@ -35,8 +38,7 @@ function SubscriptionEdit() {
     price: Yup.number()
       .typeError("*Price must be a number")
       .required("*Price is required")
-      .positive("*Please enter a valid number")
-      .integer("*Price must be a whole number"),
+      .positive("*Please enter a valid number"),
     description: Yup.string()
       .notRequired()
       .max(200, "*The maximum length is 200 characters"),
@@ -128,6 +130,7 @@ function SubscriptionEdit() {
     };
 
     getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, serviceData]);
 
   const getService = async () => {
@@ -144,6 +147,19 @@ function SubscriptionEdit() {
 
   useEffect(() => {
     getService();
+  }, []);
+
+  const fetchOffers = async () => {
+    try {
+      const data = await fetchAllOfferWithIds();
+      setOffers(data);
+    } catch (error) {
+      toast.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchOffers();
   }, []);
 
   return (
@@ -178,11 +194,11 @@ function SubscriptionEdit() {
       >
         <div className="card">
           <div className="d-flex justify-content-between align-items-center card_header p-1 mb-4 px-4">
-            <div class="d-flex align-items-center">
-              <div class="d-flex">
-                <div class="dot active"></div>
+            <div className="d-flex align-items-center">
+              <div className="d-flex">
+                <div className="dot active"></div>
               </div>
-              <span class="me-2 text-muted">Edit Subscription</span>
+              <span className="me-2 text-muted">Edit Subscription</span>
             </div>
             <div className="my-2 pe-3 d-flex align-items-center">
               <Link to="/subscription">
@@ -447,16 +463,24 @@ function SubscriptionEdit() {
                   </div>
 
                   <div className="col-md-6 col-12 mb-3">
-                    <label className="form-label">Offer Id</label>
-                    <input
+                    <label className="form-label">Offers</label>
+                    <select
                       type="text"
-                      className={`form-control ${
+                      className={`form-select ${
                         formik.touched.offer_id && formik.errors.offer_id
                           ? "is-invalid"
                           : ""
                       }`}
                       {...formik.getFieldProps("offer_id")}
-                    />
+                    >
+                      <option selected></option>
+                      {offers &&
+                        offers.map((data) => (
+                          <option key={data.id} value={data.id}>
+                            {data.coupon_code}
+                          </option>
+                        ))}
+                    </select>
                     {formik.touched.offer_id && formik.errors.offer_id && (
                       <div className="invalid-feedback">
                         {formik.errors.offer_id}

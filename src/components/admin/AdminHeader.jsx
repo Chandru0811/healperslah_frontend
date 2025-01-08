@@ -1,17 +1,16 @@
-import React, { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import user from "../../assets/user_profile.svg";
 import { Link, useNavigate } from "react-router-dom";
 import { IoIosArrowDown } from "react-icons/io";
 import PropTypes from "prop-types";
-import { IoHomeOutline, IoSettingsOutline } from "react-icons/io5";
-import { GoPencil } from "react-icons/go";
+import { IoHomeOutline } from "react-icons/io5";
 import { TbLogout2 } from "react-icons/tb";
-import { FaBell } from "react-icons/fa";
 
 function AdminHeader({ handleLogout }) {
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const user_name = localStorage.getItem("helperlah_name");
+  const dropdownRef = useRef(null);
 
   const handelLogOutClick = () => {
     handleLogout();
@@ -19,8 +18,19 @@ function AdminHeader({ handleLogout }) {
   };
 
   const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
+    setIsDropdownOpen((prev) => !prev);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <header
@@ -32,7 +42,7 @@ function AdminHeader({ handleLogout }) {
           <div className="row align-items-center">
             <div className="col-sm-6 col-12 mb-4 mb-sm-0 admin-settings"></div>
             <div className="col-sm-6 col-12 text-sm-end">
-              <div className="mx-n1 position-relative">
+              <div className="mx-n1 position-relative" ref={dropdownRef}>
                 <span style={{ cursor: "pointer" }} onClick={toggleDropdown}>
                   {/* <FaBell className="me-3" style={{ color: "#8b99b5" }} /> */}
                   <img
@@ -82,13 +92,13 @@ function AdminHeader({ handleLogout }) {
                       <span>Home</span>
                     </Link>
 
-                    <Link
-                      to="/settings"
+                    {/* <Link
+                      to="/profile"
                       className="dropdown-item d-flex align-items-center"
                     >
                       <GoPencil className="me-2" />
                       <span>Profile</span>
-                    </Link>
+                    </Link> */}
                     {/* <Link
                       to="/settings"
                       className="dropdown-item d-flex align-items-center"
@@ -101,7 +111,10 @@ function AdminHeader({ handleLogout }) {
                       onClick={handelLogOutClick}
                     >
                       <TbLogout2 className="me-2" />
-                      <span>Logout</span>
+                      <span
+                      >
+                        Logout
+                      </span>
                     </Link>
                   </div>
                 )}

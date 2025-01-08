@@ -1,7 +1,7 @@
 import toast from "react-hot-toast";
 import api from "../../config/URL";
 
-const fetchAllServiceGroupWithIds = async () => {
+const fetchAllOfferWithIds = async () => {
   try {
     const response = await api.get("admin/offers");
     return response.data.data;
@@ -11,4 +11,4 @@ const fetchAllServiceGroupWithIds = async () => {
   }
 };
 
-export default fetchAllServiceGroupWithIds;
+export default fetchAllOfferWithIds;

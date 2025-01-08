@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {useParams, Link } from "react-router-dom";
 import PaymentModal from "./PaymentModal";
 import api from "../../../config/URL";
@@ -8,14 +8,13 @@ function ServiceAssignmentView() {
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(true);
 
-
   const getData = async () => {
     try {
       setLoading(true)
       const response = await api.get(`admin/serviceAssignment/${id}`);
       setData(response.data.data);
-      console.log("object::",response.data.data);
     } catch (error) {
+      console.log("Error:", error.data.data);
     } finally {
       setLoading(false);
     }
@@ -23,6 +22,7 @@ function ServiceAssignmentView() {
 
   useEffect(() => {
     getData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
 
@@ -66,7 +66,7 @@ function ServiceAssignmentView() {
               </button>
             </Link>
             &nbsp;&nbsp;
-            <PaymentModal />
+            <PaymentModal order_id={data.order_id} company_id={data.company_id} helper_id={data.helper_id} />
           </div>
         </div>
         {loading ? (

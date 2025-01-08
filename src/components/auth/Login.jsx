@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Form, Button } from "react-bootstrap";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Link, useNavigate } from "react-router-dom";
@@ -10,6 +9,7 @@ import api from "../../config/URL";
 import PropTypes from "prop-types";
 import toast from "react-hot-toast";
 import { FiAlertTriangle } from "react-icons/fi";
+import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 
 function Login({ loginAsVendor, loginAsAdmin }) {
   const [showPassword, setShowPassword] = useState(false);
@@ -19,7 +19,7 @@ function Login({ loginAsVendor, loginAsAdmin }) {
     email_or_mobile: Yup.string().required("Email or Mobile is required"),
     password: Yup.string()
       .required("Password is required")
-      .max(8, "Password must not exceed 8 characters")
+      .min(6, "Password must have minimum 6 characters")
       .matches(/^\S*$/, "Password must not contain spaces"),
   });
 
@@ -163,35 +163,43 @@ function Login({ loginAsVendor, loginAsAdmin }) {
                 Forgot Password?
               </Link>
             </div>
-            <Form.Group controlId="formPassword" className="mb-3">
-              <div style={{ position: "relative" }}>
-                <Form.Control
+            <div className="mb-3">
+              <div
+                className={`input-group mb-3`}
+                style={{ outline: "none", boxShadow: "none" }}
+              >
+                <input
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter password"
+                  className={`form-control ${
+                    formik.touched.password && formik.errors.password
+                      ? "is-invalid"
+                      : ""
+                  }`}
+                  style={{
+                    borderRadius: "3px",
+                    borderRight: "none",
+                    borderTopRightRadius: "0px",
+                    borderBottomRightRadius: "0px",
+                  }}
+                  name="password"
                   {...formik.getFieldProps("password")}
-                  isInvalid={formik.touched.password && formik.errors.password}
                 />
-                {formik.values.password && (
-                  <span
-                    onClick={togglePasswordVisibility}
-                    style={{
-                      position: "absolute",
-                      right: "10px",
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      cursor: "pointer",
-                    }}
-                  >
-                    {showPassword ? <FaEyeSlash /> : <FaEye />}
-                  </span>
-                )}
-                {formik.touched.password && formik.errors.password ? (
-                  <Form.Control.Feedback type="invalid">
+                <span
+                  className={`input-group-text iconInputBackground`}
+                  id="basic-addon1"
+                  onClick={togglePasswordVisibility}
+                  style={{ cursor: "pointer", borderRadius: "3px" }}
+                >
+                  {showPassword ? <IoEyeOffOutline /> : <IoEyeOutline />}
+                </span>
+                {formik.touched.password && formik.errors.password && (
+                  <div className="invalid-feedback">
                     {formik.errors.password}
-                  </Form.Control.Feedback>
-                ) : null}
+                  </div>
+                )}
               </div>
-            </Form.Group>
+            </div>
 
             <Button
               type="submit"

@@ -5,8 +5,9 @@ import * as yup from "yup";
 import api from "../../../config/URL";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
 
-function PaymentTypeAdd() {
+function PaymentTypeAdd({ onSuccess }) {
   const navigate = useNavigate();
   const [show, setShow] = useState(false);
   const [loadIndicator, setLoadIndicator] = useState(false);
@@ -37,6 +38,7 @@ function PaymentTypeAdd() {
         const response = await api.post("admin/paymentType", values);
         if (response.status === 200) {
           toast.success(response.data.message);
+          onSuccess(); 
           handleClose();
           formik.resetForm();
           navigate("/paymentType");
@@ -137,5 +139,9 @@ function PaymentTypeAdd() {
     </>
   );
 }
+
+PaymentTypeAdd.propTypes = {
+  onSuccess: PropTypes.func.isRequired,
+};
 
 export default PaymentTypeAdd;

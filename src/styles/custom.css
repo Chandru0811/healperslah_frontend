@@ -636,13 +636,14 @@
 
 /* Profile  */
 
-.dropdown-menu {
+.profile-menu {
   display: flex;
   flex-direction: column;
-  background: #ef4444 !important;
+  background: #e10064 !important;
+  border-radius : 10px;
 }
 
-.dropdown-item {
+.profile-item {
   border: none;
   color: #fff;
   padding: 10px;
@@ -651,10 +652,10 @@
   outline: none;
 }
 
-.dropdown-item:hover {
+.profile-item:hover {
   color: #f8b4b4;
 }
 
-.dropdown-item.active {
+.profile-item.active {
   color: #f8b4b4;
 }

@@ -1,20 +1,17 @@
 import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { MaterialReactTable } from "material-react-table";
-import { MoreVert as MoreVertIcon } from "@mui/icons-material";
 import {
   ThemeProvider,
   createTheme,
   Menu,
   MenuItem,
-  IconButton,
 } from "@mui/material";
 import Delete from "../../../components/common/Delete";
 import PropTypes from "prop-types";
 
 function Company() {
   const [menuAnchor, setMenuAnchor] = useState(null);
-  const [selectedId, setSelectedId] = useState(null);
   const navigate = useNavigate();
 
   const data = [
@@ -60,24 +57,6 @@ function Company() {
         size: 40,
         cell: ({ cell }) => (
           <span style={{ textAlign: "center" }}>{cell.getValue()}</span>
-        ),
-      },
-      {
-        accessorKey: "id",
-        header: "",
-        enableHiding: false,
-        enableSorting: false,
-        size: 20,
-        Cell: ({ cell }) => (
-          <IconButton
-            onClick={(e) => {
-              e.stopPropagation();
-              setMenuAnchor(e.currentTarget);
-              setSelectedId(cell.getValue());
-            }}
-          >
-            <MoreVertIcon />
-          </IconButton>
         ),
       },
       {
@@ -251,7 +230,7 @@ function Company() {
             <MenuItem onClick={() => navigate(`/company/edit`)}>Edit</MenuItem>
             <MenuItem>
               <Delete
-                path={`admin/company/delete/${selectedId}`}
+                path={`admin/company/delete`}
                 onOpen={handleMenuClose}
               />
             </MenuItem>

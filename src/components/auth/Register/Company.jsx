@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import logo from "../../../assets/Logo_3_Final_7.png";
 import PlayStore from "../../../assets/play_store_badge.png";
 import AppStore from "../../../assets/app_store_badge.png";
 import { FaLocationDot } from "react-icons/fa6";
 import { IoCloseSharp, IoMail } from "react-icons/io5";
-import { FiPlus } from "react-icons/fi";
+import { FiAlertTriangle, FiPlus } from "react-icons/fi";
 import { FaPhoneAlt } from "react-icons/fa";
 import {
   FaFacebook,
@@ -737,7 +737,7 @@ function Company() {
                   >
                     <div className="accordion-body">
                       Yes, you can reschedule or cancel your booking. Please
-                      note that we require at least 24 hours' notice to avoid
+                      note that we require at least 24 hours notice to avoid
                       cancellation fees.
                     </div>
                   </div>
@@ -753,7 +753,7 @@ function Company() {
               <div className="col-md-7 col-12 py-2 py-md-4 ps-4 ps-md-0 pe-3 pe-md-0">
                 <p className="text-light fw-small bottom_card_ptag">
                   Lorem Ipsum is simply dummy text of the printing and
-                  typesetting industry. Lorem Ipsum has been the industry's
+                  typesetting industry. Lorem Ipsum has been the industry&apos;s
                   standard dummy text ever since the 1500s, when an unknown
                   printer took a galley of type and scrambled it to make a type
                   specimen book.
@@ -774,18 +774,18 @@ function Company() {
         {/* <!-- FAQ and CTA End --> */}
 
         {/* <!--==== Footer Section ====--> */}
-        <section class="container-fluid footer">
-          <div class="container">
-            <div class="row m-0 m-0">
-              <div class="col-md-4 col-12 text-md-start text-center mt-4">
-                <div class="ps-2">
-                  <p class="footer-title">Contact</p>
+        <section className="container-fluid footer">
+          <div className="container">
+            <div className="row m-0 m-0">
+              <div className="col-md-4 col-12 text-md-start text-center mt-4">
+                <div className="ps-2">
+                  <p className="footer-title">Contact</p>
                 </div>
-                <div class="footer-links">
-                  <div class="links">
+                <div className="footer-links">
+                  <div className="links">
                     <a
                       href="https://www.google.com/maps/place/The+Alexcier/@1.2916847,103.8111868,17z/data=!3m2!4b1!5s0x31da1a2cf1b2be13:0x7b0f9d88a36fdfbb!4m6!3m5!1s0x31da1bb95520771b:0xf2b9dfa378aa9a6e!8m2!3d1.2916793!4d103.8137617!16s%2Fg%2F11gyxjfkjk?entry=ttu&g_ep=EgoyMDI0MDkxOC4xIKXMDSoASAFQAw%3D%3D"
-                      class="text-decoration-none d-flex justify-content-md-start justify-content-center align-items-center"
+                      className="text-decoration-none d-flex justify-content-md-start justify-content-center align-items-center"
                       style={{ fontSize: "16px", color: "#ffffff" }}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -803,15 +803,15 @@ function Company() {
                   </div>
                 </div>
               </div>
-              <div class="col-md-4 col-12 text-md-start text-center mt-4">
-                <div class="ps-2">
-                  <p class="footer-title">Email</p>
+              <div className="col-md-4 col-12 text-md-start text-center mt-4">
+                <div className="ps-2">
+                  <p className="footer-title">Email</p>
                 </div>
-                <div class="footer-links">
-                  <div class="links">
+                <div className="footer-links">
+                  <div className="links">
                     <a
                       href="mailto:info@trucklah.com"
-                      class="text-decoration-none"
+                      className="text-decoration-none"
                       style={{ fontSize: "16px", color: "#ffffff" }}
                     >
                       <IoMail />
@@ -820,15 +820,15 @@ function Company() {
                   </div>
                 </div>
               </div>
-              <div class="col-md-4 col-12 text-md-start text-center mt-4">
-                <div class="ps-2">
-                  <p class="footer-title">Contact</p>
+              <div className="col-md-4 col-12 text-md-start text-center mt-4">
+                <div className="ps-2">
+                  <p className="footer-title">Contact</p>
                 </div>
-                <div class="footer-links">
-                  <div class="links">
+                <div className="footer-links">
+                  <div className="links">
                     <a
                       href="tel:+6588941306"
-                      class="text-decoration-none"
+                      className="text-decoration-none"
                       style={{ fontSize: "16px", color: "#ffffff" }}
                     >
                       <FaPhoneAlt />
@@ -931,9 +931,9 @@ function Company() {
               </div>
             </div>
           </div>
-          <hr class="text-light" />
-          <div class="copyrights">
-            <p class="text-center text-light m-0 pb-3">
+          <hr className="text-light" />
+          <div className="copyrights">
+            <p className="text-center text-light m-0 pb-3">
               2024 © Copyright Helperlah Pte Ltd. All Rights Reserved.
             </p>
           </div>

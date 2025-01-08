@@ -1,5 +1,5 @@
 import { useFormik } from "formik";
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import Cropper from "react-easy-crop";
@@ -27,13 +27,13 @@ function ServiceGroupAdd() {
   ];
 
   const imageValidation = Yup.mixed()
-  .required("*Image is required")
-  .test("fileFormat", "Unsupported format", (value) => {
-    return !value || (value && SUPPORTED_FORMATS.includes(value.type));
-  })
-  .test("fileSize", "File size is too large. Max 2MB.", (value) => {
-    return !value || (value && value.size <= MAX_FILE_SIZE);
-  });
+    .required("*Image is required")
+    .test("fileFormat", "Unsupported format", (value) => {
+      return !value || (value && SUPPORTED_FORMATS.includes(value.type));
+    })
+    .test("fileSize", "File size is too large. Max 2MB.", (value) => {
+      return !value || (value && value.size <= MAX_FILE_SIZE);
+    });
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required("*Name is required"),
@@ -81,19 +81,25 @@ function ServiceGroupAdd() {
           toast.error(response.data.message);
         }
       } catch (error) {
-        if (error.response && error.response.status === 422) {
-          const errors = error.response.data.errors;
-          if (errors) {
-            Object.keys(errors).forEach((key) => {
-              errors[key].forEach((errorMsg) => {
-                toast(errorMsg, {
-                  icon: <FiAlertTriangle className="text-warning" />,
+        if (error.response) {
+          if (error.response.status === 422) {
+            const errors = error.response.data.error;
+            if (errors) {
+              Object.keys(errors).forEach((key) => {
+                errors[key].forEach((errorMsg) => {
+                  toast(errorMsg, {
+                    icon: <FiAlertTriangle className="text-warning" />,
+                  });
                 });
               });
-            });
+            }
+          } else {
+            toast.error(
+              error.response.data.message || "An unexpected error occurred."
+            );
           }
         } else {
-          toast.error("An error occurred while deleting the record.");
+          toast.error("An unexpected error occurred.");
         }
       } finally {
         setLoadIndicator(false);
@@ -110,17 +116,16 @@ function ServiceGroupAdd() {
       .replace(/\s+/g, "_")
       .replace(/[^\w-]+/g, "");
     formik.setFieldValue("slug", slug);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formik.values.name]);
 
   const handleFileChange = (event) => {
-    const file = event.target.files[0];
+    const file = event?.target?.files[0];
     if (file) {
       if (file.size > MAX_FILE_SIZE) {
-        formik.setFieldError("image", "File size is too large. Max 2MB.");
-        return;
-      }
-      if (!SUPPORTED_FORMATS.includes(file.type)) {
-        formik.setFieldError("image", "Unsupported format.");
+        toast.error("File size is too large. Max 2MB.");
+        event.target.value = null;
+        formik.setFieldValue("image", null);
         return;
       }
 
@@ -132,6 +137,10 @@ function ServiceGroupAdd() {
         setShowCropper(true);
       };
       reader.readAsDataURL(file);
+
+      if (file.size > MAX_FILE_SIZE) {
+        formik.setFieldError(`image`, "File size is too large. Max 2MB.");
+      }
     }
   };
 
@@ -139,50 +148,58 @@ function ServiceGroupAdd() {
     setCroppedAreaPixels(croppedAreaPixels);
   };
 
-  const getCroppedImg = async (imageSrc, croppedAreaPixels) => {
-    const image = new Image();
-    image.src = imageSrc;
-    await new Promise((resolve) => (image.onload = resolve));
-
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-
-    const targetWidth = 300;
-    const targetHeight = 300;
-    canvas.width = targetWidth;
-    canvas.height = targetHeight;
-
-    ctx.drawImage(
-      image,
-      croppedAreaPixels.x,
-      croppedAreaPixels.y,
-      croppedAreaPixels.width,
-      croppedAreaPixels.height,
-      0,
-      0,
-      targetWidth,
-      targetHeight
-    );
-
+  const getCroppedImg = (imageSrc, crop, croppedAreaPixels) => {
     return new Promise((resolve, reject) => {
-      canvas.toBlob((blob) => {
-        if (blob) {
+      const image = new Image();
+      image.src = imageSrc;
+      image.onload = () => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        const targetWidth = 900;
+        const targetHeight = 400;
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
+
+        ctx.drawImage(
+          image,
+          croppedAreaPixels.x,
+          croppedAreaPixels.y,
+          croppedAreaPixels.width,
+          croppedAreaPixels.height,
+          0,
+          0,
+          targetWidth,
+          targetHeight
+        );
+
+        canvas.toBlob((blob) => {
+          if (!blob) {
+            reject(new Error("Canvas is empty"));
+            return;
+          }
           blob.name = "croppedImage.jpeg";
           resolve(blob);
-        } else {
-          reject(new Error("Canvas is empty"));
-        }
-      }, "image/jpeg");
+        }, "image/jpeg");
+      };
     });
   };
 
   const handleCropSave = async () => {
     try {
-      const croppedImageBlob = await getCroppedImg(imageSrc, croppedAreaPixels);
-      const file = new File([croppedImageBlob], originalFileName, {
+      const croppedImageBlob = await getCroppedImg(
+        imageSrc,
+        crop,
+        croppedAreaPixels
+      );
+      const fileName = originalFileName;
+
+      const file = new File([croppedImageBlob], fileName, {
         type: originalFileType,
       });
+
       formik.setFieldValue("image", file);
+      setOriginalFileType(file.type);
       setShowCropper(false);
     } catch (error) {
       console.error("Error cropping the image:", error);
@@ -349,7 +366,7 @@ function ServiceGroupAdd() {
                       image={imageSrc}
                       crop={crop}
                       zoom={zoom}
-                      aspect={300 / 300}
+                      aspect={900 / 400}
                       onCropChange={setCrop}
                       onZoomChange={setZoom}
                       onCropComplete={onCropComplete}

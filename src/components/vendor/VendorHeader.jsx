@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import user from "../../assets/user_profile.svg";
 import { Link, useNavigate } from "react-router-dom";
 import { IoIosArrowDown } from "react-icons/io";
@@ -11,6 +11,7 @@ function VendorHeader({ handleLogout }) {
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const user_name = localStorage.getItem("helperlah_name");
+  const dropdownRef = useRef(null);
 
   const handelLogOutClick = () => {
     handleLogout();
@@ -18,8 +19,22 @@ function VendorHeader({ handleLogout }) {
   };
 
   const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
+    setIsDropdownOpen((prev) => !prev);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <header
@@ -31,7 +46,7 @@ function VendorHeader({ handleLogout }) {
           <div className="row align-items-center">
             <div className="col-sm-6 col-12 mb-4 mb-sm-0 admin-settings"></div>
             <div className="col-sm-6 col-12 text-sm-end">
-              <div className="mx-n1 position-relative">
+              <div className="mx-n1 position-relative" ref={dropdownRef}>
                 <span style={{ cursor: "pointer" }} onClick={toggleDropdown}>
                   {/* <FaBell className="me-3" style={{ color: "#8b99b5" }} /> */}
                   <img
@@ -98,6 +113,9 @@ function VendorHeader({ handleLogout }) {
                     <Link
                       className="dropdown-item d-flex align-items-center"
                       onClick={handelLogOutClick}
+                      style={{
+                        borderTop: "1px solid #ddd",
+                      }}
                     >
                       <TbLogout2 className="me-2" />
                       <span>Logout</span>

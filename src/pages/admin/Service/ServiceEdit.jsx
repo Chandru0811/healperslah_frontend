@@ -54,7 +54,7 @@ function ServiceEdit() {
       .required("*Basic Price is required")
       .positive("*Please enter a valid number")
       .integer("*Basic Price must be a whole number"),
-    // image: imageValidation,
+    image: imageValidation,
     description: Yup.string()
       .required("*Description is a required field")
       .max(200, "*The maximum length is 200 characters"),
@@ -170,7 +170,9 @@ function ServiceEdit() {
     const file = event.target.files[0];
     if (file) {
       if (file.size > MAX_FILE_SIZE) {
-        formik.setFieldError("image", "File size is too large. Max 2MB.");
+        toast.error("File size is too large. Max 2MB.");
+        event.target.value = null;
+        formik.setFieldValue("image", null);
         return;
       }
       if (!SUPPORTED_FORMATS.includes(file.type)) {
