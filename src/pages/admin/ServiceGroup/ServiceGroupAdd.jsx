@@ -35,7 +35,7 @@ function ServiceGroupAdd() {
       return !value || (value && value.size <= MAX_FILE_SIZE);
     });
 
-  const validationSchema = Yup.object().shape({
+  const validationSchema = Yup.object({
     name: Yup.string().required("*Name is required"),
     order: Yup.string().required("*Order is required"),
     base_price: Yup.number()
@@ -116,7 +116,7 @@ function ServiceGroupAdd() {
       .replace(/\s+/g, "_")
       .replace(/[^\w-]+/g, "");
     formik.setFieldValue("slug", slug);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formik.values.name]);
 
   const handleFileChange = (event) => {
@@ -200,6 +200,8 @@ function ServiceGroupAdd() {
 
       formik.setFieldValue("image", file);
       setOriginalFileType(file.type);
+      formik.setFieldError("image", "");
+      formik.setFieldTouched("image", false);
       setShowCropper(false);
     } catch (error) {
       console.error("Error cropping the image:", error);

@@ -239,6 +239,8 @@ function ServiceGroupEdit() {
       formik.setFieldValue("image", file);
       const croppedImageURL = URL.createObjectURL(croppedImageBlob);
       setPreviewImage(croppedImageURL);
+      formik.setFieldError("image", "");
+      formik.setFieldTouched("image", false);
       setShowCropper(false);
     } catch (error) {
       console.error("Error cropping the image:", error);

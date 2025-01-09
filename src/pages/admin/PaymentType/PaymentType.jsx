@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { MaterialReactTable } from "material-react-table";
 import { MoreVert as MoreVertIcon } from "@mui/icons-material";
 import {
@@ -14,13 +14,13 @@ import PaymentTypeEdit from "./PaymentTypeEdit";
 import Delete from "../../../components/common/Delete";
 import api from "../../../config/URL";
 import PropTypes from "prop-types";
+import PaymentTypeView from "./PaymentTypeView";
 
 function PaymentType() {
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
-  const navigate = useNavigate();
 
   const columns = useMemo(
     () => [
@@ -193,10 +193,6 @@ function PaymentType() {
                     updatedAt: false,
                   },
                 }}
-                muiTableBodyRowProps={() => ({
-                  onClick: () => navigate(`/paymenttype`),
-                  style: { cursor: "pointer" },
-                })}
               />
             </ThemeProvider>
             <Menu
@@ -208,6 +204,12 @@ function PaymentType() {
               <MenuItem>
                 <PaymentTypeEdit
                   onSuccess={fetchData}
+                  id={selectedId}
+                  handleMenuClose={handleMenuClose}
+                />
+              </MenuItem>
+              <MenuItem>
+                <PaymentTypeView
                   id={selectedId}
                   handleMenuClose={handleMenuClose}
                 />

@@ -195,6 +195,9 @@ function ServiceAdd() {
         type: originalFileType,
       });
       formik.setFieldValue("image", file);
+      setOriginalFileType(file.type);
+      formik.setFieldError("image", "");
+      formik.setFieldTouched("image", false);
       setShowCropper(false);
     } catch (error) {
       console.error("Error cropping the image:", error);

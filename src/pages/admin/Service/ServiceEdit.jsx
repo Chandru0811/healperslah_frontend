@@ -133,6 +133,7 @@ function ServiceEdit() {
       .replace(/\s+/g, "_")
       .replace(/[^\w-]+/g, "");
     formik.setFieldValue("slug", slug);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formik.values.name]);
 
   const scrollToError = (errors) => {
@@ -241,6 +242,8 @@ function ServiceEdit() {
       formik.setFieldValue("image", file);
       const croppedImageURL = URL.createObjectURL(croppedImageBlob);
       setPreviewImage(croppedImageURL);
+      formik.setFieldError("image", "");
+      formik.setFieldTouched("image", false);
       setShowCropper(false);
     } catch (error) {
       console.error("Error cropping the image:", error);
