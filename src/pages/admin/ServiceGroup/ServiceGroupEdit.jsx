@@ -33,10 +33,12 @@ function ServiceGroupEdit() {
   const imageValidation = Yup.mixed()
     .nullable()
     .test("fileFormat", "Unsupported format", (value) => {
-      return !value || (value && SUPPORTED_FORMATS.includes(value.type));
+      if (value) return true; 
+      return SUPPORTED_FORMATS.includes(value.type);
     })
     .test("fileSize", "File size is too large. Max 2MB.", (value) => {
-      return !value || (value && value.size <= MAX_FILE_SIZE);
+      if (value) return true;
+      return value.size <= MAX_FILE_SIZE;
     });
 
   const validationSchema = Yup.object().shape({
@@ -146,7 +148,7 @@ function ServiceGroupEdit() {
     const getData = async () => {
       try {
         setLoading(true);
-        const response = await api.get(`admin/serviceGroup/${id}`);        
+        const response = await api.get(`admin/serviceGroup/${id}`);
         formik.setValues(response.data.data);
         setPreviewImage(`${ImageURL}${response.data.data.image}`);
       } catch (error) {

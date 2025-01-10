@@ -34,16 +34,14 @@ function ServiceEdit() {
 
   const imageValidation = Yup.mixed()
     .nullable()
-    .test("fileSize", "File size is too large. Max 2MB.", (value) => {
-      return !value || (value && value.size <= MAX_FILE_SIZE);
+    .test("fileFormat", "Unsupported format", (value) => {
+      if (value) return true; 
+      return SUPPORTED_FORMATS.includes(value.type);
     })
-    .test(
-      "fileFormat",
-      "Unsupported file format. Allowed formats are PNG, JPEG, JPG, and WEBP.",
-      (value) => {
-        return !value || (value && SUPPORTED_FORMATS.includes(value.type));
-      }
-    );
+    .test("fileSize", "File size is too large. Max 2MB.", (value) => {
+      if (value) return true;
+      return value.size <= MAX_FILE_SIZE;
+    });
 
   const validationSchema = Yup.object().shape({
     service_group_id: Yup.string().required("*Service Group Id is required"),
@@ -165,6 +163,7 @@ function ServiceEdit() {
       }
     };
     getData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const handleFileChange = (event) => {
