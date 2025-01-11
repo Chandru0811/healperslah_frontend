@@ -10,6 +10,7 @@ import {
   IconButton,
 } from "@mui/material";
 import api from "../../../config/URL";
+import PropTypes from "prop-types";
 
 function Payment() {
   const [menuAnchor, setMenuAnchor] = useState(null);
@@ -123,7 +124,7 @@ function Payment() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await api.get("admin/payment");
+      const response = await api.get("admin/payments");
       setData(response.data.data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -209,41 +210,60 @@ function Payment() {
             </span>
           </div>
         </div>
-        <>
-          <ThemeProvider theme={theme}>
-            <MaterialReactTable
-              columns={columns}
-              data={data}
-              enableColumnActions={false}
-              enableColumnFilters={false}
-              enableDensityToggle={false}
-              enableFullScreenToggle={false}
-              initialState={{
-                columnVisibility: {
-                  createdBy: false,
-                  createdAt: false,
-                  updatedBy: false,
-                  updatedAt: false,
-                },
-              }}
-              muiTableBodyRowProps={({ row }) => ({
-                onClick: () => navigate(`/payment/view`),
-                style: { cursor: "pointer" },
-              })}
-            />
-          </ThemeProvider>
-          <Menu
-            id="action-menu"
-            anchorEl={menuAnchor}
-            open={Boolean(menuAnchor)}
-            onClose={handleMenuClose}
-          >
-            <MenuItem onClick={() => navigate(`/payment/edit`)}>Edit</MenuItem>
-          </Menu>
-        </>
+        {loading ? (
+          <div className="loader-container">
+            <div className="loader">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        ) : (
+          <>
+            <ThemeProvider theme={theme}>
+              <MaterialReactTable
+                columns={columns}
+                data={data}
+                enableColumnActions={false}
+                enableColumnFilters={false}
+                enableDensityToggle={false}
+                enableFullScreenToggle={false}
+                initialState={{
+                  columnVisibility: {
+                    createdBy: false,
+                    createdAt: false,
+                    updatedBy: false,
+                    updatedAt: false,
+                  },
+                }}
+                muiTableBodyRowProps={({ row }) => ({
+                  onClick: () => navigate(`/payment/view/${row.original.id}`),
+                  style: { cursor: "pointer" },
+                })}
+              />
+            </ThemeProvider>
+            <Menu
+              id="action-menu"
+              anchorEl={menuAnchor}
+              open={Boolean(menuAnchor)}
+              onClose={handleMenuClose}
+            >
+              <MenuItem onClick={() => navigate(`/payment/edit/${selectedId}`)}>
+                Edit
+              </MenuItem>
+            </Menu>
+          </>
+        )}
       </div>
     </div>
   );
 }
+
+Payment.propTypes = {
+  row: PropTypes.func.isRequired,
+  cell: PropTypes.func.isRequired,
+};
 
 export default Payment;

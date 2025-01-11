@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import api from "../../../config/URL";
+import toast from "react-hot-toast";
 
 function SubscriptionView() {
   const { id } = useParams();
@@ -31,6 +32,7 @@ function SubscriptionView() {
 
   useEffect(() => {
     getData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const additionalSpecs = data.additional_specs

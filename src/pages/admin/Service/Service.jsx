@@ -70,9 +70,9 @@ function Service() {
         },
       },
       {
-        accessorKey: "service_group_id",
+        accessorKey: "serviceGroupName",
         enableHiding: false,
-        header: "Service Group Id",
+        header: "Service Group Name",
       },
       { accessorKey: "name", enableHiding: false, header: "Name" },
       {

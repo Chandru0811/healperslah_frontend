@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Deactivate from "../../../components/common/Deactivate";
 import api from "../../../config/URL";
 import ImageURL from "../../../config/ImageURL";
 import toast from "react-hot-toast";
+import { FiAlertTriangle } from "react-icons/fi";
 
 function ServiceView() {
   const { id } = useParams();
@@ -25,6 +26,7 @@ function ServiceView() {
 
   useEffect(() => {
     getData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const handelStatusChange = async () => {
@@ -77,11 +79,11 @@ function ServiceView() {
       </ol>
       <div className="card vh-100" style={{ border: "1px solid #dbd9d0" }}>
         <div className="d-flex px-4 justify-content-between align-items-center card_header p-1 mb-4">
-          <div class="d-flex align-items-center">
-            <div class="d-flex">
-              <div class="dot active"></div>
+          <div className="d-flex align-items-center">
+            <div className="d-flex">
+              <div className="dot active"></div>
             </div>
-            <span class="me-2 text-muted">View Service</span>
+            <span className="me-2 text-muted">View Service</span>
           </div>
           <div className="my-2 pe-3 d-flex align-items-center">
             <Link to="/service">
@@ -129,11 +131,11 @@ function ServiceView() {
               <div className="col-md-6 col-12 my-2">
                 <div className="row">
                   <div className="col-6">
-                    <p className="fw-medium text-sm">Service Group Id</p>
+                    <p className="fw-medium text-sm">Service Group Name</p>
                   </div>
                   <div className="col-6">
                     <p className="text-muted text-sm">
-                      : {data.service_group_id}
+                      : {data.serviceGroupName}
                     </p>
                   </div>
                 </div>
