@@ -71,7 +71,7 @@ function Orders() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await api.get(`vendor/orders/28`);
+      const response = await api.get(`vendor/orders/1`);
       setData(response.data.data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -157,7 +157,7 @@ function Orders() {
         </div>
         {loading ? (
           <div className="loader-container">
-            <div className="loading">
+            <div className="loader">
               <span></span>
               <span></span>
               <span></span>

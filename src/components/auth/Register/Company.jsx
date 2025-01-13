@@ -70,6 +70,7 @@ function Company() {
       working_hrs: "",
       providing_services: {},
       payment_mode: "",
+      other_details: "",
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {

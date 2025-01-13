@@ -225,6 +225,14 @@
   background-color: #287f71;
 }
 
+.onprocess_dot {
+  width: 10px;
+  height: 10px;
+  margin: 0 5px;
+  border-radius: 50%;
+  background-color: #f4e808;
+}
+
 .inactive_dot {
   width: 10px;
   height: 10px;

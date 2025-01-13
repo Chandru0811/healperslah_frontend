@@ -7,6 +7,7 @@ import api from "../../../config/URL";
 import { FiAlertTriangle } from "react-icons/fi";
 import toast from "react-hot-toast";
 import fetchAllOfferWithIds from "../../List/OfferList";
+import fetchAllServiceWithIds from "../../List/ServiceList";
 
 function SubscriptionAdd() {
   const navigate = useNavigate();
@@ -114,30 +115,21 @@ function SubscriptionAdd() {
     validateOnBlur: true,
   });
 
-  const getService = async () => {
+  const fetchData = async () => {
     try {
-      const serviceData = await api.get(`admin/services`);
-      setServiceData(serviceData.data.data);
+      const [serviceData, offerData] = await Promise.all([
+        fetchAllServiceWithIds(),
+        fetchAllOfferWithIds(),
+      ]);
+      setServiceData(serviceData);
+      setOffers(offerData);
     } catch (error) {
-      toast.error(error);
+      toast.error(error.message || "Failed to fetch data");
     }
   };
 
   useEffect(() => {
-    getService();
-  }, []);
-
-  const fetchOffers = async () => {
-    try {
-      const data = await fetchAllOfferWithIds();
-      setOffers(data);
-    } catch (error) {
-      toast.error(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchOffers();
+    fetchData();
   }, []);
 
   return (

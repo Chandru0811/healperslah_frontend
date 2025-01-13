@@ -1,51 +1,16 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { MaterialReactTable } from "material-react-table";
-import {
-  ThemeProvider,
-  createTheme,
-  Menu,
-  MenuItem,
-} from "@mui/material";
+import { ThemeProvider, createTheme, Menu, MenuItem } from "@mui/material";
 import Delete from "../../../components/common/Delete";
 import PropTypes from "prop-types";
+import api from "../../../config/URL";
 
 function Company() {
   const [menuAnchor, setMenuAnchor] = useState(null);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
-  const data = [
-    {
-      id: 1,
-      company_reg_no: "CO-100",
-      company_name: "Company 1",
-      phone_no: "9876543212",
-      email: "company@gmail.com",
-      no_of_employee: "50",
-      nation: "India",
-      nationality: "Indian",
-      working_hrs: "11 am - 5 pm",
-      created_by: "Admin",
-      created_at: "2024-01-06",
-      updated_by: "Admin",
-      updated_at: "2024-01-06",
-    },
-    {
-      id: 2,
-      company_reg_no: "CO-101",
-      company_name: "Company 2",
-      phone_no: "9876543213",
-      email: "company2@gmail.com",
-      no_of_employee: "70",
-      nation: "Singapore",
-      nationality: "Singaporian",
-      working_hrs: "10 am - 6 pm",
-      created_by: "Admin",
-      created_at: "2024-01-06",
-      updated_by: "Admin",
-      updated_at: "2024-01-06",
-    },
-  ];
 
   const columns = useMemo(
     () => [
@@ -60,7 +25,7 @@ function Company() {
         ),
       },
       {
-        accessorKey: "company_reg_no",
+        accessorKey: "company_registration_no",
         enableHiding: false,
         header: "Company Reg Number",
       },
@@ -70,13 +35,13 @@ function Company() {
         header: "Company Name",
       },
       {
-        accessorKey: "no_of_employee",
+        accessorKey: "no_of_employees",
         header: "No of Employee",
         enableHiding: false,
         size: 40,
       },
       {
-        accessorKey: "phone_no",
+        accessorKey: "mobile",
         header: "Phone Number",
         enableHiding: false,
         size: 40,
@@ -93,7 +58,7 @@ function Company() {
         size: 40,
       },
       {
-        accessorKey: "nation",
+        accessorKey: "citizenship",
         header: "Nation",
         size: 40,
       },
@@ -121,6 +86,22 @@ function Company() {
     ],
     []
   );
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get(`admin/companies`);
+      setData(response.data.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const theme = createTheme({
     components: {
@@ -195,47 +176,61 @@ function Company() {
             </span>
           </div>
         </div>
-        <>
-          <ThemeProvider theme={theme}>
-            <MaterialReactTable
-              columns={columns}
-              data={data}
-              enableColumnActions={false}
-              enableColumnFilters={false}
-              enableDensityToggle={false}
-              enableFullScreenToggle={false}
-              initialState={{
-                columnVisibility: {
-                  working_hrs: false,
-                  nation: false,
-                  nationality: false,
-                  created_by: false,
-                  created_at: false,
-                  updated_by: false,
-                  updated_at: false,
-                },
-              }}
-              muiTableBodyRowProps={() => ({
-                onClick: () => navigate(`/company/view`),
-                style: { cursor: "pointer" },
-              })}
-            />
-          </ThemeProvider>
-          <Menu
-            id="action-menu"
-            anchorEl={menuAnchor}
-            open={Boolean(menuAnchor)}
-            onClose={handleMenuClose}
-          >
-            <MenuItem onClick={() => navigate(`/company/edit`)}>Edit</MenuItem>
-            <MenuItem>
-              <Delete
-                path={`admin/company/delete`}
-                onOpen={handleMenuClose}
+        {loading ? (
+          <div className="loader-container">
+            <div className="loader">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        ) : (
+          <>
+            <ThemeProvider theme={theme}>
+              <MaterialReactTable
+                columns={columns}
+                data={data}
+                enableColumnActions={false}
+                enableColumnFilters={false}
+                enableDensityToggle={false}
+                enableFullScreenToggle={false}
+                initialState={{
+                  columnVisibility: {
+                    working_hrs: false,
+                    citizenship: false,
+                    nationality: false,
+                    created_by: false,
+                    created_at: false,
+                    updated_by: false,
+                    updated_at: false,
+                  },
+                }}
+                muiTableBodyRowProps={({ row }) => ({
+                  onClick: () => navigate(`/company/view/${row.original.id}`),
+                  style: { cursor: "pointer" },
+                })}
               />
-            </MenuItem>
-          </Menu>
-        </>
+            </ThemeProvider>
+            <Menu
+              id="action-menu"
+              anchorEl={menuAnchor}
+              open={Boolean(menuAnchor)}
+              onClose={handleMenuClose}
+            >
+              <MenuItem onClick={() => navigate(`/company/edit`)}>
+                Edit
+              </MenuItem>
+              <MenuItem>
+                <Delete
+                  path={`admin/company/delete`}
+                  onOpen={handleMenuClose}
+                />
+              </MenuItem>
+            </Menu>
+          </>
+        )}
       </div>
     </div>
   );

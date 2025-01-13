@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import {useParams, Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import PaymentModal from "./PaymentModal";
 import api from "../../../config/URL";
 
@@ -10,7 +10,7 @@ function ServiceAssignmentView() {
 
   const getData = async () => {
     try {
-      setLoading(true)
+      setLoading(true);
       const response = await api.get(`admin/serviceAssignment/${id}`);
       setData(response.data.data);
     } catch (error) {
@@ -22,9 +22,8 @@ function ServiceAssignmentView() {
 
   useEffect(() => {
     getData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
-
 
   return (
     <div className="container-fluid px-0">
@@ -66,7 +65,11 @@ function ServiceAssignmentView() {
               </button>
             </Link>
             &nbsp;&nbsp;
-            <PaymentModal order_id={data.order_id} company_id={data.company_id} helper_id={data.helper_id} />
+            <PaymentModal
+              order_id={data.order_id}
+              company_id={data.company_id}
+              helper_id={data.helper_id}
+            />
           </div>
         </div>
         {loading ? (
@@ -80,53 +83,62 @@ function ServiceAssignmentView() {
             </div>
           </div>
         ) : (
-        <div className="container-fluid px-4">
-          <div className="row pb-3">
-            <div className="col-md-6 col-12 my-2">
-              <div className="row">
-                <div className="col-6">
-                  <p className="fw-medium text-sm">Order Id</p>
-                </div>
-                <div className="col-6">
-                  <p className="text-muted text-sm">: {data.order_id}</p>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-6 col-12 my-2">
-              <div className="row">
-                <div className="col-6">
-                  <p className="fw-medium text-sm">Company Id</p>
-                </div>
-                <div className="col-6">
-                  <p className="text-muted text-sm">: {data.company_id}</p>
+          <div className="container-fluid px-4">
+            <div className="row pb-3">
+              <div className="col-md-6 col-12 my-2">
+                <div className="row">
+                  <div className="col-6">
+                    <p className="fw-medium text-sm">Order Number</p>
+                  </div>
+                  <div className="col-6">
+                    <p className="text-muted text-sm">: {data.orderNumber}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="col-md-6 col-12 my-2">
-              <div className="row">
-                <div className="col-6">
-                  <p className="fw-medium text-sm">Helper Id</p>
-                </div>
-                <div className="col-6">
-                  <p className="text-muted text-sm">: {data.helper_id}</p>
+              <div className="col-md-6 col-12 my-2">
+                <div className="row">
+                  <div className="col-6">
+                    <p className="fw-medium text-sm">Company Name</p>
+                  </div>
+                  <div className="col-6">
+                    <p className="text-muted text-sm">: {data.companyName}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="col-md-6 col-12 my-2">
-              <div className="row">
-                <div className="col-6">
-                  <p className="fw-medium text-sm">Assigned At</p>
+              <div className="col-md-6 col-12 my-2">
+                <div className="row">
+                  <div className="col-6">
+                    <p className="fw-medium text-sm">Booking Type</p>
+                  </div>
+                  <div className="col-6">
+                    <p className="text-muted text-sm">: {data.booking_type}</p>
+                  </div>
                 </div>
-                <div className="col-6">
-                <p className="text-muted text-sm">
-  : {data.assigned_at.split(" ")[0]}
-</p>
-
+              </div>
+              <div className="col-md-6 col-12 my-2">
+                <div className="row">
+                  <div className="col-6">
+                    <p className="fw-medium text-sm">Helper Name</p>
+                  </div>
+                  <div className="col-6">
+                    <p className="text-muted text-sm">: {data.helperName}</p>
+                  </div>
+                </div>
+              </div>
+              <div className="col-md-6 col-12 my-2">
+                <div className="row">
+                  <div className="col-6">
+                    <p className="fw-medium text-sm">Assigned At</p>
+                  </div>
+                  <div className="col-6">
+                    <p className="text-muted text-sm">
+                      : {data.assigned_at.split(" ")[0]}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
         )}
       </div>
     </div>

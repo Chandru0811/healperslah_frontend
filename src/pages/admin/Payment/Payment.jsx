@@ -68,16 +68,16 @@ function Payment() {
           ) : null;
         },
       },
-      { accessorKey: "order_id", enableHiding: false, header: "Order Id" },
+      { accessorKey: "order.order_number", enableHiding: false, header: "Order Number" },
       {
-        accessorKey: "helper_id",
+        accessorKey: "helper.name",
         enableHiding: false,
-        header: "Helper Id",
+        header: "Helper Name",
       },
       {
-        accessorKey: "company_id",
+        accessorKey: "company.company_name",
         enableHiding: false,
-        header: "Company Id",
+        header: "Company Name",
       },
       {
         accessorKey: "booking_type",

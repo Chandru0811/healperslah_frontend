@@ -1,10 +1,13 @@
 import { useFormik } from "formik";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import * as Yup from "yup";
 import { MultiSelect } from "react-multi-select-component";
 import api from "../../../config/URL";
 import toast from "react-hot-toast";
+import { FiAlertTriangle } from "react-icons/fi";
+import fetchAllServiceWithIds from "../../List/ServiceList";
+import fetchAllOfferWithIds from "../../List/OfferList";
 
 function CustomPackageEdit() {
   const navigate = useNavigate();
@@ -12,6 +15,7 @@ function CustomPackageEdit() {
   const [loadIndicator, setLoadIndicator] = useState(false);
   const [loading, setLoading] = useState(true);
   const [serviceData, setServiceData] = useState([]);
+  const [offers, setOffers] = useState(null);
   const [selectedServices, setSelectedServices] = useState([]);
   const serviceOption = serviceData?.map((service) => ({
     label: service.name,
@@ -60,7 +64,7 @@ function CustomPackageEdit() {
       price: "",
       offer_id: "",
     },
-    // validationSchema,
+    validationSchema: validationSchema,
     onSubmit: async (values) => {
       setLoadIndicator(true);
 
@@ -72,7 +76,8 @@ function CustomPackageEdit() {
       try {
         const response = await api.put(
           `admin/custom_package/update/${id}`,
-          payload);
+          payload
+        );
         if (response.status === 200) {
           toast.success(response.data.message);
           navigate("/custompackage");
@@ -123,26 +128,30 @@ function CustomPackageEdit() {
         });
       } catch (error) {
         toast.error(`Error: ${error.response?.data?.message || error.message}`);
+      } finally {
+        setLoading(false);
       }
     };
 
     getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, serviceData]);
 
-  const getService = async () => {
+  const fetchData = async () => {
     try {
-      setLoading(true);
-      const serviceData = await api.get(`admin/services`);
-      setServiceData(serviceData.data.data);
+      const [serviceData, offerData] = await Promise.all([
+        fetchAllServiceWithIds(),
+        fetchAllOfferWithIds(),
+      ]);
+      setServiceData(serviceData);
+      setOffers(offerData);
     } catch (error) {
-      toast.error(error);
-    } finally {
-      setLoading(false);
+      toast.error(error.message || "Failed to fetch data");
     }
   };
 
   useEffect(() => {
-    getService();
+    fetchData();
   }, []);
 
   return (
@@ -177,11 +186,11 @@ function CustomPackageEdit() {
       >
         <div className="card">
           <div className="d-flex justify-content-between align-items-center card_header p-1 mb-4 px-4">
-            <div class="d-flex align-items-center">
-              <div class="d-flex">
-                <div class="dot active"></div>
+            <div className="d-flex align-items-center">
+              <div className="d-flex">
+                <div className="dot active"></div>
               </div>
-              <span class="me-2 text-muted">Edit Custom Subscription</span>
+              <span className="me-2 text-muted">Edit Custom Subscription</span>
             </div>
             <div className="my-2 pe-3 d-flex align-items-center">
               <Link to="/custompackage">
@@ -432,16 +441,24 @@ function CustomPackageEdit() {
                   )}
                 </div>
                 <div className="col-md-6 col-12 mb-3">
-                  <label className="form-label">Offer Id</label>
-                  <input
+                  <label className="form-label">Offers</label>
+                  <select
                     type="text"
-                    className={`form-control ${
+                    className={`form-select ${
                       formik.touched.offer_id && formik.errors.offer_id
                         ? "is-invalid"
                         : ""
                     }`}
                     {...formik.getFieldProps("offer_id")}
-                  />
+                  >
+                    <option selected></option>
+                    {offers &&
+                      offers.map((data) => (
+                        <option key={data.id} value={data.id}>
+                          {data.coupon_code}
+                        </option>
+                      ))}
+                  </select>
                   {formik.touched.offer_id && formik.errors.offer_id && (
                     <div className="invalid-feedback">
                       {formik.errors.offer_id}

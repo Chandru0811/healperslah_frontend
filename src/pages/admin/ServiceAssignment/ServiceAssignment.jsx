@@ -56,28 +56,33 @@ function ServiceAssignment() {
         header: "Status",
         Cell: ({ row }) => {
           const status = row.original.status;
-          return status === "Assigned" ? (
+          return status === "Completed" ? (
             <div className="d-flex align-items-center">
               <div className="active_dot"></div>
+              <span>Completed</span>
+            </div>
+          ) : status === "Assigned" ? (
+            <div className="d-flex align-items-center">
+              <div className="onprocess_dot"></div>
               <span>Assigned</span>
             </div>
-          ) : status === "Notassigned" ? (
+          ) : status === "NotAssigned" ? (
             <div className="d-flex align-items-center">
               <div className="inactive_dot"></div>
               <span>Not Assigned</span>
             </div>
-          ) : null;
+          ): null;
         },
       },
-      { accessorKey: "order_id", enableHiding: false, header: "Order Id" },
+      { accessorKey: "order.order_number", enableHiding: false, header: "Order Number" },
       {
-        accessorKey: "company_id",
+        accessorKey: "company.company_name",
         enableHiding: false,
-        header: "Company Id",
+        header: "Company Name",
       },
       {
-        accessorKey: "helper_id",
-        header: "Helper Id",
+        accessorKey: "helper.name",
+        header: "Helper Name",
         enableHiding: false,
         size: 40,
       },

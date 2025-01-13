@@ -65,7 +65,7 @@ function Admin({ handleLogout }) {
                 {/* Company */}
                 <Route path="/company" element={<Company />} />
                 <Route path="/company/edit" element={<CompanyEdit />} />
-                <Route path="/company/view" element={<CompanyView />} />
+                <Route path="/company/view/:id" element={<CompanyView />} />
 
                 {/* Service Group */}
                 <Route path="/servicegroup" element={<ServiceGroup />} />
@@ -139,8 +139,8 @@ function Admin({ handleLogout }) {
 
                 {/* Payment */}
                 <Route path="/payment" element={<Payment />} />
-                <Route path="/payment/edit" element={<PaymentEdit />} />
-                <Route path="/payment/view" element={<PaymentView />} />
+                <Route path="/payment/edit/:id" element={<PaymentEdit />} />
+                <Route path="/payment/view/:id" element={<PaymentView />} />
 
                 {/* Payment Type */}
                 <Route path="/paymenttype" element={<PaymentType />} />
