@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { MaterialReactTable } from "material-react-table";
 import { ThemeProvider, createTheme } from "@mui/material";
 import api from "../../../config/URL";
+import PropTypes from "prop-types";
 
 function Orders() {
   const [data, setData] = useState([]);
@@ -21,28 +22,56 @@ function Orders() {
           <span style={{ textAlign: "center" }}>{cell.getValue()}</span>
         ),
       },
-      { accessorKey: "order_id", enableHiding: false, header: "Order Id" },
       {
-        accessorKey: "helper_id",
+        accessorKey: "status",
         enableHiding: false,
-        header: "Helper Id",
+        header: "Status",
+        Cell: ({ row }) => {
+          const status = row.original.status;
+          return status === "Assigned" ? (
+            <div className="d-flex align-items-center">
+              <div className="active_dot"></div>
+              <span>Assigned</span>
+            </div>
+          ) : status === "notAssigned" ? (
+            <div className="d-flex align-items-center">
+              <div className="inactive_dot"></div>
+              <span>Not Assigned</span>
+            </div>
+          ) : null;
+        },
+      },
+      {
+        accessorKey: "order.order_number",
+        enableHiding: false,
+        header: "Order Number",
+      },
+      {
+        accessorKey: "helper.name",
+        enableHiding: false,
+        header: "Helper Name",
       },
       {
         accessorKey: "assigned_at",
         header: "Assigned At",
         enableHiding: false,
         size: 40,
+        Cell: ({ cell }) => cell.getValue()?.substring(0, 10),
       },
-      { accessorKey: "start_date", enableHiding: false, header: "Start Date" },
-      { accessorKey: "end_date", enableHiding: false, header: "End Date" },
       {
-        accessorKey: "status",
-        header: "Status",
+        accessorFn: (row) =>
+          row.order.order_details.map((detail) => detail.start_date).join(", "),
         enableHiding: false,
-        size: 50,
+        header: "Start Date",
       },
       {
-        accessorKey: "total_amount",
+        accessorFn: (row) =>
+          row.order.order_details.map((detail) => detail.end_date).join(", "),
+        enableHiding: false,
+        header: "End Date",
+      },
+      {
+        accessorKey: "order.total_amount",
         enableHiding: false,
         header: "Total Amount",
       },
@@ -197,5 +226,9 @@ function Orders() {
     </div>
   );
 }
+
+Orders.propTypes = {
+  row: PropTypes.func.isRequired,
+};
 
 export default Orders;

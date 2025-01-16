@@ -1,23 +1,29 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import api from "../../../config/URL";
+import toast from "react-hot-toast";
 
 function HelperView() {
-  const [data] = useState({
-    name: "",
-    phone_no: "",
-    email: "",
-    nation: "",
-    nationality: "",
-    address: "",
-    service_offering: "",
-    availability: "",
-    working_hrs: "",
-    service: "",
-    experience: "",
-    payment_mode: "",
-    providing_services: {},
-    other_details: "",
-  });
+  const { id } = useParams();
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const getData = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get(`vendor/helper/${id}`);
+      setData(response.data.data);
+    } catch (error) {
+      toast.error("Error Fetching Data", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="container-fluid px-0">
@@ -61,163 +67,184 @@ function HelperView() {
           </div>
         </div>
         <>
-          <div className="container-fluid px-4">
-            <div className="row pb-3">
-              <div className="col-md-6 col-12 my-2">
-                <div className="row">
-                  <div className="col-6">
-                    <p className="fw-medium text-sm">Name</p>
-                  </div>
-                  <div className="col-6">
-                    <p className="text-muted text-sm">: {data.name}</p>
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-6 col-12 my-2">
-                <div className="row">
-                  <div className="col-6">
-                    <p className="fw-medium text-sm">Address</p>
-                  </div>
-                  <div className="col-6">
-                    <p className="text-muted text-sm">: {data.address}</p>
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-6 col-12 my-2">
-                <div className="row">
-                  <div className="col-6">
-                    <p className="fw-medium text-sm">Phone Number</p>
-                  </div>
-                  <div className="col-6">
-                    <p className="text-muted text-sm">: {data.phone_no}</p>
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-6 col-12 my-2">
-                <div className="row">
-                  <div className="col-6">
-                    <p className="fw-medium text-sm">Email</p>
-                  </div>
-                  <div className="col-6">
-                    <p className="text-muted text-sm text-break ">
-                      : {data.email}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-6 col-12 my-2">
-                <div className="row">
-                  <div className="col-6">
-                    <p className="fw-medium text-sm">Nation</p>
-                  </div>
-                  <div className="col-6">
-                    <p className="text-muted text-sm text-break ">
-                      : {data.nation}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-6 col-12 my-2">
-                <div className="row">
-                  <div className="col-6">
-                    <p className="fw-medium text-sm">Nationality</p>
-                  </div>
-                  <div className="col-6">
-                    <p className="text-muted text-sm text-break ">
-                      : {data.nationality}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-6 col-12 my-2">
-                <div className="row">
-                  <div className="col-6">
-                    <p className="fw-medium text-sm">Service Offering</p>
-                  </div>
-                  <div className="col-6">
-                    <p className="text-muted text-sm text-break ">
-                      : {data.service_offering}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-6 col-12 my-2">
-                <div className="row">
-                  <div className="col-6">
-                    <p className="fw-medium text-sm">Availability</p>
-                  </div>
-                  <div className="col-6">
-                    <p className="text-muted text-sm text-break ">
-                      : {data.availability}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-6 col-12 my-2">
-                <div className="row">
-                  <div className="col-6">
-                    <p className="fw-medium text-sm">Working Hours</p>
-                  </div>
-                  <div className="col-6">
-                    <p className="text-muted text-sm text-break ">
-                      : {data.working_hrs}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-6 col-12 my-2">
-                <div className="row">
-                  <div className="col-6">
-                    <p className="fw-medium text-sm">Payment Mode</p>
-                  </div>
-                  <div className="col-6">
-                    <p className="text-muted text-sm text-break ">
-                      : {data.payment_mode}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-6 col-12 my-2">
-                <div className="row">
-                  <div className="col-6">
-                    <p className="fw-medium text-sm">Other Details</p>
-                  </div>
-                  <div className="col-6">
-                    <p className="text-muted text-sm text-break ">
-                      : {data.other_details}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="col-12 my-5">
-                <h4 className="fw-medium">Service</h4>
-              </div>
-              <div className="col-md-6 col-12 my-2">
-                <div className="row">
-                  <div className="col-6">
-                    <p className="fw-medium text-sm">Service</p>
-                  </div>
-                  <div className="col-6">
-                    <p className="text-muted text-sm text-break ">
-                      : {data.service}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-6 col-12 my-2">
-                <div className="row">
-                  <div className="col-6">
-                    <p className="fw-medium text-sm">Experience</p>
-                  </div>
-                  <div className="col-6">
-                    <p className="text-muted text-sm text-break ">
-                      : {data.experience}
-                    </p>
-                  </div>
-                </div>
+          {loading ? (
+            <div className="loader-container">
+              <div className="loader">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
               </div>
             </div>
-          </div>
+          ) : (
+            <div className="container-fluid px-4">
+              <div className="row pb-3">
+                <div className="col-md-6 col-12 my-2">
+                  <div className="row">
+                    <div className="col-6">
+                      <p className="fw-medium text-sm">Name</p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm">: {data.name}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12 my-2">
+                  <div className="row">
+                    <div className="col-6">
+                      <p className="fw-medium text-sm">Address</p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm">: {data.address}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12 my-2">
+                  <div className="row">
+                    <div className="col-6">
+                      <p className="fw-medium text-sm">Phone Number</p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm">: {data.mobile}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12 my-2">
+                  <div className="row">
+                    <div className="col-6">
+                      <p className="fw-medium text-sm">Email</p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm text-break ">
+                        : {data.email}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12 my-2">
+                  <div className="row">
+                    <div className="col-6">
+                      <p className="fw-medium text-sm">Nation</p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm text-break ">
+                        : {data.citizenship}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12 my-2">
+                  <div className="row">
+                    <div className="col-6">
+                      <p className="fw-medium text-sm">Nationality</p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm text-break ">
+                        : {data.nationality}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12 my-2">
+                  <div className="row">
+                    <div className="col-6">
+                      <p className="fw-medium text-sm">Service Offering</p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm text-break ">
+                        : {data.services_offering}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12 my-2">
+                  <div className="row">
+                    <div className="col-6">
+                      <p className="fw-medium text-sm">Availability</p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm text-break ">
+                        :{" "}
+                        {data.availablity
+                          ? JSON.parse(data.availablity).join(", ")
+                          : "--"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12 my-2">
+                  <div className="row">
+                    <div className="col-6">
+                      <p className="fw-medium text-sm">Working Hours</p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm text-break ">
+                        : {data.working_hrs}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12 my-2">
+                  <div className="row">
+                    <div className="col-6">
+                      <p className="fw-medium text-sm">Payment Mode</p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm text-break ">
+                        : {data.paymentName}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12 my-2">
+                  <div className="row">
+                    <div className="col-6">
+                      <p className="fw-medium text-sm">Other Details</p>
+                    </div>
+                    <div className="col-6">
+                      <p className="text-muted text-sm text-break ">
+                        : {data.other_details}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-12 my-5">
+                  <h4 className="fw-medium">Service</h4>
+                </div>
+                {Object.entries(JSON.parse(data.specialized_in)).map(
+                ([service, experience], index) => (
+                  <div key={index} className="row">
+                    <div className="col-md-6 col-12 my-2">
+                      <div className="row">
+                        <div className="col-6">
+                          <p className="fw-medium text-sm">Service</p>
+                        </div>
+                        <div className="col-6">
+                          <p className="text-muted text-sm text-break">
+                            : {service}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-md-6 col-12 my-2">
+                      <div className="row">
+                        <div className="col-6">
+                          <p className="fw-medium text-sm">Experience</p>
+                        </div>
+                        <div className="col-6">
+                          <p className="text-muted text-sm text-break">
+                            : {experience}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )
+              )}
+              </div>
+            </div>
+          )}
         </>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { MaterialReactTable } from "material-react-table";
 import { MoreVert as MoreVertIcon } from "@mui/icons-material";
@@ -11,40 +11,14 @@ import {
 } from "@mui/material";
 import Delete from "../../../components/common/Delete";
 import PropTypes from "prop-types";
+import api from "../../../config/URL";
 
 function Helper() {
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
-  const data = [
-    {
-      id: 1,
-      name: "Saran",
-      phone_no: "9876543212",
-      email: "company@gmail.com",
-      nation: "India",
-      nationality: "Indian",
-      working_hrs: "11 am - 5 pm",
-      created_by: "Admin",
-      created_at: "2024-01-06",
-      updated_by: "Admin",
-      updated_at: "2024-01-06",
-    },
-    {
-      id: 2,
-      name: "Ramesh",
-      phone_no: "9876543213",
-      email: "company2@gmail.com",
-      nation: "Singapore",
-      nationality: "Singaporian",
-      working_hrs: "10 am - 6 pm",
-      created_by: "Admin",
-      created_at: "2024-01-06",
-      updated_by: "Admin",
-      updated_at: "2024-01-06",
-    },
-  ];
 
   const columns = useMemo(
     () => [
@@ -83,7 +57,7 @@ function Helper() {
         size: 40,
       },
       {
-        accessorKey: "phone_no",
+        accessorKey: "mobile",
         header: "Phone Number",
         enableHiding: false,
         size: 40,
@@ -101,7 +75,7 @@ function Helper() {
         size: 40,
       },
       {
-        accessorKey: "nation",
+        accessorKey: "citizenship",
         header: "Nation",
         enableHiding: false,
         size: 40,
@@ -131,6 +105,22 @@ function Helper() {
     ],
     []
   );
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get(`vendor/helpers/17`);
+      setData(response.data.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const theme = createTheme({
     components: {
@@ -216,44 +206,59 @@ function Helper() {
             </button>
           </Link>
         </div>
-        <>
-          <ThemeProvider theme={theme}>
-            <MaterialReactTable
-              columns={columns}
-              data={data}
-              enableColumnActions={false}
-              enableColumnFilters={false}
-              enableDensityToggle={false}
-              enableFullScreenToggle={false}
-              initialState={{
-                columnVisibility: {
-                  created_by: false,
-                  created_at: false,
-                  updated_by: false,
-                  updated_at: false,
-                },
-              }}
-              muiTableBodyRowProps={() => ({
-                onClick: () => navigate(`/helper/view`),
-                style: { cursor: "pointer" },
-              })}
-            />
-          </ThemeProvider>
-          <Menu
-            id="action-menu"
-            anchorEl={menuAnchor}
-            open={Boolean(menuAnchor)}
-            onClose={handleMenuClose}
-          >
-            <MenuItem onClick={() => navigate(`/helper/edit`)}>Edit</MenuItem>
-            <MenuItem>
-              <Delete
-                path={`vendor/helper/delete/${selectedId}`}
-                onOpen={handleMenuClose}
+        {loading ? (
+          <div className="loader-container">
+            <div className="loader">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        ) : (
+          <>
+            <ThemeProvider theme={theme}>
+              <MaterialReactTable
+                columns={columns}
+                data={data}
+                enableColumnActions={false}
+                enableColumnFilters={false}
+                enableDensityToggle={false}
+                enableFullScreenToggle={false}
+                initialState={{
+                  columnVisibility: {
+                    created_by: false,
+                    created_at: false,
+                    updated_by: false,
+                    updated_at: false,
+                  },
+                }}
+                muiTableBodyRowProps={({ row }) => ({
+                  onClick: () => navigate(`/helper/view/${row.original.id}`),
+                  style: { cursor: "pointer" },
+                })}
               />
-            </MenuItem>
-          </Menu>
-        </>
+            </ThemeProvider>
+            <Menu
+              id="action-menu"
+              anchorEl={menuAnchor}
+              open={Boolean(menuAnchor)}
+              onClose={handleMenuClose}
+            >
+              <MenuItem onClick={() => navigate(`/helper/edit/${selectedId}`)}>
+                Edit
+              </MenuItem>
+              <MenuItem>
+                <Delete
+                  path={`vendor/helper/delete/${selectedId}`}
+                  onDeleteSuccess={fetchData}
+                  onOpen={handleMenuClose}
+                />
+              </MenuItem>
+            </Menu>
+          </>
+        )}
       </div>
     </div>
   );

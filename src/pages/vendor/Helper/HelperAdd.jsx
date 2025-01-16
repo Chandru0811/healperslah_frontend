@@ -1,16 +1,20 @@
 import { useFormik } from "formik";
-import React, { useState } from "react";
-import { FiPlus } from "react-icons/fi";
+import { useState } from "react";
+import { FiAlertTriangle, FiPlus } from "react-icons/fi";
 import { IoCloseSharp } from "react-icons/io5";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
+import api from "../../../config/URL";
+import toast from "react-hot-toast";
 
 function HelperAdd() {
+  const navigate = useNavigate();
+  const [loadIndicator, setLoadIndicator] = useState(false);
   const [fields, setFields] = useState([{ experience: "", service: "" }]);
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required("*Name is required"),
-    phone_no: Yup.number()
+    mobile: Yup.number()
       .typeError("*Phone Number must be a number")
       .required("*Phone Number is required")
       .positive("*Please enter a valid number")
@@ -18,46 +22,90 @@ function HelperAdd() {
     email: Yup.string()
       .email("*Entry a valid Email")
       .required("*Email is required"),
-    nation: Yup.string().required("*Nation is required"),
+    citizenship: Yup.string().required("*Nation is required"),
     nationality: Yup.string().required("*Nationality is required"),
     address: Yup.string().required("*Address is required"),
-    service_offering: Yup.string().required("*Address is required"),
+    services_offering: Yup.string().required("*Address is required"),
     availability: Yup.string().required("*Availability is required"),
     working_hrs: Yup.string().required("*Working Hrs is required"),
-    service: Yup.string().required("*Service is required"),
-    experience: Yup.string().required("*Experience is required"),
     payment_mode: Yup.string().required("*Payment Mode is required"),
     other_details: Yup.string()
-      .required("*Other Details is a required field")
+      .required("*Other Details is a required")
       .max(200, "*The maximum length is 200 characters"),
   });
 
   const formik = useFormik({
     initialValues: {
       name: "",
-      phone_no: "",
+      mobile: "",
       email: "",
-      nation: "",
+      citizenship: "",
       nationality: "",
       address: "",
-      service_offering: "",
+      services_offering: "",
       availability: "",
       working_hrs: "",
-      service: "",
-      experience: "",
+      specialized_in: {},
       payment_mode: "",
       other_details: "",
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
-      const availability = ["Monday", "Wednesday", "Friday"];
+      setLoadIndicator(true);
+      const availability = ["Monday", "Wednesday"];
 
-      const providing_services = fields.reduce((acc, field) => {
+      const specialized_in = fields.reduce((acc, field) => {
         if (field.service && field.experience) {
           acc[field.service] = field.experience;
         }
         return acc;
       }, {});
+
+      const payload = {
+        ...values,
+        availablity: availability,
+        specialized_in,
+      };
+      try {
+        const response = await api.post(
+          "vendor/register/helper/92/17",
+          payload,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        if (response.status === 200) {
+          toast.success(response.data.message);
+          navigate("/helper");
+        } else {
+          toast.error(response.data.message);
+        }
+      } catch (error) {
+        if (error.response) {
+          if (error.response.status === 422) {
+            const errors = error.response.data.error;
+            if (errors) {
+              Object.keys(errors).forEach((key) => {
+                errors[key].forEach((errorMsg) => {
+                  toast(errorMsg, {
+                    icon: <FiAlertTriangle className="text-warning" />,
+                  });
+                });
+              });
+            }
+          } else {
+            toast.error(
+              error.response.data.message || "An unexpected error occurred."
+            );
+          }
+        } else {
+          toast.error("An unexpected error occurred.");
+        }
+      } finally {
+        setLoadIndicator(false);
+      }
     },
     validateOnChange: false,
     validateOnBlur: true,
@@ -110,11 +158,11 @@ function HelperAdd() {
       >
         <div className="card">
           <div className="d-flex justify-content-between align-items-center card_header p-1 mb-4 px-4">
-            <div class="d-flex align-items-center">
-              <div class="d-flex">
-                <div class="dot active"></div>
+            <div className="d-flex align-items-center">
+              <div className="d-flex">
+                <div className="dot active"></div>
               </div>
-              <span class="me-2 text-muted">Add Helper</span>
+              <span className="me-2 text-muted">Add Helper</span>
             </div>
             <div className="my-2 pe-3 d-flex align-items-center">
               <Link to="/helper">
@@ -123,7 +171,17 @@ function HelperAdd() {
                 </button>
               </Link>
               &nbsp;&nbsp;
-              <button type="submit" className="btn btn-button">
+              <button
+                type="submit"
+                className="btn btn-button"
+                disabled={loadIndicator}
+              >
+                {loadIndicator && (
+                  <span
+                    className="spinner-border spinner-border-sm me-2"
+                    aria-hidden="true"
+                  ></span>
+                )}
                 Save
               </button>
             </div>
@@ -144,9 +202,7 @@ function HelperAdd() {
                   {...formik.getFieldProps("name")}
                 />
                 {formik.touched.name && formik.errors.name && (
-                  <div className="invalid-feedback">
-                    {formik.errors.name}
-                  </div>
+                  <div className="invalid-feedback">{formik.errors.name}</div>
                 )}
               </div>
               <div className="col-md-6 col-12 mb-3">
@@ -175,15 +231,15 @@ function HelperAdd() {
                 <input
                   aria-label="Default input example"
                   className={`form-control ${
-                    formik.touched.phone_no && formik.errors.phone_no
+                    formik.touched.mobile && formik.errors.mobile
                       ? "is-invalid"
                       : ""
                   }`}
-                  {...formik.getFieldProps("phone_no")}
+                  {...formik.getFieldProps("mobile")}
                 />
-                {formik.touched.phone_no && formik.errors.phone_no && (
+                {formik.touched.mobile && formik.errors.mobile && (
                   <div className="invalid-feedback">
-                    {formik.errors.phone_no}
+                    {formik.errors.mobile}
                   </div>
                 )}
               </div>
@@ -211,18 +267,18 @@ function HelperAdd() {
                 <select
                   type="text"
                   className={`form-select ${
-                    formik.touched.nation && formik.errors.nation
+                    formik.touched.citizenship && formik.errors.citizenship
                       ? "is-invalid"
                       : ""
                   }`}
-                  {...formik.getFieldProps("nation")}
+                  {...formik.getFieldProps("citizenship")}
                 >
                   <option></option>
                   <option value="India">India</option>
                   <option value="Singapore">Singapore</option>
                 </select>
-                {formik.touched.nation && formik.errors.nation && (
-                  <div className="invalid-feedback">{formik.errors.nation}</div>
+                {formik.touched.citizenship && formik.errors.citizenship && (
+                  <div className="invalid-feedback">{formik.errors.citizenship}</div>
                 )}
               </div>
               <div className="col-md-6 col-12 mb-3">
@@ -255,17 +311,17 @@ function HelperAdd() {
                 <textarea
                   rows={5}
                   className={`form-control ${
-                    formik.touched.service_offering &&
-                    formik.errors.service_offering
+                    formik.touched.services_offering &&
+                    formik.errors.services_offering
                       ? "is-invalid"
                       : ""
                   }`}
-                  {...formik.getFieldProps("service_offering")}
+                  {...formik.getFieldProps("services_offering")}
                 />
-                {formik.touched.service_offering &&
-                  formik.errors.service_offering && (
+                {formik.touched.services_offering &&
+                  formik.errors.services_offering && (
                     <div className="invalid-feedback">
-                      {formik.errors.service_offering}
+                      {formik.errors.services_offering}
                     </div>
                   )}
               </div>
@@ -371,9 +427,9 @@ function HelperAdd() {
                   {...formik.getFieldProps("payment_mode")}
                 >
                   <option></option>
-                  <option value="Cash">Cash</option>
-                  <option value="Bank Transfer">Bank Transfer</option>
-                  <option value="UPI">UPI</option>
+                  <option value="2">Cash</option>
+                  <option value="3">Bank Transfer</option>
+                  <option value="4">UPI</option>
                 </select>
                 {formik.touched.payment_mode && formik.errors.payment_mode && (
                   <div className="invalid-feedback">

@@ -32,8 +32,8 @@ function Vendor({ handleLogout }) {
                 {/* Helper */}
                 <Route path="/helper" element={<Helper />} />
                 <Route path="/helper/add" element={<HelperAdd />} />
-                <Route path="/helper/edit" element={<HelperEdit />} />
-                <Route path="/helper/view" element={<HelperView />} />
+                <Route path="/helper/edit/:id" element={<HelperEdit />} />
+                <Route path="/helper/view/:id" element={<HelperView />} />
 
                 {/* Profile */}
                 <Route path="/profile" element={<Profile />} />

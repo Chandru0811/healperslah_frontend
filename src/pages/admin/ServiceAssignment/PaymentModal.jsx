@@ -27,8 +27,6 @@ function PaymentModal({ order_id, company_id, helper_id }) {
   const handleOpenDialog = () => {
     setDeleteDialogOpen(true);
     document.body.style.overflow = "hidden";
-
-    formik.setFieldValue("total_amount", "5000");
   };
 
   const handleCloseDialog = () => {
@@ -94,10 +92,12 @@ function PaymentModal({ order_id, company_id, helper_id }) {
 
   useEffect(() => {
     if (formik.values.amount_paid && formik.values.total_amount) {
-      const balanceAmount = parseFloat(formik.values.total_amount) - parseFloat(formik.values.amount_paid);
+      const balanceAmount =
+        parseFloat(formik.values.total_amount) -
+        parseFloat(formik.values.amount_paid);
       formik.setFieldValue("balance_amount", balanceAmount.toFixed(2));
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formik.values.amount_paid, formik.values.total_amount]);
 
   const fetchPaymentType = async () => {
@@ -111,6 +111,25 @@ function PaymentModal({ order_id, company_id, helper_id }) {
 
   useEffect(() => {
     fetchPaymentType();
+  }, []);
+
+  const getData = async () => {
+    try {
+      const response = await api.get(`admin/order/10`);
+      // formik.setValues(response.data.data);
+      formik.setValues({
+        ...formik.values,
+        amount_paid: response.data.data.amount_paid,
+        balance_amount: response.data.data.balance_amount,
+        total_amount: response.data.data.total_amount,
+      });
+    } catch (error) {
+      toast.error("Error Fetching Data: " + error.message);
+    }
+  };
+
+  useEffect(() => {
+    getData();
   }, []);
 
   return (
@@ -220,19 +239,20 @@ function PaymentModal({ order_id, company_id, helper_id }) {
                     }`}
                     {...formik.getFieldProps("payment_mode")}
                   >
-                     <option selected></option>
-                  {payment &&
-                    payment.map((data) => (
-                      <option key={data.id} value={data.id}>
-                        {data.name}
-                      </option>
-                    ))}
+                    <option selected></option>
+                    {payment &&
+                      payment.map((data) => (
+                        <option key={data.id} value={data.id}>
+                          {data.name}
+                        </option>
+                      ))}
                   </select>
-                  {formik.touched.payment_mode && formik.errors.payment_mode && (
-                    <div className="invalid-feedback">
-                      {formik.errors.payment_mode}
-                    </div>
-                  )}
+                  {formik.touched.payment_mode &&
+                    formik.errors.payment_mode && (
+                      <div className="invalid-feedback">
+                        {formik.errors.payment_mode}
+                      </div>
+                    )}
                 </div>
                 <div className="col-md-6 col-12 mb-3">
                   <label className="form-label">
@@ -241,7 +261,8 @@ function PaymentModal({ order_id, company_id, helper_id }) {
                   <select
                     aria-label="Default select example"
                     className={`form-select ${
-                      formik.touched.payment_status && formik.errors.payment_status
+                      formik.touched.payment_status &&
+                      formik.errors.payment_status
                         ? "is-invalid"
                         : ""
                     }`}
@@ -252,11 +273,12 @@ function PaymentModal({ order_id, company_id, helper_id }) {
                     <option value="2">Not Paid</option>
                     <option value="3">Partially Paid</option>
                   </select>
-                  {formik.touched.payment_status && formik.errors.payment_status && (
-                    <div className="invalid-feedback">
-                      {formik.errors.payment_status}
-                    </div>
-                  )}
+                  {formik.touched.payment_status &&
+                    formik.errors.payment_status && (
+                      <div className="invalid-feedback">
+                        {formik.errors.payment_status}
+                      </div>
+                    )}
                 </div>
               </div>
             </div>

@@ -46,9 +46,9 @@ function Order() {
       },
       { accessorKey: "order_number", enableHiding: false, header: "Order Number" },
       {
-        accessorKey: "customer_id",
+        accessorKey: "customer.name",
         enableHiding: false,
-        header: "Customer Id",
+        header: "Customer Name",
       },
       {
         accessorKey: "total_amount",

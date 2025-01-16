@@ -34,14 +34,15 @@ function AssignModal({ orderId }) {
   };
 
   const validationSchema = yup.object().shape({
-    // helper_id: yup.string().required("*Helper Id required"),
+    helper_id: yup.string().required("*Helper Id required"),
   });
 
   const formik = useFormik({
     initialValues: {
       order_id: "",
-      company_id: "1",
+      company_id: "",
       helper_id: "",
+      booking_type: "service",
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
@@ -79,6 +80,19 @@ function AssignModal({ orderId }) {
     validateOnBlur: true,
   });
 
+  // const fetchCompany = async () => {
+  //   try {
+  //     const service = await api.get("admin/companies");
+  //     setCompany(service);
+  //   } catch (error) {
+  //     toast.error(error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   fetchCompany();
+  // }, []);
+
   return (
     <>
       <button
@@ -109,28 +123,61 @@ function AssignModal({ orderId }) {
         <DialogTitle>Assign</DialogTitle>
         <DialogContent>
           <form onSubmit={formik.handleSubmit}>
-            <div className="col-md-6 col-12 mb-3">
-              <label className="form-label">
-                Helper Id<span className="text-danger">*</span>
-              </label>
-              <select
-                aria-label="Default select example"
-                className={`form-select ${
-                  formik.touched.helper_id && formik.errors.helper_id
-                    ? "is-invalid"
-                    : ""
-                }`}
-                {...formik.getFieldProps("helper_id")}
-              >
-                <option value=""></option>
-                <option value="1">Ramesh</option>
-                <option value="2">Saran</option>
-              </select>
-              {formik.touched.helper_id && formik.errors.helper_id && (
-                <div className="invalid-feedback">
-                  {formik.errors.helper_id}
-                </div>
-              )}
+            <div className="row">
+              <div className="col-md-6 col-12 mb-3">
+                <label className="form-label">
+                  Company Name<span className="text-danger">*</span>
+                </label>
+                <select
+                  aria-label="Default select example"
+                  className={`form-select ${
+                    formik.touched.company_id && formik.errors.company_id
+                      ? "is-invalid"
+                      : ""
+                  }`}
+                  {...formik.getFieldProps("company_id")}
+                >
+                  <option selected></option>
+                  <option value="17">Company 37</option>
+                  <option value="16">Company 36</option>
+                  <option value="15">Company 34</option>
+                  {/* {company &&
+                    company.map((data) => (
+                      <option key={data.id} value={data.id}>
+                        {data.company_name}
+                      </option>
+                    ))} */}
+                </select>
+                {formik.touched.company_id && formik.errors.company_id && (
+                  <div className="invalid-feedback">
+                    {formik.errors.company_id}
+                  </div>
+                )}
+              </div>
+              <div className="col-md-6 col-12 mb-3">
+                <label className="form-label">
+                  Helper<span className="text-danger">*</span>
+                </label>
+                <select
+                  aria-label="Default select example"
+                  className={`form-select ${
+                    formik.touched.helper_id && formik.errors.helper_id
+                      ? "is-invalid"
+                      : ""
+                  }`}
+                  {...formik.getFieldProps("helper_id")}
+                >
+                  <option value=""></option>
+                  <option value="11">Helper 2</option>
+                  <option value="8">Helper 3</option>
+                  <option value="13">Helper 4</option>
+                </select>
+                {formik.touched.helper_id && formik.errors.helper_id && (
+                  <div className="invalid-feedback">
+                    {formik.errors.helper_id}
+                  </div>
+                )}
+              </div>
             </div>
           </form>
         </DialogContent>

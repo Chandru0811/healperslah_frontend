@@ -1,9 +1,13 @@
 import { useFormik } from "formik";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import * as Yup from "yup";
+import fetchAllPaymentTypeWithIds from "../../List/PaymentTypeList";
+import toast from "react-hot-toast";
 
 function PaymentEdit() {
+  const [payment, setPaymnet] = useState(null);
+
   const validationSchema = Yup.object().shape({
     order_id: Yup.string().required("*Order Id required"),
     helper_id: Yup.string().required("*Helper Id required"),
@@ -43,7 +47,21 @@ function PaymentEdit() {
         parseFloat(formik.values.amount_paid);
       formik.setFieldValue("balance_amount", balanceAmount.toFixed(2));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formik.values.amount_paid, formik.values.total_amount]);
+
+  const fetchPaymentType = async () => {
+    try {
+      const data = await fetchAllPaymentTypeWithIds();
+      setPaymnet(data);
+    } catch (error) {
+      toast.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPaymentType();
+  }, []);
 
   return (
     <div className="container-fluid px-0">
@@ -77,11 +95,11 @@ function PaymentEdit() {
       >
         <div className="card vh-100">
           <div className="d-flex justify-content-between align-items-center card_header p-1 mb-4 px-4">
-            <div class="d-flex align-items-center">
-              <div class="d-flex">
-                <div class="dot active"></div>
+            <div className="d-flex align-items-center">
+              <div className="d-flex">
+                <div className="dot active"></div>
               </div>
-              <span class="me-2 text-muted">Edit Payment</span>
+              <span className="me-2 text-muted">Edit Payment</span>
             </div>
             <div className="my-2 pe-3 d-flex align-items-center">
               <Link to="/payment">
@@ -250,15 +268,23 @@ function PaymentEdit() {
                 <label className="form-label">
                   Payment Mode<span className="text-danger">*</span>
                 </label>
-                <input
-                  type="text"
-                  className={`form-control ${
+                <select
+                  aria-label="Default select example"
+                  className={`form-select ${
                     formik.touched.payment_mode && formik.errors.payment_mode
                       ? "is-invalid"
                       : ""
                   }`}
                   {...formik.getFieldProps("payment_mode")}
-                />
+                >
+                  <option selected></option>
+                  {payment &&
+                    payment.map((data) => (
+                      <option key={data.id} value={data.id}>
+                        {data.name}
+                      </option>
+                    ))}
+                </select>
                 {formik.touched.payment_mode && formik.errors.payment_mode && (
                   <div className="invalid-feedback">
                     {formik.errors.payment_mode}

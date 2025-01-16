@@ -58,12 +58,17 @@ function Payment() {
           return status === 1 ? (
             <div className="d-flex align-items-center">
               <div className="active_dot"></div>
-              <span>Active</span>
+              <span>Paid</span>
             </div>
-          ) : status === 0 ? (
+          ) : status === 2 ? (
+            <div className="d-flex align-items-center">
+              <div className="onprocess_dot"></div>
+              <span>Paid Patial</span>
+            </div>
+          ) : status === 3 ? (
             <div className="d-flex align-items-center">
               <div className="inactive_dot"></div>
-              <span>Inactive</span>
+              <span>Not Paid</span>
             </div>
           ) : null;
         },

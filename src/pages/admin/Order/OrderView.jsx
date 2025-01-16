@@ -13,13 +13,9 @@ function OrderView() {
     try {
       setLoading(true);
       const response = await api.get(`admin/order/${id}`);
-      if (response.data.success) {
-        setData(response.data.data);
-      } else {
-        toast.error("Error Fetching Data");
-      }
+      setData(response.data.data);
     } catch (error) {
-      toast.error("Error Fetching Data", error?.response?.data?.message);
+      toast.error("Error Fetching Data", error);
     } finally {
       setLoading(false);
     }
@@ -27,6 +23,7 @@ function OrderView() {
 
   useEffect(() => {
     getData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function formatDateTime(dateTime) {
