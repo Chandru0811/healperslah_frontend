@@ -116,11 +116,8 @@ function PaymentModal({ order_id, company_id, helper_id }) {
   const getData = async () => {
     try {
       const response = await api.get(`admin/order/10`);
-      // formik.setValues(response.data.data);
       formik.setValues({
         ...formik.values,
-        amount_paid: response.data.data.amount_paid,
-        balance_amount: response.data.data.balance_amount,
         total_amount: response.data.data.total_amount,
       });
     } catch (error) {
