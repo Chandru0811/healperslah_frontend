@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import Delete from "../../../components/common/Delete";
 import api from "../../../config/URL";
+import PropTypes from "prop-types";
 
 function CustomPackage() {
   const [menuAnchor, setMenuAnchor] = useState(null);
@@ -267,5 +268,10 @@ function CustomPackage() {
     </div>
   );
 }
+
+CustomPackage.propTypes = {
+  row: PropTypes.func.isRequired,
+  cell: PropTypes.func.isRequired,
+};
 
 export default CustomPackage;
