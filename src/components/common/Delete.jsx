@@ -4,6 +4,7 @@ import { Dialog, DialogActions, DialogTitle, Slide } from "@mui/material";
 import api from "../../config/URL";
 import PropTypes from "prop-types";
 import toast from "react-hot-toast";
+import { FiAlertTriangle } from "react-icons/fi";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
